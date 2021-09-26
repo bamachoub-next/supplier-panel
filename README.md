@@ -1,1 +1,1 @@
-This is suplier-panel project for BaMaChoub
+This is supplier-panel project for BaMaChoub

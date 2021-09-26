@@ -1,16 +1,111 @@
+:root {
+  --accent: #9d3ebd;
+  --secondary: #f6876a;
+  --primary3: #d2d0e3;
+  --primary2: #aba4da;
+  --primary: #50459c;
+  --white: #ffffff;
+  --bg: #f8f8f8;
+  --info: #31ccec;
+  --warning: #fcbf49;
+  --negative: #e63946;
+  --positive: #52b788;
+  --gray: #757575;
+  --black: #001219;
+  --info_bg : #e1f2ff;
+  --label-text : #2699fb;
+  --border-color:#bce0fd;
+
+}
+@font-face {
+  font-family: 'IRANSansXV';
+  src: local('IRANSansX-Medium'), url(./../public/fonts/IRANSansX-Medium.woff2) format('truetype');
+}
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: IRANSansXV;
+  overflow-x: hidden;  
 }
+*:not([class*="icon"]) {
+  font-family: IRANSansXV !important;
 
+}
+h2 {
+  font-family: IRANSansXV !important;
+  color:var(--label-text);
+
+}
 a {
   color: inherit;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.b-card{
+  background-color: var(--info_bg);
+  border-radius: 32px;
+  
+}
+ .p-steps-title , .Countdown span , select , select option ,svg , div , .p-dropdown-label.p-inputtext {
+  color:var(--label-text);
+
+}
+.p-steps-title,.p-steps-number, .p-placeholder,option{
+  color:var(--label-text) !important;
+
+}
+.b-card label,a{
+  color:var(--label-text);
+
+}
+
+.p-steps .p-steps-item .p-menuitem-link{
+  background-color: transparent;
+  
+}
+span.p-steps-title{
+  font-size: 0.75rem;
+
+}
+
+.form-control{
+  height: 3rem;
+}
+
+label{
+  font-size: 0.75rem;
+
+}
+
+.form-control{
+  border: solid 1px var(--border-color);
+
+}
+input , select{
+  font-size: 0.875rem !important;
+
+}
+
+.title{
+
+  font-size: 0.875rem;
+
+}
+.large-title{
+
+  font-size: 1.5rem;
+
+}
+.small-title{
+
+  font-size: 0.75rem;
+
+}
+.p-progressbar-label{
+  color: var(--white)
 }
