@@ -157,6 +157,7 @@ class BirthDate extends React.Component {
 
 
 	}
+	/*
 	componentWillReceiveProps(param) {
         if(param.SelectedDay || param.SelectedMounth || param.SelectedYear){
 			this.setState({
@@ -166,7 +167,7 @@ class BirthDate extends React.Component {
 			});
 			
 		}
-    }
+    }*/
 
 	render() {
 
@@ -174,11 +175,11 @@ class BirthDate extends React.Component {
 			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 				<div style={{width:'30%'}}>
 
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.state.SelectedDay} options={Days} onChange={(event)=>{
+					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedDay} options={Days} onChange={(event)=>{
 						this.setState({
 							SelectedDay:event.target.value
 							});
-							this.props.callback({SelectedDay:event.target.value,SelectedMounth:this.state.SelectedMounth,SelectedYear:this.state.SelectedYear});
+							this.props.callback({SelectedDay:event.target.value,SelectedMounth:this.props.SelectedMounth,SelectedYear:this.props.SelectedYear});
 
 						}}
 					
@@ -187,22 +188,22 @@ class BirthDate extends React.Component {
 				</div>
 				<div style={{width:'30%'}}>
 
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.state.SelectedMounth} options={Mounths}  onChange={(event)=>{
-						this.setState({
-							SelectedDay:event.target.value
+					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedMounth} options={Mounths}  onChange={(event)=>{
+							this.setState({
+								SelectedDay:event.target.value
 							});
-							this.props.callback({SelectedDay:this.state.SelectedDay,SelectedMounth:event.target.value,SelectedYear:this.state.SelectedYear});
+							this.props.callback({SelectedDay:this.props.SelectedDay,SelectedMounth:event.target.value,SelectedYear:this.props.SelectedYear});
 
 						}}  placeholder="ماه" />
 
 				</div>
 				<div style={{width:'30%'}}>
 
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.state.SelectedYear} options={Years} onChange={(event)=>{
-						this.setState({
-							SelectedDay:event.target.value
+					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedYear} options={Years} onChange={(event)=>{
+							this.setState({
+								SelectedDay:event.target.value
 							});
-							this.props.callback({SelectedDay:this.state.SelectedDay,SelectedMounth:this.state.SelectedMounth,SelectedYear:event.target.value});
+							this.props.callback({SelectedDay:this.props.SelectedDay,SelectedMounth:this.props.SelectedMounth,SelectedYear:event.target.value});
 
 						}} placeholder="سال" />
 

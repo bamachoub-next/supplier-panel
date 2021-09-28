@@ -4,9 +4,11 @@ import { Card } from 'primereact/card';
 import { Steps } from 'primereact/steps';
 import { Button } from 'primereact/button';
 import Countdown from 'react-countdown';
-import ArrowForward from '@material-ui/icons/ArrowForward';
+import { LocationSearchingTwoTone,ArrowForward } from '@material-ui/icons';
 import { MultiSelect } from 'primereact/multiselect';
-import { FileUpload } from 'primereact/fileupload';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {Dialog} from 'primereact/dialog';
 
 
 import Server from './../../components/Server'
@@ -14,7 +16,20 @@ import Cities from './../../components/Cities';
 import BirthDate from './../../components/BirthDate';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
+import dynamic from 'next/dynamic';
+
+const DynamicMap = dynamic(
+    () => {
+      return import('./../../components/Mapp');
+    },
+    {
+      ssr: false
+    }
+  );
+
 import { Toast } from 'primereact/toast';
+
+const MySwal = withReactContent(Swal)
 
 const items = [
     { label: 'اطلاعات فروشنده' },
@@ -41,19 +56,39 @@ class Signup extends React.Component {
         }
     }
     checkValidationCode() {
+        if(!this.state.ValidationCode)
+        {
+            this.setState({
+                ValidationCode_inValid:true
+            })
+            return;
+        }
         this.Server.post("supplier-employee-auth/check-validation-code", { code: this.state.ValidationCode, phoneNumber: this.state.phoneNumber },
             (response) => {
                 this.setState({
                     Step: 3
                 })
             }, (error) => {
-                this.toast.current.show({ severity: 'error', summary: <div> عملیات انجام نشد </div>, life: 8000 });
+                
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'عملیات انجام نشد'
+                })
+                //this.toast.current.show({ severity: 'error', summary: <div> عملیات انجام نشد </div>, life: 8000 });
 
 
             }
         )
     }
     getValidationCode() {
+        if(!this.state.phoneNumber)
+        {
+            this.setState({
+                phoneNumber_inValid:true
+            })
+            return;
+        }
         this.Server.post("supplier-employee-auth/get-validation-code", { phoneNumber: this.state.phoneNumber },
             (response) => {
                 this.setState({
@@ -64,18 +99,23 @@ class Signup extends React.Component {
                 })
 
             }, (error) => {
-
-                this.toast.current.show({ severity: 'error', summary: <div> عملیات انجام نشد </div>, life: 8000 });
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'عملیات انجام نشد'
+                })
+                //this.toast.current.show({ severity: 'error', summary: <div> عملیات انجام نشد </div>, life: 8000 });
 
 
             }
         )
     }
     setInfo(){
+        debugger;
         let param =
         {
             "address": this.state.address,
-            "birthDate": this.state.SelectedDay + "/" + this.state.SelectedMounth + "/" + this.state.SelectedYear ,
+            "birthDate": this.state.SelectedDay?.code + "/" + this.state.SelectedMounth?.code + "/" + this.state.SelectedYear?.code ,
             "categoriesToSale": this.state.categoriesToSale,
             "city": this.state.SelectedCity + " " + this.state.SelectedSubCity,
             "firstName": this.state.firstName,
@@ -83,11 +123,11 @@ class Signup extends React.Component {
             "idBookPageTwoImage": this.state.idBookPageTwoImage,
             "idCardImage": this.state.idCardImage,
             "lastName": this.state.lastName,
-            "latitude": 0,
-            "longitude": 0,
-            "nationalCode": this.state.nationalCode,
-            "phoneNumber": this.state.phoneNumber,
-            "postalCode": this.state.postalCode,
+            "latitude": this.state.lat,
+            "longitude": this.state.lng,
+            "nationalCode": this.state.nationalCode.toString(),
+            "phoneNumber": this.state.phoneNumber.toString(),
+            "postalCode": this.state.postalCode.toString(),
             "salesPermitImage": this.state.salesPermitImage,
             "shabaNumber": this.state.shabaNumber,
             "shopName": this.state.shopName,
@@ -96,20 +136,34 @@ class Signup extends React.Component {
           this.Server.post("supplier-employee-auth/create-supplier-preview", param,
             (response) => {
                 if(response.data.code == "200")
-                    this.toast.current.show({ severity: 'success', summary: <div> {response.data.message}</div>, life: 8000 });
+                    MySwal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: response.data.message
+                    })
                 else
-                    this.toast.current.show({ severity: 'error', summary: <div> {response.data.message}</div>, life: 8000 });
+                    MySwal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: response.data.message
+                    })
 
             }, (error) => {
-                this.toast.current.show({ severity: 'error', summary: <div> </div>, life: 8000 });
-
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: "عملیات انجام نشد"
+                })
             }
         )
     }
     getCityResponse(value) {
         this.setState({
             SelectedCity: value.SelectedCity,
-            SelectedSubCity: value.SelectedSubCity
+            SelectedSubCity: value.SelectedSubCity,
+            city_inValid:false,
+            subCity_inValid:false
+
         })
     }
     getBirthDateResponse(value) {
@@ -123,7 +177,7 @@ class Signup extends React.Component {
     
     render() {
         return (
-            <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }} className="container" >
+            <div className="justify-content-center container" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
                 <Toast ref={this.toast} position="bottom-left" style={{ fontFamily: 'iranyekanwebblack', textAlign: 'right' }} />
                 {this.state.Step == 1 &&
                     <div>
@@ -144,9 +198,10 @@ class Signup extends React.Component {
                                             </h2>
                                         </div>
                                     </div>
-                                    <BInput value={this.state.phoneNumber} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره موبایل خود را وارد کنید" Val={(v)=>
+                                    <BInput value={this.state.phoneNumber} InputNumber={true} inValid={this.state.phoneNumber_inValid}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره موبایل خود را وارد کنید" absoluteLabel="شماره موبایل" Val={(v)=>
                                                     this.setState({
-                                                        phoneNumber:v
+                                                        phoneNumber:v,
+                                                        phoneNumber_inValid:false
                                                 })} />
                                    
 
@@ -220,9 +275,10 @@ class Signup extends React.Component {
                                         </div>
                                     </div>
                                     
-                                    <BInput value={this.state.ValidationCode} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد تایید را وارد کنید" Val={(v)=>
+                                    <BInput value={this.state.ValidationCode} InputNumber={true}  absoluteLabel="کد تایید" inValid={this.state.ValidationCode_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد تایید را وارد کنید" Val={(v)=>
                                                     this.setState({
-                                                        ValidationCode:v
+                                                        ValidationCode:v,
+                                                        ValidationCode_inValid:false
                                                 })} />
 
                                     <div className="row justify-content-center" style={{ justifyContent: 'center', marginTop: 32 }} >
@@ -292,21 +348,25 @@ class Signup extends React.Component {
                                     <Steps model={items} activeIndex={this.state.activeIndex} />
                                     {this.state.Step == 3 &&
                                         <div>
-                                            <BInput value={this.state.firstName} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام" Val={(v)=>
+                                            <BInput value={this.state.firstName} inValid={this.state.firstName_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام" absoluteLabel="نام" Val={(v)=>
                                                     this.setState({
-                                                        firstName:v
+                                                        firstName:v,
+                                                        firstName_inValid:false
                                                 })} />
-                                            <BInput value={this.state.lastName} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام خانوادگی" Val={(v)=>
+                                            <BInput value={this.state.lastName} inValid={this.state.lastName_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام خانوادگی" absoluteLabel="نام خانوادگی" Val={(v)=>
                                                     this.setState({
-                                                        lastName:v
+                                                        lastName:v,
+                                                        lastName_inValid:false
                                                 })} />
-                                            <BInput value={this.state.nationalCode} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد ملی" Val={(v)=>
+                                            <BInput value={this.state.nationalCode} inValid={this.state.nationalCode_inValid} InputNumber={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد ملی" absoluteLabel="کد ملی" Val={(v)=>
                                                     this.setState({
-                                                        nationalCode:v
+                                                        nationalCode:v,
+                                                        nationalCode_inValid:false
                                                 })} />
-                                            <BInput value={this.state.shenasname} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شناسنامه" Val={(v)=>
+                                            <BInput value={this.state.shenasname}   inValid={this.state.shenasname_inValid} InputNumber={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v)=>
                                                     this.setState({
-                                                        shenasname:v
+                                                        shenasname:v,
+                                                        shenasname_inValid:false
                                                 })} />
                                             
                                             <div className="row mt-3" style={{ justifyContent: 'center' }} >
@@ -318,19 +378,75 @@ class Signup extends React.Component {
 
                                             </div>
 
-                                            <BInput value={this.state.shabaNumber} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شبا" Val={(v)=>
+                                            <BInput value={this.state.shabaNumber} direction="ltr" inValid={this.state.shabaNumber_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شبا" absoluteLabel="شماره شبا" Val={(v)=>
                                                     this.setState({
-                                                        shabaNumber:v
+                                                        shabaNumber:v,
+                                                        shabaNumber_inValid:false
                                                 })} />
 
                                             <div className="row" style={{ justifyContent: 'center', marginTop: 32 }} >
 
                                                 <div className="col-lg-8 col-12" >
                                                     <Button label="تایید اطلاعات و ادامه" style={{ width: '100%' }} onClick={() => {
-                                                        this.setState({
+                                                        /*MySwal.fire({
+                                                            title: <div>اطلاعات زیر را تایید میکنید</div>,
+                                                            showCancelButton: true,
+                                                            confirmButtonText: 'تایید اطلاعات',
+                                                            cancelButtonText: `ویرایش کد شبا`,
+                                                          }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                this.setState({
+                                                                    Step: 4,
+                                                                    activeIndex: 1
+                                                                })
+                                                            } else if (result.isDenied) {
+                                                              
+                                                            }
+                                                          })*/
+                                                          if(!this.state.firstName)
+                                                          {
+                                                            this.setState({
+                                                                firstName_inValid:true
+                                                            })
+                                                            return;
+                                                          }
+                                                          if(!this.state.lastName)
+                                                          {
+                                                            this.setState({
+                                                                lastName_inValid:true
+                                                            })
+                                                            return;
+                                                          }
+                                                          if(!this.state.nationalCode)
+                                                          {
+                                                            this.setState({
+                                                                nationalCode_inValid:true
+                                                            })
+                                                            return;
+                                                          }
+                                                          if(!this.state.shenasname)
+                                                          {
+                                                            this.setState({
+                                                                shenasname_inValid:true
+                                                            })
+                                                            return;
+                                                          }
+                                                          
+                                                          if(!this.state.shabaNumber)
+                                                          {
+                                                            this.setState({
+                                                                shabaNumber_inValid:true
+                                                            })
+                                                            return;
+                                                          }
+                                                          
+                                                          
+                                                          
+                                                          this.setState({
                                                             Step: 4,
                                                             activeIndex: 1
-                                                        })
+                                                          })
+                                                       
                                                     }} />
                                                 </div>
 
@@ -342,24 +458,38 @@ class Signup extends React.Component {
                                     {this.state.Step == 4 &&
                                         <div>
 
-                                            <BInput value={this.state.shopName} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام فروشگاه" Val={(v)=>
+                                            <BInput value={this.state.shopName} inValid={this.state.shopName_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="نام فروشگاه" absoluteLabel="نام فروشگاه" Val={(v)=>
                                                     this.setState({
-                                                        shopName:v
+                                                        shopName:v,
+                                                        shopName_inValid:false
                                                 })} />
                                             <div className="row mt-3" style={{ justifyContent: 'center' }} >
-
                                                 <div className="col-lg-8 col-12" >
-                                                    <Cities callback={this.getCityResponse.bind(this)} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
+                                                <Button className="p-button-info p-button-outlined" style={{ width: '100%',textAlign:'center' }} onClick={() => {
+                                                        this.setState({
+                                                            showMap:true
+                                                        })
+                                                    }} > <div style={{width:'100%'}} ><LocationSearchingTwoTone /> <span>لوکیشن فروشگاه </span> </div></Button>
+                                                   
+                                                </div>
+                                            </div>    
+                                            <div className="row mt-3" style={{ justifyContent: 'center' }} >
+
+                                                <div className="col-lg-8 col-12 " >
+                                                    <Cities callback={this.getCityResponse.bind(this)} subCity_inValid={this.state.subCity_inValid} city_inValid={this.state.city_inValid} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
                                                 </div>
 
                                             </div>
-                                            <BInput value={this.state.address} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="آدرس" Val={(v)=>
+                                            
+                                            <BInput value={this.state.address} inValid={this.state.address_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="آدرس" absoluteLabel="آدرس" Val={(v)=>
                                                     this.setState({
-                                                        address:v
+                                                        address:v,
+                                                        address_inValid:false
                                                 })} />
-                                            <BInput value={this.state.postalCode} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد پستی" Val={(v)=>
+                                            <BInput value={this.state.postalCode} InputNumber={true} inValid={this.state.postalCode_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد پستی" absoluteLabel="کد پستی" Val={(v)=>
                                                     this.setState({
-                                                        postalCode:v
+                                                        postalCode:v,
+                                                        postalCode_inValid:false
                                                 })} />
                                             <div className="row mt-3" style={{ justifyContent: 'center' }} >
 
@@ -367,6 +497,7 @@ class Signup extends React.Component {
                                                     <label htmlFor="name">محصولاتی که می فروشید</label>
                                                     <div>
                                                         <MultiSelect display="chip" optionLabel="name" style={{ width: '100%' }} value={this.state.categoriesToSale} options={categoriesToSales} onChange={(e) => this.setState({ categoriesToSale: e.value })} />
+                                                        <small  className={this.state.categoriesToSale_inValid ? "p-error p-d-block" : "p-error p-d-none"}  > حداقل یک محصول را انتخاب کنید</small>
 
                                                     </div>
 
@@ -377,6 +508,53 @@ class Signup extends React.Component {
 
                                                 <div className="col-lg-8 col-12" >
                                                     <Button label="تایید اطلاعات و ادامه" style={{ width: '100%' }} onClick={() => {
+                                                        
+                                                        if(!this.state.shopName)
+                                                        {
+                                                          this.setState({
+                                                            shopName_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+                                                        if(!this.state.address)
+                                                        {
+                                                          this.setState({
+                                                            address_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+                                                        
+                                                        if(!this.state.postalCode)
+                                                        {
+                                                          this.setState({
+                                                            postalCode_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+                                                        if(!this.state.SelectedCity)
+                                                        {
+                                                          this.setState({
+                                                            city_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+                                                        if(!this.state.SelectedSubCity)
+                                                        {
+                                                          this.setState({
+                                                            subCity_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+                                                        if(!this.state.categoriesToSale)
+                                                        {
+                                                          this.setState({
+                                                            categoriesToSale_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+
+                                                        
+
                                                         this.setState({
                                                             Step: 5,
                                                             activeIndex: 2
@@ -432,6 +610,17 @@ class Signup extends React.Component {
                                     }
 
                                 </Card>
+
+                                <Dialog visible={this.state.showMap}  onHide={()=>{this.setState({showMap:false})}}  minY={70} maxY={400}  maximizable={true}>
+                                    <DynamicMap callback={(data)=>{
+                                        this.setState({
+                                            address:data.address,
+                                            lng:data.lng,
+                                            lat:data.lat,
+                                            showMap:false
+                                        })
+                                    }}/>
+                                 </Dialog>
                             </div>
                             <div className="col-lg-3 col-1">
 

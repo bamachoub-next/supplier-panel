@@ -109,3 +109,8 @@ input , select{
 .p-progressbar-label{
   color: var(--white)
 }
+.b-border{
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  border-radius: 8px;
+}
