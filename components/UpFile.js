@@ -76,6 +76,7 @@ class BInput extends React.Component {
         <div className="col-lg-8 col-12" style={{ display: 'flex', justifyContent: 'space-between', background: '#fff', alignItems: 'center',padding:8 }} >
           <div>
             <div className="title">{this.state.label}</div>
+            <small  className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
 
           </div>
           <div>
@@ -83,6 +84,7 @@ class BInput extends React.Component {
             <Button label={this.state.buttonLabel} style={{ width: '100%' }} onClick={() => {
               this.uploadRef.current.click();
             }} />
+
 
           </div>
 

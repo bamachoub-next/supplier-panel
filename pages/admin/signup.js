@@ -9,6 +9,7 @@ import { MultiSelect } from 'primereact/multiselect';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {Dialog} from 'primereact/dialog';
+import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDialog> tag
 
 
 import Server from './../../components/Server'
@@ -36,10 +37,7 @@ const items = [
     { label: 'اطلاعات فروشگاه' },
     { label: 'بارگزاری مدارک' }
 ];
-const categoriesToSales = [
-    { name: 'ام دی اف', code: 'ام دی اف' },
-    { name: 'نئوپان', code: 'نئوپان' },
-]
+
 const Completionist = () => <a href="#" onClick={() => {
     this.getValidationCode()
 }} >ارسال مجدد کد تایید</a>;
@@ -49,10 +47,15 @@ class Signup extends React.Component {
         super(props);
         this.Server = new Server();
         this.toast = React.createRef();
-
+        console.log(props);
+        let categories=[];
+        props.data.map((v,i)=>{
+            categories.push({name:v.name,code:v.url})
+        })
         this.state = {
             activeIndex: 0,
-            Step: 1
+            Step: 1,
+            categoriesToSales:categories
         }
     }
     checkValidationCode() {
@@ -63,11 +66,20 @@ class Signup extends React.Component {
             })
             return;
         }
-        this.Server.post("supplier-employee-auth/check-validation-code", { code: this.state.ValidationCode, phoneNumber: this.state.phoneNumber },
+        this.Server.post("supplier-employee-auth/check-validation-code", { code: this.state.ValidationCode.toString(), phoneNumber: this.state.phoneNumber.toString() },
             (response) => {
-                this.setState({
-                    Step: 3
-                })
+
+                if(!response.data.code)
+                    this.setState({
+                        Step: 3
+                    })
+                else
+                    MySwal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: response.data.message
+                    })
+
             }, (error) => {
                 
                 MySwal.fire({
@@ -89,14 +101,23 @@ class Signup extends React.Component {
             })
             return;
         }
-        this.Server.post("supplier-employee-auth/get-validation-code", { phoneNumber: this.state.phoneNumber },
+        this.Server.post("supplier-employee-auth/get-validation-code", { phoneNumber: this.state.phoneNumber.toString() },
             (response) => {
-                this.setState({
-                    Step: 2,
-                    RecieverCode: "3077",
-                    ValidationCode: '',
-                    Count: Date.now() + 59000
-                })
+                debugger
+                if(!response.data.code)
+                    this.setState({
+                        Step: 2,
+                        RecieverCode: "3077",
+                        ValidationCode: '',
+                        Count: Date.now() + 59000
+                    })
+                else
+                    MySwal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: response.data.message
+                    })
+                
 
             }, (error) => {
                 MySwal.fire({
@@ -112,12 +133,38 @@ class Signup extends React.Component {
     }
     setInfo(){
         debugger;
+        if(!this.state.idCardImage){
+            this.setState({
+                idCardImage_inValid:true
+            })
+            return;
+        }
+        if(!this.state.idBookPageOneImage){
+            this.setState({
+                idBookPageOneImage_inValid:true
+            })
+            return;
+        }
+        if(!this.state.idBookPageTwoImage){
+            this.setState({
+                idBookPageTwoImage_inValid:true
+            })
+            return;
+        }
+        
+        if(!this.state.salesPermitImage){
+            this.setState({
+                salesPermitImage_inValid:true
+            })
+            return;
+        }
         let param =
         {
             "address": this.state.address,
             "birthDate": this.state.SelectedDay?.code + "/" + this.state.SelectedMounth?.code + "/" + this.state.SelectedYear?.code ,
-            "categoriesToSale": this.state.categoriesToSale,
-            "city": this.state.SelectedCity + " " + this.state.SelectedSubCity,
+            "categoriesToSale": this.state.categoriesToSale.map((item)=>{ return item.code}),
+            "city": this.state.SelectedSubCity,
+            "state": this.state.SelectedCity,
             "firstName": this.state.firstName,
             "idBookPageOneImage": this.state.idBookPageOneImage,
             "idBookPageTwoImage": this.state.idBookPageTwoImage,
@@ -126,20 +173,20 @@ class Signup extends React.Component {
             "latitude": this.state.lat,
             "longitude": this.state.lng,
             "nationalCode": this.state.nationalCode.toString(),
+            "shenasNameCode" : this.state.shenasname.toString(),
             "phoneNumber": this.state.phoneNumber.toString(),
             "postalCode": this.state.postalCode.toString(),
             "salesPermitImage": this.state.salesPermitImage,
             "shabaNumber": this.state.shabaNumber,
-            "shopName": this.state.shopName,
-            "state": ""
+            "shopName": this.state.shopName
           }
           this.Server.post("supplier-employee-auth/create-supplier-preview", param,
             (response) => {
-                if(response.data.code == "200")
+                if(!response.data.code || response.data.code == 200 )
                     MySwal.fire({
-                        icon: 'error',
-                        title: 'خطا',
-                        text: response.data.message
+                        icon: 'success',
+                        title: 'عملیات موفق',
+                        text: 'ثبت نام با موفقیت انجام شد'
                     })
                 else
                     MySwal.fire({
@@ -158,6 +205,7 @@ class Signup extends React.Component {
         )
     }
     getCityResponse(value) {
+        debugger;
         this.setState({
             SelectedCity: value.SelectedCity,
             SelectedSubCity: value.SelectedSubCity,
@@ -198,7 +246,7 @@ class Signup extends React.Component {
                                             </h2>
                                         </div>
                                     </div>
-                                    <BInput value={this.state.phoneNumber} InputNumber={true} inValid={this.state.phoneNumber_inValid}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره موبایل خود را وارد کنید" absoluteLabel="شماره موبایل" Val={(v)=>
+                                    <BInput value={this.state.phoneNumber} inValid={this.state.phoneNumber_inValid} InputNumber={true}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره موبایل خود را وارد کنید" absoluteLabel="شماره موبایل" Val={(v)=>
                                                     this.setState({
                                                         phoneNumber:v,
                                                         phoneNumber_inValid:false
@@ -217,7 +265,7 @@ class Signup extends React.Component {
 
                                         <div className="col-lg-8 col-12" style={{ textAlign: 'center' }} >
                                             <label>آیا قبلا ثبت نام کرده اید ؟</label>
-                                            <Link href="/signin"   >
+                                            <Link href="./"   >
                                                 <a style={{ marginRight: 10 }} >
                                                     ورود
                                             </a>
@@ -470,7 +518,8 @@ class Signup extends React.Component {
                                                             showMap:true
                                                         })
                                                     }} > <div style={{width:'100%'}} ><LocationSearchingTwoTone /> <span>لوکیشن فروشگاه </span> </div></Button>
-                                                   
+                                                <small  className={this.state.location_inValid ? "p-error p-d-block" : "p-error p-d-none"}  >موقعیت جغرافیایی خود را مشخص کنید</small>
+
                                                 </div>
                                             </div>    
                                             <div className="row mt-3" style={{ justifyContent: 'center' }} >
@@ -496,7 +545,7 @@ class Signup extends React.Component {
                                                 <div className="col-lg-8 col-12" >
                                                     <label htmlFor="name">محصولاتی که می فروشید</label>
                                                     <div>
-                                                        <MultiSelect display="chip" optionLabel="name" style={{ width: '100%' }} value={this.state.categoriesToSale} options={categoriesToSales} onChange={(e) => this.setState({ categoriesToSale: e.value })} />
+                                                        <MultiSelect display="chip" optionLabel="name" style={{ width: '100%' }} value={this.state.categoriesToSale} options={this.state.categoriesToSales} onChange={(e) => this.setState({ categoriesToSale: e.value,categoriesToSale_inValid:false })} />
                                                         <small  className={this.state.categoriesToSale_inValid ? "p-error p-d-block" : "p-error p-d-none"}  > حداقل یک محصول را انتخاب کنید</small>
 
                                                     </div>
@@ -552,6 +601,16 @@ class Signup extends React.Component {
                                                           })
                                                           return;
                                                         }
+                                                        if(!this.state.lat || !this.state.lng)
+                                                        {
+                                                          this.setState({
+                                                            location_inValid:true
+                                                          })
+                                                          return;
+                                                        }
+
+
+                                                        
 
                                                         
 
@@ -570,31 +629,37 @@ class Signup extends React.Component {
 
                                         <div>
 
-                                            <UpFile label="کارت ملی" uploadImage={this.state.idCardImage} buttonLabel="انتخاب تصویر" callback={(v)=>{
+                                            <UpFile label="کارت ملی" inValid={this.state.idCardImage_inValid} uploadImage={this.state.idCardImage} buttonLabel="انتخاب تصویر" callback={(v)=>{
                                                 this.setState({
-                                                    idCardImage:v.uploadImage
+                                                    idCardImage:v.uploadImage,
+                                                    idCardImage_inValid:false
                                                 })
                                             }
                                                    } />
-                                             <UpFile uploadImage={this.state.idBookPageOneImage} label="شناسنامه صفحه اول" buttonLabel="انتخاب تصویر" callback={(v)=>{
+                                             <UpFile uploadImage={this.state.idBookPageOneImage} inValid={this.state.idBookPageOneImage_inValid} label="شناسنامه صفحه اول" buttonLabel="انتخاب تصویر" callback={(v)=>{
                                                 this.setState({
-                                                    idBookPageOneImage:v.uploadImage
+                                                    idBookPageOneImage:v.uploadImage,
+                                                    idBookPageOneImage_inValid:false
                                                 })
                                             }
                                                    } />    
-                                            <UpFile uploadImage={this.state.idBookPageTwoImage}  label="صفحه دوم شناسنامه" buttonLabel="انتخاب تصویر" callback={(v)=>{
+
+                                            <UpFile uploadImage={this.state.idBookPageTwoImage} inValid={this.state.idBookPageTwoImage_inValid}  label="صفحه دوم شناسنامه" buttonLabel="انتخاب تصویر" callback={(v)=>{
                                                 this.setState({
-                                                    idBookPageTwoImage:v.uploadImage
+                                                    idBookPageTwoImage:v.uploadImage,
+                                                    idBookPageTwoImage_inValid:false
                                                 })
                                             }
-                                                   } />  
-                                            <UpFile uploadImage={this.state.salesPermitImage} label="جواز کسب" buttonLabel="انتخاب تصویر" callback={(v)=>{
+                                                   } /> 
+ 
+                                            <UpFile uploadImage={this.state.salesPermitImage} inValid={this.state.salesPermitImage_inValid}  label="جواز کسب" buttonLabel="انتخاب تصویر" callback={(v)=>{
                                                 this.setState({
-                                                    salesPermitImage:v.uploadImage
+                                                    salesPermitImage:v.uploadImage,
+                                                    salesPermitImage_inValid:false
+
                                                 })
                                             }
-                                                   } />           
-                                            
+                                                   } />    
 
                                             <div className="row" style={{ justifyContent: 'center', marginTop: 32 }} >
 
@@ -611,13 +676,14 @@ class Signup extends React.Component {
 
                                 </Card>
 
-                                <Dialog visible={this.state.showMap}  onHide={()=>{this.setState({showMap:false})}}  minY={70} maxY={400}  maximizable={true}>
+                                <Dialog visible={this.state.showMap}  onHide={()=>{this.setState({showMap:false})}}  style={{width: '50vw'}}  maximizable={true}>
                                     <DynamicMap callback={(data)=>{
                                         this.setState({
                                             address:data.address,
                                             lng:data.lng,
                                             lat:data.lat,
-                                            showMap:false
+                                            showMap:false,
+                                            location_inValid:false
                                         })
                                     }}/>
                                  </Dialog>
@@ -641,5 +707,16 @@ class Signup extends React.Component {
     }
 }
 
-
+export async function getServerSideProps({query}){
+    let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
+    const data = await res.json();
+    
+    
+    return {
+      props :{
+        data
+      }
+    }
+  
+  }
 export default Signup;
