@@ -103,7 +103,6 @@ class Signup extends React.Component {
         }
         this.Server.post("supplier-employee-auth/get-validation-code", { phoneNumber: this.state.phoneNumber.toString() },
             (response) => {
-                debugger
                 if(!response.data.code)
                     this.setState({
                         Step: 2,
@@ -132,7 +131,6 @@ class Signup extends React.Component {
         )
     }
     setInfo(){
-        debugger;
         if(!this.state.idCardImage){
             this.setState({
                 idCardImage_inValid:true
@@ -205,7 +203,6 @@ class Signup extends React.Component {
         )
     }
     getCityResponse(value) {
-        debugger;
         this.setState({
             SelectedCity: value.SelectedCity,
             SelectedSubCity: value.SelectedSubCity,
