@@ -10,8 +10,8 @@ class Server extends React.Component {
      };   
    }
     get(url,params,SuccessCallBack,ErrorCallBack){
-       
-      axios.get(serverUrl+url+'', params)
+      
+      axios.get(serverUrl+url+params)
       .then(response => {
         this.setState({
            isLoading:false

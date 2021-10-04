@@ -18,6 +18,10 @@
   --label-2:#92cdff;
 
 }
+$smallSize:0.75rem;
+$meduimSize:0.875rem;
+$largeSize:1.5rem;
+
 @font-face {
   font-family: 'IRANSansXV';
   src: local('IRANSansX-Medium'), url(./../public/fonts/IRANSansX-Medium.woff2) format('truetype');
@@ -70,7 +74,16 @@ a {
 
 }
 .p-menuitem-text{
+    font-size: $meduimSize;
   
+}
+.pi{
+    font-size: $smallSize;
+    color:var(--label-text) !important
+}
+.b-menu .p-panelmenu-content , .p-panelmenu-header-link {
+    background: transparent  !important;
+    border: 0px  !important;
 }
 .p-steps-title,.p-steps-number, .p-placeholder,option{
   color:var(--label-text) !important;
@@ -86,7 +99,7 @@ a {
   
 }
 span.p-steps-title{
-  font-size: 0.75rem;
+  font-size: $smallSize;
 
 }
 
@@ -95,7 +108,7 @@ span.p-steps-title{
 }
 
 label{
-  font-size: 0.75rem;
+  font-size: $smallSize;
 
 }
 
@@ -104,23 +117,23 @@ label{
 
 }
 input , select{
-  font-size: 0.875rem !important;
+  font-size: $meduimSize !important;
 
 }
 
 .title{
 
-  font-size: 0.875rem;
+  font-size: $meduimSize;
 
 }
 .large-title{
 
-  font-size: 1.5rem;
+  font-size: $largeSize;
 
 }
 .small-title{
 
-  font-size: 0.75rem;
+  font-size: $smallSize;
 
 }
 .p-progressbar-label{

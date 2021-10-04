@@ -11,6 +11,7 @@ import Router from 'next/router'
 
 
 import { Toast } from 'primereact/toast';
+import { ThreeSixtySharp } from '@material-ui/icons';
 
 const MySwal = withReactContent(Swal)
 
@@ -27,11 +28,15 @@ class ChangePass extends React.Component {
         
         this.state = {
             activeIndex: 0,
-            Step: 1
+            Step: 1,
+            BtnText:"دریافت پیامک"
         }
         
     }
     getNewPass() {
+        debugger;
+        if(this.state.Step == 2)
+            this.verifyNewPass()
         if(!this.state.phoneNumber)
         {
             this.setState({
@@ -47,8 +52,13 @@ class ChangePass extends React.Component {
                         showConfirmButton:false,
                         title: 'رمز عبور جدید برای شما ارسال شد',
                         html: <div className='title'><div>رمز عبور به شماره شما ارسال شد، لطفا پس از ورود رمز عبور خود را تغییر دهید</div><br/><br/>
-                        <div style={{textAlign:'center'}}><Button label="صفحه ورود" onClick={() => {MySwal.close();Router.push('./');} } style={{ width: 120 }} /></div></div>
+                        <div style={{textAlign:'center'}}><Button label="صفحه ورود" onClick={() => {MySwal.close();} } style={{ width: 120 }} /></div></div>
                     })
+                    this.setState({
+                        Step:2,
+                        BtnText:"ورود"
+                    })
+                    
                 }
                 
 
@@ -64,6 +74,38 @@ class ChangePass extends React.Component {
             }
         )
     }
+    verifyNewPass() {
+        debugger;
+        if(!this.state.phoneNumber)
+        {
+            this.setState({
+                phoneNumber_inValid:true
+            })
+            return;
+        }
+        this.Server.post("supplier-employee-auth/changePassword-without-login", { phoneNumber: this.state.phoneNumber.toString(),code: this.state.code.toString(),password: this.state.password.toString() },
+            (response) => {
+                debugger;
+                if(!response.data.code || response.data.code == 200){
+                    Router.push('/admin/dashboard');
+                }
+                
+
+            }, (error) => {
+                console.log(error.response)
+                MySwal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: (error.response.data && error.response.data.userMsg) ? error.response.data.userMsg : 'عملیات انجام نشد'
+                })
+                //this.toast.current.show({ severity: 'error', summary: <div> عملیات انجام نشد </div>, life: 8000 });
+
+
+            }
+        )
+    }
+    
+
     
     
     render() {
@@ -93,11 +135,29 @@ class ChangePass extends React.Component {
                                                         phoneNumber:v,
                                                         phoneNumber_inValid:false
                                                 })} />
+                                    {
+                                        this.state.Step == 2 &&
+
+                                        <BInput value={this.state.code} inValid={this.state.code_inValid} InputNumber={true}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد تایید پیامک شده" absoluteLabel="کد تایید پیامک شده" Val={(v)=>
+                                            this.setState({
+                                                code:v,
+                                                code_inValid:false
+                                        })} />
+                                    } 
+                                    {
+                                        this.state.Step == 2 &&
+
+                                        <BInput value={this.state.password} inValid={this.state.password_inValid} InputNumber={true}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="رمز عبور پیامک شده" absoluteLabel="رمز عبور پیامک شده" Val={(v)=>
+                                            this.setState({
+                                                password:v,
+                                                password_inValid:false
+                                        })} />
+                                    }           
 
                                     <div className="row justify-content-center" style={{ justifyContent: 'center', marginTop: 32 }} >
 
                                         <div className="col-lg-8 col-12" >
-                                            <Button label="ورود" onClick={() => this.getNewPass()} style={{ width: '100%' }} />
+                                            <Button label={this.state.BtnText} onClick={() => this.getNewPass()} style={{ width: '100%' }} />
                                         </div>
 
                                     </div>
