@@ -76,7 +76,7 @@ a {
   color:var(--label-text) !important;
 
 }
-.b-card label,a{
+.b-card label,a,th,td{
   color:var(--label-text);
 
 }

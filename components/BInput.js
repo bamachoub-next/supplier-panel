@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import {Password} from 'primereact/password';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 class BInput extends React.Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class BInput extends React.Component {
           
               } />
           }
-          {!this.props.InputNumber && !this.props.password &&
+          {!this.props.InputNumber && !this.props.password && !this.props.textArea &&
           <InputText autocomplete="off" validateOnly={true}  value={this.props.value}  style={{direction:this.props.direction||"rtl"}} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
             this.setState({
               value: e.target.value
@@ -47,6 +48,19 @@ class BInput extends React.Component {
           }
           {this.props.password &&
           <Password  autocomplete="off" feedback={false}   value={this.props.value}  inputStyle={{direction:this.props.direction||"rtl"}} style={{width:'100%'}} inputClassName={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            this.setState({
+              value: e.target.value
+            })
+            this.props.Val(e.target.value)
+
+            }
+        
+            } />
+          
+          
+          }
+          {this.props.textArea &&
+          <InputTextarea autocomplete="off" validateOnly={true} rows={this.props.rows||5} cols={this.props.cols||30} value={this.props.value}  style={{height:'auto',direction:this.props.direction||"rtl"}} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
             this.setState({
               value: e.target.value
             })

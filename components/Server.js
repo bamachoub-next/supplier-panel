@@ -9,7 +9,7 @@ class Server extends React.Component {
         isLoading:false
      };   
    }
-    get(url,params,SuccessCallBack,ErrorCallBack){
+    get(url,params,SuccessCallBack,ErrorCallBack,config){
       
       axios.get(serverUrl+url+params)
       .then(response => {
@@ -31,10 +31,11 @@ class Server extends React.Component {
 
     
    }
-   post(url,params,SuccessCallBack,ErrorCallBack){
+   post(url,params,SuccessCallBack,ErrorCallBack,Authorization){
        
       axios.post(serverUrl+url+'', params, {headers: {
          'Content-Type': 'application/json',
+         ...Authorization
      }})
       .then(response => {
         this.setState({

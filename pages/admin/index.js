@@ -1,26 +1,17 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
 import { Card } from 'primereact/card';
-import { Steps } from 'primereact/steps';
 import { Button } from 'primereact/button';
-import Countdown from 'react-countdown';
-import { LocationSearchingTwoTone,ArrowForward } from '@material-ui/icons';
-import { MultiSelect } from 'primereact/multiselect';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import {Dialog} from 'primereact/dialog';
-import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDialog> tag
-
-
-import Server from './../../components/Server'
-import Cities from './../../components/Cities';
-import BirthDate from './../../components/BirthDate';
-import BInput from './../../components/BInput';
-import UpFile from './../../components/UpFile';
+import { connect } from 'react-redux';
+import { Toast } from 'primereact/toast';
 import Router from 'next/router'
 
+import Server from './../../components/Server'
+import BInput from './../../components/BInput';
 
-import { Toast } from 'primereact/toast';
+
 
 const MySwal = withReactContent(Swal)
 
@@ -34,7 +25,7 @@ const Completionist = () => <a href="#" onClick={() => {
     this.getValidationCode()
 }} >ارسال مجدد کد تایید</a>;
 
-class Signup extends React.Component {
+class Login extends React.Component {
     constructor(props) {
         super(props);
         this.Server = new Server();
@@ -46,6 +37,7 @@ class Signup extends React.Component {
         
     }
     login() {
+        debugger;
         if(!this.state.phoneNumber)
         {
             this.setState({
@@ -57,6 +49,13 @@ class Signup extends React.Component {
         this.Server.post("supplier-employee-auth/login", { phoneNumber: this.state.phoneNumber.toString(),password:this.state.password },
             (response) => {
                 if(response.data.accessToken){
+                    //redux
+                    this.props.dispatch({
+                        type: 'EmployerLogin',    
+                        employKey:response.data.employee?._key,
+                        accessToken:response.data.accessToken
+                
+                    })
                     if(response.data.isFirstLogin){
                         this.setState({
                             changePass:true
@@ -275,5 +274,10 @@ class Signup extends React.Component {
     }
 }
 
-
-export default Signup;
+const mapStateToProps = (state) => {
+    return{
+        employKey:state.employKey,
+        accessToken:state.accessToken
+    }
+  }
+export default connect(mapStateToProps)(Login)

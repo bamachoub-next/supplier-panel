@@ -7,10 +7,12 @@ function reducer(state = initialState , action){
 
    
     switch(action.type){    
-       case "LoginTrueUser":{
-           localStorage.setItem("token",action.token);
+       case "EmployerLogin":{
+           debugger;
+           localStorage.setItem("accessToken",action.accessToken);
            return {
-                token:action.token
+              employKey:action.employKey.toString(),
+              accessToken:action.accessToken
            } 
            break;        
        }

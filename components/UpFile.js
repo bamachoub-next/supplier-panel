@@ -72,26 +72,39 @@ class BInput extends React.Component {
   render() {
     return (
       <div className="row mt-3" style={{ justifyContent: 'center' }} >
+        {this.props.large ?
+          <div className={this.props.className||"col-lg-8 col-12 mt-3"} style={{ display: 'flex',flexDirection:'column', justifyContent: 'space-between',height:200, background: '#fff', alignItems: 'center',padding:8 }} >
+            <div>
+              <div className="title">{this.state.label}</div>
+              <small  className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
+            </div>
+            <div>
+              <input className="d-none" id="uploadRef" ref={this.uploadRef} autoComplete="off" onChange={this.FileUpload} type="file" name="file" />
+              <Button label={this.state.buttonLabel} style={{ width: '100%' }} onClick={() => {
+                this.uploadRef.current.click();
+              }} />
+            </div>
+          </div>
+      
+        :
 
-        <div className="col-lg-8 col-12" style={{ display: 'flex', justifyContent: 'space-between', background: '#fff', alignItems: 'center',padding:8 }} >
+          <div className={this.props.className||"col-lg-8 col-12 mt-3"} style={{ display: 'flex', justifyContent: 'space-between', background: '#fff', alignItems: 'center',padding:8 }} >
           <div>
             <div className="title">{this.state.label}</div>
             <small  className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
-
           </div>
           <div>
             <input className="d-none" id="uploadRef" ref={this.uploadRef} autoComplete="off" onChange={this.FileUpload} type="file" name="file" />
             <Button label={this.state.buttonLabel} style={{ width: '100%' }} onClick={() => {
               this.uploadRef.current.click();
             }} />
-
-
           </div>
-
-
-        </div>
+          </div>
+        
+        }
+        
         {(this.state.uploadName || this.state.uploadImage) &&
-          <div className="col-lg-8 col-12 mt-3" style={{ background: '#fff' }}>
+          <div className={this.props.className||"col-lg-8 col-12 mt-3"} style={{ background: '#fff' }}>
             <div className="row" style={{  padding: 10 }}>
               <div className="col-5">
                 <img src={this.state.uploadImage} style={{ height: 75 }} />

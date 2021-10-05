@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import reducer from './../reducer.js';
+import { Provider } from 'react-redux'
 
 import { createStore } from 'redux';
 
@@ -31,7 +32,12 @@ class MyApp extends Component {
   render() {
     const {Component, pageProps} = this.props;
 
-    return ( <Component {...pageProps} /> )
+    return ( 
+      <Provider store={this.store}>
+        <Component {...pageProps} />
+      </Provider>
+    
+    )
   }
 }
 
