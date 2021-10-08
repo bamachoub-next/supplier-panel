@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Chip } from 'primereact/chip';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Close, Search } from '@material-ui/icons';
-import { Dropdown } from 'primereact/dropdown';
+import { Close, Search,DeleteOutline } from '@material-ui/icons';
+import { MultiSelect } from 'primereact/multiselect';
 import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -18,22 +19,17 @@ import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 
-const citySelectItems = [
-  { label: 'New York', value: 'NY' },
-  { label: 'Rome', value: 'RM' },
-  { label: 'London', value: 'LDN' },
-  { label: 'Istanbul', value: 'IST' },
-  { label: 'Paris', value: 'PRS' }
-];
+
 class AddProduct extends React.Component {
   constructor(props) {
     super(props);
-    debugger;
 
     this.Server = new Server();
 
     this.state = {
       activeIndex: 0,
+      brandOptions:[],
+      brandOption:[],
       Step: 1,
       GridData: [],
       currentCategoryUrl: '',
@@ -46,14 +42,15 @@ class AddProduct extends React.Component {
 
   }
 
-  itemTemplateSearch(brand) {
+  itemTemplateSearch(product) {
+
     return (
       <div className="p-clearfix" style={{ direction: 'rtl' }} >
-        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={brand._id} >
+        <div style={{ margin: '10px 10px 0 0' }} className="row" _id={product._id} >
 
-          <div className="col-lg-6" _id={brand._id} style={{ textAlign: 'right' }}>
-            <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _id={brand._id} >
-              <span style={{ whiteSpace: 'pre-wrap' }} _id={brand._id}>{brand.title}</span>
+          <div className="col-lg-6" _id={product._id} style={{ textAlign: 'right' }}>
+            <span className="iranyekanwebregular" style={{ textAlign: 'right' }} _id={product._id} >
+              <span style={{ whiteSpace: 'pre-wrap' }} _id={product._id}>{product.title}</span>
             </span>
           </div>
 
@@ -79,8 +76,11 @@ class AddProduct extends React.Component {
         if (item.category.status != "end") {
           temp.command = (event) => {
             this.setState({
+              currentCategoryKey: event.item._key,
               currentCategoryUrl: event.item._url
             })
+            this.getBrands(event.item._url,event.item._key)
+
           }
           temp["items"] = []
           for (let item2 of item.subCategories) {
@@ -92,8 +92,10 @@ class AddProduct extends React.Component {
               status: item2.status,
               command: (event) => {
                 this.setState({
+                  currentCategoryKey: event.item._key,
                   currentCategoryUrl: event.item._url
                 })
+
                 if (event.item.items && event.item.items.length == 0) {
                   this.getCategories(2, event.item._key);
                 } else {
@@ -111,8 +113,10 @@ class AddProduct extends React.Component {
         } else {
           temp.command = (event) => {
             this.setState({
+              currentCategoryKey: event.item._key,
               currentCategoryUrl: event.item._url
             })
+
             this.getProductsPerCat(event.item);
           }
         }
@@ -142,8 +146,10 @@ class AddProduct extends React.Component {
                   status: lastitem.status,
                   command: (event) => {
                     this.setState({
+                      currentCategoryKey: event.item._key,
                       currentCategoryUrl: event.item._url
                     })
+
                     if (event.item.status == "end")
                       this.getProductsPerCat(event.item);
 
@@ -169,22 +175,76 @@ class AddProduct extends React.Component {
       }
     )
   }
-  suggestBrands(event) {
-
+  suggestproductInSearch(event) {
     if (!this.state.currentCategoryUrl)
       return;
-    this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}/${this.state.brand}`, { searchString: this.state.brand },
+    this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
       (response) => {
-        debugger;
         if (response.data) {
-          let brandSuggestions = []
+          let productInSearchSuggestions = []
           response.data.map(function (v, i) {
-            brandSuggestions.push({ _id: v._id, title: v.title, desc: v.description })
+            v.commissionPercent = <div>{v.commissionPercent} %</div>
+            v.img = <img src={v.imageArr[0]} />
+            v.add = <Button label="افزودن به انبار" onClick={() => this.addToMyProducts()} style={{ width: '100%' }} />
+            v.titleAndSubTitle = <div>
+              <div style={{ fontWeight: 'bold' }}>{v.title}</div>
+              <div>{v.description}</div>
+            </div>
+            productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description,brand:v.brand,commissionPercent:v.commissionPercent,img:v.img,add:v.add,titleAndSubTitle:v.titleAndSubTitle,lowestPrice:v.lowestPrice,categoryName:v.categoryName })
           })
 
-          this.setState({ brandSuggestions: brandSuggestions });
+          this.setState({ productInSearchSuggestions: productInSearchSuggestions });
 
         }
+
+      }, (error) => {
+
+      }
+    )
+
+  }
+  searchByFilter(brandOption,offset,limit) {
+    if (!this.state.currentCategoryUrl)
+      return;
+    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, {brand:brandOption},
+      (response) => {
+        if (response.data) {
+          for (let i = 0; i < response.data.length; i++) {
+            response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
+            response.data[i].img = <img src={response.data[i].imageArr[0]} />
+            response.data[i].add = <Button label="افزودن به انبار" onClick={() => this.addToMyProducts()} style={{ width: '100%' }} />
+            response.data[i].titleAndSubTitle = <div>
+              <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
+              <div>{response.data[i].description}</div>
+            </div>
+
+          }
+        }
+
+        this.setState({
+          GridData: response.data || []
+        })
+
+      }, (error) => {
+
+      }
+    )
+
+  }
+  getBrands(currentCategoryUrl,currentCategoryKey) {
+    this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`,'',
+      (response) => {
+        let brandOptions =[];
+        for(let data of response.data){
+          brandOptions.push({
+            label:data,
+            value:data
+          })
+        }
+        
+        this.setState({
+          brandOptions:brandOptions
+        })
 
       }, (error) => {
 
@@ -200,7 +260,6 @@ class AddProduct extends React.Component {
     this.Server.get(`products/cat/${item._url}/${item._key}`, `?categoryurl=${item._url}&categorykey=${item._key}&offset=0&limit=1000`,
       (response) => {
         if (response.data) {
-          debugger;
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
@@ -235,7 +294,6 @@ class AddProduct extends React.Component {
 
   }
   sendProductSuggest(){
-    debugger;
     this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description,title: this.state.product_Suggest_title,imageUrl: this.state.product_Suggest_imageUrl,supplierKey: this.props.employKey },
       (response) => {
         MySwal.fire({
@@ -284,15 +342,22 @@ class AddProduct extends React.Component {
                 <div className="col-12" >
                   <Card className="b-card2  mt-5">
                     <div className="row" >
-                      <div className="col-9" style={{ position: 'relative' }}>
+                      <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
                         <Search style={{ position: 'absolute', top: 8 }} />
 
-                        <AutoComplete placeholder="    جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ brand: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.brand} onSelect={(e) => this.setState({
-                          title: e.value.title
-                        })} suggestions={this.state.brandSuggestions} completeMethod={this.suggestBrands.bind(this)} />
+                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                          let GridDate = [];
+                              GridDate.push(e.value);
+                          this.setState({
+                            productInSearch: e.value.title,
+                            GridData:GridDate
+                          })
+                      
+                        }
+                        } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
-                      <div className="col-3" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => { debugger; }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => { debugger; }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
 
@@ -305,20 +370,49 @@ class AddProduct extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                        <Dropdown value={this.state.city} options={citySelectItems} style={{ width: '100%' }} onChange={(e) => this.setState({
-                          city: e.value
-                        })} placeholder="برند" />
+                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} style={{ width: '100%' }} onChange={(e) => {
+                          this.setState({
+                            brandOption: e.value
+                          })
+                          this.searchByFilter(e.value[0],0,10)
+                        }
+                        } placeholder="برند" />
+                        
 
 
                       </div>
                     </div>
                     <div className="row mt-3" >
-                      <div className="col-md-9 col-12">
+                      <div className="col-md-9 col-12" style={{display:'flex',justifyContent:'start',alignItems:'baseline'}}>
                         <div>فیلترهای اعمال شده</div>
+                        <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
+                          {this.state.brandOption.map((v, i) => {
+                            if (!v.remove) {
+                              return (<Chip label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                                let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
+                                let remove = -1;
+                                let brandOption = this.state.brandOption;
+                                for(let i=0;i<brandOption.length;i++){
+                                  if(brandOption[i] == brand){
+                                    remove=i;
+                                  }
+                                }
+                                brandOption.splice(remove, 1)
+                                this.setState({
+                                  brandOption:brandOption
+                                })
+                                //this.searchByFilter(brandOption[0],0,10)
+
+                              }} />)
+                            }
+
+                          })
+                          }
+                        </div>
                       </div>
-                      <div className="col-md-3 col-12">
-                        <div style={{ textAlign: 'left' }}>حذف همه فیلترها</div>
-                      </div>
+                      <a className="col-md-3 col-12" href="#" onClick={()=>{this.setState({brandOption:[]});this.searchByFilter("",0,10)}} >
+                        <div style={{ textAlign: 'left' }}><span><DeleteOutline /></span><span> حذف همه فیلترها</span></div>
+                      </a>
                     </div>
 
 
@@ -327,25 +421,25 @@ class AddProduct extends React.Component {
                 </div>
               </div>
               <div className="row" >
-                <div className="col-3" style={{ position: 'relative' }}>
+                <div className="col-lg-3 col-12" style={{ position: 'relative' }}>
 
                   <Card className="b-card2  mt-5">
-                    <PanelMenu model={this.state.cats} className="b-menu" />
+                    <PanelMenu model={this.state.cats} transitionOptions="nodeRef" className="b-menu" />
 
                   </Card>
                 </div>
 
-                <div className="col-9" style={{ position: 'relative' }}>
+                <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
 
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
-                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.BlogId} onSelectionChange={e => this.selectedBlogsChange(e.value)}>
+                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} onSelectionChange={e => {debugger;}}>
                         <Column field="img" header="" style={{ textAlign: 'right' }} className="title" />
                         <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />
                         <Column field="commissionPercent" header="کمیسیون فروش کالا" style={{ textAlign: 'right' }} className="title" />
-                        <Column field="price" header="کمترین قیمت روی سایت" style={{ textAlign: 'right' }} className="title" />
+                        <Column field="lowestPrice" header="کمترین قیمت روی سایت" style={{ textAlign: 'right' }} className="title" />
                         <Column field="add" header="" style={{ textAlign: 'right' }} className="title" />
 
                       </DataTable>
@@ -419,7 +513,7 @@ class AddProduct extends React.Component {
     )
   }
 }
-export async function getServerSideProps({ query }) {
+export async function getStaticProps({ query }) {
 
   let res = await fetch('http://127.0.0.1:3000/api/v1/categories?level=1');
   const cats = await res.json();

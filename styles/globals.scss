@@ -73,16 +73,26 @@ a {
 }
 
  .p-steps-title , .Countdown span , select , select option ,svg , div , .p-dropdown-label.p-inputtext, .p-menuitem-text{
-  color:var(--label-text);
+  color:var(--label-text) ;
 
 }
-.p-menuitem-text{
+.b-menu .p-menuitem-text{
     font-size: $meduimSize;
+    color:var(--label-text) !important ;
+
   
 }
 .pi{
     font-size: $smallSize;
-    color:var(--label-text) !important
+    color:var(--label-text)
+}
+.p-chip-text{
+  font-size: $meduimSize;
+  color:var(--label-text)
+}
+
+.p-chip{
+  background-color: #fff !important;
 }
 .b-menu .p-panelmenu-content , .p-panelmenu-header-link {
     background: transparent  !important;
@@ -91,6 +101,13 @@ a {
 .p-steps-title,.p-steps-number, .p-placeholder,option{
   color:var(--label-text) !important;
 
+}
+
+.b-menu .p-menuitem-link > span:first-child{
+  margin-right:25px;
+}
+.b-menu .p-toggleable-content{
+  margin-right:15px;
 }
 .b-card label,a,th > span,td{
   color:var(--label-text);
@@ -154,7 +171,7 @@ input , select{
   color: var(--white);
 }
 button svg{
-  color:var(--white);
+  color:var(--white) ;
 }
 .p-menubar {
   border:0;
