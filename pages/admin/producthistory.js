@@ -20,7 +20,7 @@ import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 
 
-class AddProduct extends React.Component {
+class producthistory extends React.Component {
   constructor(props) {
     super(props);
 
@@ -582,4 +582,4 @@ const mapStateToProps = (state) => {
       accessToken:state.accessToken
   }
 }
-export default connect(mapStateToProps)(AddProduct)
+export default connect(mapStateToProps)(producthistory)

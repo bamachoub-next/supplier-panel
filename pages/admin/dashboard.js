@@ -33,6 +33,7 @@ class Dashboard extends React.Component {
                 
                 <div>
                 <Button label="ایجاد کالای جدید" onClick={() =>   Router.push('/admin/addproduct')} style={{ width: '100%' }} />
+                <Button label="تاریخچه درخواست ایجاد کالا" onClick={() =>   Router.push('/admin/producthistory')} style={{ width: '100%',marginTop:50 }} />
 
                 </div>
 

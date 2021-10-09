@@ -76,8 +76,8 @@ a {
   color:var(--label-text) ;
 
 }
-.b-menu .p-menuitem-text{
-    font-size: $meduimSize;
+.b-menu .p-menuitem-text , .swal2-title{
+    font-size: $meduimSize !important;
     color:var(--label-text) !important ;
 
   
