@@ -18,6 +18,7 @@ import Header from './../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 
 class AddProduct extends React.Component {
@@ -30,6 +31,7 @@ class AddProduct extends React.Component {
       activeIndex: 0,
       brandOptions:[],
       brandOption:[],
+      showLoading:false,
       Step: 1,
       GridData: [],
       currentCategoryUrl: '',
@@ -61,6 +63,7 @@ class AddProduct extends React.Component {
 
   }
   setCategories(categories, level, key) {
+    debugger;
 
     let cats = this.state.cats || [];
     if (level == 1) {
@@ -167,10 +170,19 @@ class AddProduct extends React.Component {
     })
   }
   getCategories(level, key) {
+    this.setState({
+      showLoading:true
+    })
     this.Server.get("categories", `?level=${level}`,
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         this.setCategories(response.data, level, key)
       }, (error) => {
+        this.setState({
+          showLoading:false
+        })
 
       }
     )
@@ -178,8 +190,10 @@ class AddProduct extends React.Component {
   suggestproductInSearch(event) {
     if (!this.state.currentCategoryUrl)
       return;
+    
     this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
       (response) => {
+        
         if (response.data) {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
@@ -198,6 +212,7 @@ class AddProduct extends React.Component {
         }
 
       }, (error) => {
+        
 
       }
     )
@@ -206,8 +221,14 @@ class AddProduct extends React.Component {
   searchByFilter(brandOption,offset,limit) {
     if (!this.state.currentCategoryUrl)
       return;
+    this.setState({
+      showLoading:true
+    })
     this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, {brand:brandOption},
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
@@ -227,13 +248,22 @@ class AddProduct extends React.Component {
 
       }, (error) => {
 
+        this.setState({
+          showLoading:false
+        })
       }
     )
 
   }
   getBrands(currentCategoryUrl,currentCategoryKey) {
+    this.setState({
+      showLoading:true
+    })
     this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`,'',
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         let brandOptions =[];
         for(let data of response.data){
           brandOptions.push({
@@ -247,6 +277,9 @@ class AddProduct extends React.Component {
         })
 
       }, (error) => {
+        this.setState({
+          showLoading:false
+        })
 
       }
     )
@@ -255,10 +288,14 @@ class AddProduct extends React.Component {
   getProductsPerCat(item) {
 
     this.setState({
-      GridData: []
+      GridData: [],
+      showLoading:true
     })
     this.Server.get(`products/cat/${item._url}/${item._key}`, `?categoryurl=${item._url}&categorykey=${item._key}&offset=0&limit=1000`,
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
@@ -276,14 +313,22 @@ class AddProduct extends React.Component {
           GridData: response.data || []
         })
       }, (error) => {
+        this.setState({
+          showLoading:false
+        })
 
       }
     )
   }
   addToMyProducts(key) {
-    debugger;
+    this.setState({
+      showLoading:true
+    })
     this.Server.post(`suppliers/add-fav/${this.state.currentCategoryUrl}/${key}`, {},
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         if(response.data && !response.data.error){
           MySwal.fire({
             icon: 'success',
@@ -293,6 +338,9 @@ class AddProduct extends React.Component {
             <div style={{textAlign:'center'}}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => {MySwal.close();} } style={{ width: '90%',marginBottom:30 }} /><br /><Button label="بازگشت" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div></div>
         })
         }else{
+          this.setState({
+            showLoading:false
+          })
           MySwal.fire({
             icon: 'error',
             title: 'خطا',
@@ -301,7 +349,9 @@ class AddProduct extends React.Component {
         }
 
       }, (error) => {
-
+        this.setState({
+          showLoading:false
+        })
       },{ Authorization: `Bearer ${this.props.accessToken}` }
     )
 
@@ -317,19 +367,27 @@ class AddProduct extends React.Component {
 
   }
   sendProductSuggest(){
+    this.setState({
+      showLoading:true
+    })
     this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description,title: this.state.product_Suggest_title,imageUrl: this.state.product_Suggest_imageUrl,supplierKey: this.props.employKey },
       (response) => {
+        this.setState({
+          showLoading:false
+        })
         MySwal.fire({
           icon: 'success',
           showConfirmButton:false,
           title: 'درخواست ایجاد کالای شما ارسال شد',
           html: <div className='title'><div>درخواست شما جهت بررسی کارشناسان با ما چوب ارسال شد</div><br/><br/>
           <div style={{textAlign:'center'}}><Button label="ادامه" onClick={() => {MySwal.close();} } style={{ width: 120 }} /></div></div>
-      })
+        })
         
 
       }, (error) => {
-
+        this.setState({
+          showLoading:false
+        })
         MySwal.fire({
           icon: 'error',
           title: 'خطا',
@@ -344,6 +402,7 @@ class AddProduct extends React.Component {
     return (
       <>
         <Header />
+        
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
@@ -512,6 +571,14 @@ class AddProduct extends React.Component {
 
 
         </div>
+        {this.state.showLoading &&
+        <div className="b-overlay">
+          <div className="b-loading">
+            <ProgressSpinner strokeWidth={5} style={{width: '50px', height: '50px'}}/>
+          </div>
+        </div>
+        
+        }
         <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
           <div style={{ direction: 'rtl' }}>
             <p className="title">درخواست ایجاد کالا در باماچوب</p>

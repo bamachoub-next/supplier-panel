@@ -19,6 +19,7 @@
     "mapbox-gl": "1.13",
     "mapir-react-component": "^2.0.0",
     "next": "11.1.2",
+    "nprogress": "^0.2.0",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primereact": "^6.5.1",

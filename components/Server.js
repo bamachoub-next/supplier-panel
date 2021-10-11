@@ -9,9 +9,12 @@ class Server extends React.Component {
         isLoading:false
      };   
    }
-    get(url,params,SuccessCallBack,ErrorCallBack,config){
+    get(url,params,SuccessCallBack,ErrorCallBack,Authorization){
       
-      axios.get(serverUrl+url+params)
+      axios.get(serverUrl+url+params,{headers: {
+         'Content-Type': 'application/json',
+         ...Authorization
+     }})
       .then(response => {
         this.setState({
            isLoading:false

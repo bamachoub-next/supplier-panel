@@ -2,13 +2,35 @@ import React, { Component } from 'react';
 import { PersonOutlineOutlined, MailOutlineOutlined,AccountBalanceWalletOutlined } from '@material-ui/icons';
 import { Menubar } from 'primereact/menubar';
 import { Badge } from 'primereact/badge';
+import Router from 'next/router'
+import NProgress from "nprogress"
 
+Router.onRouteChangeStart = url => {
+  NProgress.start()
+}
+Router.onRouteChangeComplete = () => NProgress.done()
+
+Router.onRouteChangeError = () => NProgress.done()
 
 const items = [
   {
      label:'فروشگاه',
      items:[
         {
+          label:"ایجاد کالای جدید",
+          command : (event) => {
+
+            Router.push('/admin/addproduct')
+
+          }
+        },
+        {
+          label:"تاریخچه درخواست کالا",
+          command : (event) => {
+
+            Router.push('/admin/producthistory')
+
+          }
         },
         
      ]
@@ -38,11 +60,14 @@ class Header extends React.Component {
   }
   render() {
     return (
-      <div className="bg"  style={{direction:'rtl'}}  >
+      <div className="bg b-menuBar"  style={{direction:'rtl'}}  >
 
       <div className="row" style={{paddingTop:25}} >
-        <div className="col-lg-4 col-12 large-title" style={{textAlign:'center'}} >
-          <span>پنل فروشندگان</span>
+        <div className="col-lg-4 col-12 large-title" style={{textAlign:'right'}} >
+          <a href="#" onClick={()=>{Router.push('/admin/dashboard')}} style={{textDecoration:'none'}} >
+            <span style={{paddingRight:20}}>پنل فروشندگان</span>
+
+          </a>
         </div>
         <div className="col-lg-5 col-12 large-title" style={{textAlign:'center'}} >
           <span>Logo</span>

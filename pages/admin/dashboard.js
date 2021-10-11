@@ -4,6 +4,8 @@ import withReactContent from 'sweetalert2-react-content'
 import { connect } from 'react-redux';
 import { Button } from 'primereact/button';
 import Router from 'next/router'
+import { Card } from 'primereact/card';
+import { Store } from '@material-ui/icons';
 
 const MySwal = withReactContent(Swal)
 
@@ -29,13 +31,57 @@ class Dashboard extends React.Component {
         return (
             <>
             <Header />
-            <div className="justify-content-center container" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
-                
-                <div>
-                <Button label="ایجاد کالای جدید" onClick={() =>   Router.push('/admin/addproduct')} style={{ width: '100%' }} />
-                <Button label="تاریخچه درخواست ایجاد کالا" onClick={() =>   Router.push('/admin/producthistory')} style={{ width: '100%',marginTop:50 }} />
+            <div className="justify-content-center" style={{ direction: 'rtl' }}  >
+            <div className="row justify-content-center">
+                <div className="col-11" >    
+                <div className="row">
+                <div className="col-lg-3 col-12">
+                <Card className="b-card2  mt-5" style={{textAlign:'center'}}>
+                    <Store style={{width:80,height:80}}/>
+                    <p className="large-title">پارس چوب</p>
+                </Card>
+                <Card className="b-card2  mt-4" style={{textAlign:'center'}}>
+                    <p className="title">کیف پول</p>
+                </Card>
+                <Card className="b-card2  mt-3" style={{textAlign:'center'}}>
+                    <p className="title">آخرین پیام ها</p>
+                </Card>
+
 
                 </div>
+                <div className="col-lg-9 col-12">
+                <Card className="b-card2  mt-5" style={{textAlign:'right'}}>
+                    <p className="title">سفارشات</p>
+                </Card>
+                <Card className="b-card2  mt-3" style={{textAlign:'right'}}>
+                    <p className="title">استعلام های جدید</p>
+                </Card>
+                <div className="row">
+                    <div className="col-lg-3 col-12">
+                    <Card className="b-card2  mt-3" style={{textAlign:'right'}}>
+                    <p className="title">کالاهای قیمت ثابت</p>
+                    </Card>
+                    <Card className="b-card2  mt-3" style={{textAlign:'right'}}>
+                    <p className="title">کالاهای استعلامی</p>
+                    </Card>
+
+                    </div>
+                    <div className="col-lg-9 col-12">
+                    <Card className="b-card2  mt-3" style={{textAlign:'right',height:'100%'}}>
+                    <p className="title">کالاهای پر فروش شما</p>
+                </Card>
+
+                    </div>
+                </div>
+                </div>
+                
+                </div>     
+                <Card className="b-card2  mt-5" style={{textAlign:'right'}}>
+                    <p className="title">سوابق فروش</p>
+                </Card>
+                </div>
+                </div>       
+                
 
 
 
