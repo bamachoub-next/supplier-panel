@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Chip } from 'primereact/chip';
+import { Dropdown } from 'primereact/dropdown';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -19,7 +19,13 @@ import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
-
+const citySelectItems = [
+  {label: 'New York', value: 'NY'},
+  {label: 'Rome', value: 'RM'},
+  {label: 'London', value: 'LDN'},
+  {label: 'Istanbul', value: 'IST'},
+  {label: 'Paris', value: 'PRS'}
+];
 
 class ProductHistory extends React.Component {
   constructor(props) {
@@ -30,6 +36,7 @@ class ProductHistory extends React.Component {
     this.state = {
       activeIndex: 0,
       brandOptions:[],
+      cats:[],
       brandOption:[],
       showLoading:false,
       Step: 1,
@@ -37,10 +44,12 @@ class ProductHistory extends React.Component {
       currentCategoryUrl: '',
       showCreateProduct: false
     }
-  }
-  componentDidMount() {
 
-    this.getProducts(0,10)
+  }
+  
+  componentDidMount() {
+    this.setCategories(this.props.cats)
+
 
   }
 
@@ -64,22 +73,39 @@ class ProductHistory extends React.Component {
   }
   
   suggestproductInSearch(event) {
-    if (!this.state.currentCategoryUrl)
+    if (!this.state.cat)
       return;
     
-    this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
+    this.Server.post(`products/basic-search/${this.state.cat}`, { searchString: this.state.productInSearch },
       (response) => {
         
         if (response.data) {
           let productInSearchSuggestions = []
+          debugger;
           response.data.map(function (v, i) {
-            v.commissionPercent = <div>{v.commissionPercent} %</div>
-            v.img = <img src={v.imageArr[0]} />
-            v.add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            v.titleAndSubTitle = <div>
+            v.img = <img src={v.imageArr[0]} className="product-img" />
+            if(v.status == "ok"){
+              v.statusText =  "تایید شده";
+              v.add = <Button disabled label="موجود در انبار" onClick={() => {this.addToMyProducts(v._key)}} style={{ width: '100%' }} />
+            } else if(v.status == "nok"){
+              v.statusText =  "تایید نشده";
+              v.add = <div>
+                                      <span></span>
+                                      <span></span>
+                                     </div>
+            }else{
+              v.statusText =  "در حال بررسی";
+              v.add = <div></div>
+            }
+            v.titleAndSubTitle = <div style={{display:'flex'}}>
+            <div>
+            <img src={v.imageArr[0]} className="product-img" />
+            </div>
+            <div>
               <div style={{ fontWeight: 'bold' }}>{v.title}</div>
               <div>{v.description}</div>
             </div>
+          </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description,brand:v.brand,commissionPercent:v.commissionPercent,img:v.img,add:v.add,titleAndSubTitle:v.titleAndSubTitle,lowestPrice:v.lowestPrice,categoryName:v.categoryName })
           })
 
@@ -94,92 +120,42 @@ class ProductHistory extends React.Component {
     )
 
   }
-  searchByFilter(brandOption,offset,limit) {
-    if (!this.state.currentCategoryUrl)
-      return;
-    this.setState({
-      showLoading:true
-    })
-    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, {brand:brandOption},
-      (response) => {
-        this.setState({
-          showLoading:false
-        })
-        if (response.data) {
-          for (let i = 0; i < response.data.length; i++) {
-            response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div>
-              <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-              <div>{response.data[i].description}</div>
-            </div>
-
-          }
-        }
-
-        this.setState({
-          GridData: response.data || []
-        })
-
-      }, (error) => {
-
-        this.setState({
-          showLoading:false
-        })
-      }
-    )
-
-  }
-  getBrands(currentCategoryUrl,currentCategoryKey) {
-    this.setState({
-      showLoading:true
-    })
-    this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`,'',
-      (response) => {
-        this.setState({
-          showLoading:false
-        })
-        let brandOptions =[];
-        for(let data of response.data){
-          brandOptions.push({
-            label:data,
-            value:data
-          })
-        }
-        
-        this.setState({
-          brandOptions:brandOptions
-        })
-
-      }, (error) => {
-        this.setState({
-          showLoading:false
-        })
-
-      }
-    )
-
-  }
-  getProducts(offset,limit) {
+  getProducts(offset,limit,categoryUrl) {
     debugger;
     this.setState({
       GridData: [],
       showLoading:true
     })
-    this.Server.get(`suppliers/all-fav?offset=${offset}&limit=${limit}`,'',
+    this.Server.get(`suppliers/fav-product/${categoryUrl}?offset=${offset}&limit=${limit}&categoryUrl=${categoryUrl}`,'',
       (response) => {
         this.setState({
           showLoading:false
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
-            response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => {this.addToMyProducts(response.data[i]._key)}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div>
-              <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-              <div>{response.data[i].description}</div>
+            response.data[i].img = <img src={response.data[i].imageArr[0]} className="product-img" />
+            if(response.data[i].status == "ok"){
+              response.data[i].statusText =  "تایید شده";
+              response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => {this.addToMyProducts(response.data[i]._key)}} style={{ width: '100%' }} />
+            } else if(response.data[i].status == "nok"){
+              response.data[i].statusText =  "تایید نشده";
+              response.data[i].add = <div>
+                                      <span></span>
+                                      <span></span>
+                                     </div>
+            }else{
+              response.data[i].statusText =  "در حال بررسی";
+              response.data[i].add = <div></div>
+            }
+            
+            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
+              <div>
+              <img src={response.data[i].imageArr[0]} className="product-img" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
+                <div>{response.data[i].description}</div>
+              </div>
             </div>
 
           }
@@ -200,7 +176,7 @@ class ProductHistory extends React.Component {
     this.setState({
       showLoading:true
     })
-    this.Server.post(`suppliers/add-fav/${this.state.currentCategoryUrl}/${key}`, {},
+    this.Server.post(`suppliers/add-fav/${this.state.cat}/${key}`, {},
       (response) => {
         this.setState({
           showLoading:false
@@ -273,6 +249,21 @@ class ProductHistory extends React.Component {
       },{ Authorization: `Bearer ${this.props.accessToken}` }
     )
   }
+  setCategories(categories) {
+      let cats=[];
+      for (let item of categories) {
+        
+        cats.push({
+          label:item.name,
+          value:item.url,
+          _key:item._key
+        })
+      }
+
+    this.setState({
+      cats: cats
+    })
+  }
 
   render() {
     return (
@@ -304,6 +295,7 @@ class ProductHistory extends React.Component {
                         <Search style={{ position: 'absolute', top: 8 }} />
 
                         <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                          debugger;
                           let GridDate = [];
                               GridDate.push(e.value);
                           this.setState({
@@ -320,7 +312,9 @@ class ProductHistory extends React.Component {
                           GridData:this.state.GridDataSearch
                         }) }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => { this.setState({
-                          GridData:[]
+                          GridData:[],
+                          productInSearch:''
+
                         }) }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
 
 
@@ -328,54 +322,22 @@ class ProductHistory extends React.Component {
                     </div>
                   </Card>
                   <Card className="b-card2  mt-3">
-                    <div>فیلترها</div>
+                    <div>دسته بندی ها</div>
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} style={{ width: '100%' }} onChange={(e) => {
-                          this.setState({
-                            brandOption: e.value
+                      <Dropdown value={this.state.cat} options={this.state.cats} style={{width:250}} onChange={(e) => { this.setState({
+                            cat:e.value
                           })
-                          this.searchByFilter(e.value[0],0,10)
+                          this.getProducts(0,10,e.value);
                         }
-                        } placeholder="برند" />
-                        
 
+                      } 
+                      placeholder="دسته بندی را انتخاب کنید"/>
 
                       </div>
                     </div>
-                    <div className="row mt-3" >
-                      <div className="col-md-9 col-12" style={{display:'flex',justifyContent:'start',alignItems:'baseline'}}>
-                        <div>فیلترهای اعمال شده</div>
-                        <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
-                          {this.state.brandOption.map((v, i) => {
-                            if (!v.remove) {
-                              return (<Chip label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
-                                let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
-                                let remove = -1;
-                                let brandOption = this.state.brandOption;
-                                for(let i=0;i<brandOption.length;i++){
-                                  if(brandOption[i] == brand){
-                                    remove=i;
-                                  }
-                                }
-                                brandOption.splice(remove, 1)
-                                this.setState({
-                                  brandOption:brandOption
-                                })
-                                //this.searchByFilter(brandOption[0],0,10)
-
-                              }} />)
-                            }
-
-                          })
-                          }
-                        </div>
-                      </div>
-                      <a className="col-md-3 col-12" href="#" onClick={()=>{this.setState({brandOption:[]});this.searchByFilter("",0,10)}} >
-                        <div style={{ textAlign: 'left' }}><span><DeleteOutline /></span><span> حذف همه فیلترها</span></div>
-                      </a>
-                    </div>
+                    
 
 
 
@@ -390,40 +352,30 @@ class ProductHistory extends React.Component {
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
                       <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} >
-                        <Column field="img" header="" style={{ textAlign: 'right' }} className="title" />
                         <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />
-                        <Column field="commissionPercent" header="کمیسیون فروش کالا" style={{ textAlign: 'right' }} className="title" />
-                        <Column field="lowestPrice" header="کمترین قیمت روی سایت" style={{ textAlign: 'right' }} className="title" />
+                        <Column field="statusText" header="وضعیت" style={{ textAlign: 'right' }} className="title" />
+
+                        
                         <Column field="add" header="" style={{ textAlign: 'right' }} className="title" />
 
                       </DataTable>
                       :
                       <div>
-                        {this.state.brandOption.length == 0 ?
-                          <div style={{textAlign:'center'}}>
-                              <p>موردی برای نمایش وجود ندارد</p>
-                          </div>    
-
-                        :
+                        
                           <div style={{textAlign:'center'}}>
                               <p>موردی پیدا نشد</p>
-                              <p>محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</p>
+                              <p>محصولی با دسته بندی انتخاب شده در انبار شما وجود ندارد</p>
                               <div className="row" style={{justifyContent:'space-evenly',marginTop:50}}>
-                                <div className="col-lg-4 col-12" >
-                                    <button  className="btn btn-primary" onClick={()=>{this.setState({brandOption:[]});this.searchByFilter("",0,10)}} style={{ width: '100%' }} >حذف فیلترها</button>
-
-                                </div>
+                               
                                 <div className="col-lg-4 col-12" >
                                     <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
 
                                 </div>
                               </div>
                           </div>
-
                         
-                        }
                       </div>
                     }
 
@@ -501,7 +453,7 @@ class ProductHistory extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://127.0.0.1:3000/api/v1/categories?level=1');
+  let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
   const cats = await res.json();
 
   return {

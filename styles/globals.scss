@@ -223,5 +223,15 @@ button svg{
     left:0; 
     position:fixed; 
 }
+.product-img{
+  width:5rem;
+  height:5rem;
+  margin-left: 10px;
+}
 
-
+.b-menuBar .p-menubar .p-menuitem.p-menuitem-active > .p-menuitem-link {
+  background: #000000;
+}
+.b-menuBar .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
+  background: #000;
+}

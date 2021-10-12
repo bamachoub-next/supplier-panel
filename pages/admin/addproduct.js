@@ -200,10 +200,15 @@ class AddProduct extends React.Component {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img src={v.imageArr[0]} />
             v.add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            v.titleAndSubTitle = <div>
+            v.titleAndSubTitle = <div style={{display:'flex'}}>
+            <div>
+            <img src={v.imageArr[0]} className="product-img" />
+            </div>
+            <div>
               <div style={{ fontWeight: 'bold' }}>{v.title}</div>
               <div>{v.description}</div>
             </div>
+          </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description,brand:v.brand,commissionPercent:v.commissionPercent,img:v.img,add:v.add,titleAndSubTitle:v.titleAndSubTitle,lowestPrice:v.lowestPrice,categoryName:v.categoryName })
           })
 
@@ -234,10 +239,15 @@ class AddProduct extends React.Component {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div>
+            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
+            <div>
+            <img src={response.data[i].imageArr[0]} className="product-img" />
+            </div>
+            <div>
               <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
               <div>{response.data[i].description}</div>
             </div>
+          </div>
 
           }
         }
@@ -301,10 +311,15 @@ class AddProduct extends React.Component {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => {this.addToMyProducts(response.data[i]._key)}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div>
+            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
+            <div>
+            <img src={response.data[i].imageArr[0]} className="product-img" />
+            </div>
+            <div>
               <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
               <div>{response.data[i].description}</div>
             </div>
+          </div>
 
           }
         }
@@ -444,7 +459,8 @@ class AddProduct extends React.Component {
                           GridData:this.state.GridDataSearch
                         }) }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => { this.setState({
-                          GridData:[]
+                          GridData:[],
+                          productInSearch:''
                         }) }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
 
 
@@ -520,7 +536,6 @@ class AddProduct extends React.Component {
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
                       <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} >
-                        <Column field="img" header="" style={{ textAlign: 'right' }} className="title" />
                         <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />

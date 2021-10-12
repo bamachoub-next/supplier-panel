@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import fetch from 'node-fetch' ; 
 import { Button } from 'primereact/button';
+import Router from 'next/router'
 
 class Home extends React.Component {
   constructor(props) {
@@ -13,7 +14,11 @@ class Home extends React.Component {
 
 
 
+
 	}
+  componentDidMount() {
+    Router.push('/admin/')
+  }
   render() {
     return (
       <div >
