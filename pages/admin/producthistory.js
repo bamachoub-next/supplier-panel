@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
+import Router from 'next/router'
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -249,6 +250,11 @@ class ProductHistory extends React.Component {
       },{ Authorization: `Bearer ${this.props.accessToken}` }
     )
   }
+  selectGridField(value){
+    console.log(value);
+    Router.push(`/admin/addprice?id=${value._id}`)
+
+  }
   setCategories(categories) {
       let cats=[];
       for (let item of categories) {
@@ -351,7 +357,7 @@ class ProductHistory extends React.Component {
 
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
-                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} >
+                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} onSelectionChange={(e)=>{this.selectGridField(e.value)}} >
                         <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />

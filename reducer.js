@@ -8,8 +8,8 @@ function reducer(state = initialState , action){
    
     switch(action.type){    
        case "EmployerLogin":{
-           debugger;
            localStorage.setItem("accessToken",action.accessToken);
+           localStorage.setItem("employKey",action.employKey);
            return {
               employKey:action.employKey.toString(),
               accessToken:action.accessToken
