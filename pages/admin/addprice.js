@@ -36,6 +36,7 @@ class AddPrice extends React.Component {
 
     this.state = {
       showCreateProduct: false,
+      accessToken:this.props.accessToken||localStorage.getItem("accessToken"),
       Variations:[],
       EstelamRecords:[]
     }
@@ -91,12 +92,13 @@ class AddPrice extends React.Component {
 
   }
   addPriceServer(){
-    debugger;
+    this.setState({
+      showLoading:true
+    })
     
     if(this.state.addPriceParam[this.state.addPriceParam.length-1]){
       this.Server.post(`add-buy-method/price`, this.state.addPriceParam[0],
       (response) => {
-        debugger
         if (response.data) {
           if(!response.data.variant){
             MySwal.fire({
@@ -109,7 +111,8 @@ class AddPrice extends React.Component {
               icon: 'success',
               showConfirmButton:false,
               title: 'اطلاعات ثبت شده برای کالای مورد نظر ارسال شد',
-              html: <div><span>عملیات با موفقیت انجام شد</span></div>
+              html: <div><span>عملیات با موفقیت انجام شد</span>
+              <Button label="بستن" className="mt-5" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div>
           })
           }
           let addPriceParam = this.state.addPriceParam;
@@ -119,9 +122,16 @@ class AddPrice extends React.Component {
           })
           if(addPriceParam.length > 0)
             this.addPriceServer();
+          else
+            this.setState({
+              showLoading:false
+            })  
         }
       }, (error) => {
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+        this.setState({
+          showLoading:false
+        })  
+      },{ Authorization: `Bearer ${this.state.accessToken}` }
      )
     }
     
@@ -129,6 +139,7 @@ class AddPrice extends React.Component {
   }
   addEstelam(){
     let param = {};
+    
     param.codeForSupplier = this.state.codeForSupplier.toString();
     param.productId = this.state.productId;
     param.variantArr=[];
@@ -143,11 +154,12 @@ class AddPrice extends React.Component {
         })
       }
     }
-    debugger
+    this.setState({
+      showLoading:true
+    })
 
     this.Server.post(`add-buy-method/estelam`, param,
       (response) => {
-        debugger
 
         if (response.data) {
           if(response.data.code != 200){
@@ -161,17 +173,24 @@ class AddPrice extends React.Component {
               icon: 'success',
               showConfirmButton:false,
               title: 'کالای مورد نظر به انبار شما اضافه شد',
-              html: <div><span>عملیات با موفقیت انجام شد</span></div>
+              html: <div><span>عملیات با موفقیت انجام شد</span>
+              <Button label="بستن" className="mt-5" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div>
           })
           }
           
           
+          
         }
+        this.setState({
+          showLoading:false
+        })
 
       }, (error) => {
-        
+        this.setState({
+          showLoading:false
+        })
 
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      },{ Authorization: `Bearer ${this.state.accessToken}` }
     )
   }
 
@@ -384,15 +403,17 @@ class AddPrice extends React.Component {
               <div className="p-3 mt-3 ">قیمت گذاری</div>
 
               <card className="row b-card2 p-4 ">
-              <div>انتخاب واحد</div>
+              <div className="mb-3">انتخاب واحد</div>
 
               <div className="col-12" style={{display:'flex'}}>
               {this.state.product && this.state.product.variationsObj && this.state.product.variationsObj.variations.map((v,i)=>{
                 return(
-                  <div style={{background:'#fff',border:1,borderRadius:8,minWidth:150,padding:10,marginLeft:20,display:'flex',justifyContent:'space-between'}}
+                  <button className={v.Count ? "b-button active" : "b-button"} style={{border:1,borderRadius:8,minWidth:150,padding:10,marginLeft:20,display:'flex',justifyContent:'space-between'}}
                       onClick={(event)=>{
+                        v.Count=v.Count ? (v.Count+1) : 1;
                         let VariationPrices = this.state.VariationPrices||[];
                         VariationPrices.push({
+                          Count:v.Count,
                           name:v.name,
                           description:v.description,
                           number:'',
@@ -412,10 +433,14 @@ class AddPrice extends React.Component {
                       }}>
                     <span>
                     {v.name}
+                    <span>
+                        {v.Count ? `(${v.Count})` : ''}
                       </span>
-                      <Add style={{border:'2px solid'}} />
+                      </span>
+                      
+                      <Add className="icon" style={{border:'2px solid'}} />
 
-                  </div>
+                  </button>
                 )
               })
               }
@@ -425,7 +450,22 @@ class AddPrice extends React.Component {
                 const numLabel = `تعداد (${v.name})`;
                 return(
                   <card className="row b-card2 p-4 mt-3 ">
-                  <Close />  
+                  <div className="col-12" style={{position:'relative'}}>
+                    
+                  <Close className="icon" style={{position:'absolute',left:0,border:'1px solid',borderRadius:4,cursor:'pointer'}} onClick={()=>{
+                    console.log(this.state.VariationPrices)
+                    let VariationPrices = this.state.VariationPrices;
+                    debugger;
+                    for(let variations of this.state.product.variationsObj.variations){
+                      if(variations.name == v.name){
+                        variations.Count = variations.Count-1;
+                      }
+                    }
+                    VariationPrices.splice(i, 1);
+                    this.setState({
+                      VariationPrices:VariationPrices
+                    })
+                  }} />  
                   <span>واحد : {v.name}</span>
 
                   <div className="row" style={{alignItems:'end'}} >
@@ -464,7 +504,7 @@ class AddPrice extends React.Component {
 
                     </div>
                   </div>
-                  <span className="mt-3 mb-3">نوع پرداخت</span>
+                  <div className="mt-3 mb-3">نوع پرداخت</div>
                   <div className="row">
                   <div className="col-lg-2 col-md-3 col-12">
                   <div style={{display:'flex',alignItems:'flex-start'}}>
@@ -571,6 +611,8 @@ class AddPrice extends React.Component {
                     }
                     </div>
                   </div>
+                  </div>  
+
                   </card>
 
                 )

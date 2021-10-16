@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Chip } from 'primereact/chip';
+import Router from 'next/router'
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -39,8 +40,24 @@ class AddProduct extends React.Component {
     }
   }
   componentDidMount() {
+    /*
+    let token = this.props.accessToken||localStorage.getItem("accessToken")
+    this.Server.get(`supplier-employee-auth/check-validation-code/${token}`, '',
+      (response) => {
+        this.setState({
+          showLoading:false
+        })
+        this.setCategories(this.props.cats, 1)
+      }, (error) => {
+        Router.push(`/`)
+        this.setState({
+          showLoading:false
+        })
 
+      }
+    )*/
     this.setCategories(this.props.cats, 1)
+
 
   }
 

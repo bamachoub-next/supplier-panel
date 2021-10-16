@@ -47,8 +47,22 @@ p{
 .secondary{
   color: var(--secondary);
 }
-.icon{
+.icon,.b-button{
   color:var(--label-text);
+
+}
+.b-button{
+  color:var(--label-text);
+  background-color:var(--white);
+
+}
+.b-button.active{
+  color:var(--white);
+  background-color:var(--label-text);
+
+}
+.b-button.active .icon{
+  color:var(--white);
 
 }
 *:not([class*="icon"]) {
