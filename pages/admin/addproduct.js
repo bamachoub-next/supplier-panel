@@ -489,7 +489,7 @@ class AddProduct extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} style={{ width: '100%' }} onChange={(e) => {
+                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} className="b-border" style={{ width: '100%' }} onChange={(e) => {
                           this.setState({
                             brandOption: e.value
                           })
@@ -507,7 +507,7 @@ class AddProduct extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.brandOption.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip label={v} className="b-p-chip" _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let brandOption = this.state.brandOption;

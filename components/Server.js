@@ -84,6 +84,30 @@ class Server extends React.Component {
 
     
    }
+   put(url,params,SuccessCallBack,ErrorCallBack,Authorization){
+      axios.put(serverUrl+url+'', params, {headers: {
+         'Content-Type': 'application/json',
+         ...Authorization
+      }})
+      .then(response => {
+        this.setState({
+           isLoading:false
+         })
+         SuccessCallBack(response,this.setState.isLoading);
+         
+      })
+      .catch(error => {
+         this.setState({
+           isLoading:false
+         })
+         ErrorCallBack(error,this.setState.isLoading);
+         
+      })
+      
+
+
+    
+   }
   
  
 }

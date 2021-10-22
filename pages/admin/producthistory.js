@@ -20,13 +20,7 @@ import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
-const citySelectItems = [
-  {label: 'New York', value: 'NY'},
-  {label: 'Rome', value: 'RM'},
-  {label: 'London', value: 'LDN'},
-  {label: 'Istanbul', value: 'IST'},
-  {label: 'Paris', value: 'PRS'}
-];
+
 
 class ProductHistory extends React.Component {
   constructor(props) {
@@ -170,7 +164,7 @@ class ProductHistory extends React.Component {
           showLoading:false
         })
 
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
     )
   }
   addToMyProducts(key) {
@@ -205,7 +199,7 @@ class ProductHistory extends React.Component {
         this.setState({
           showLoading:false
         })
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
     )
 
   }
@@ -247,7 +241,7 @@ class ProductHistory extends React.Component {
           text: 'عملیات انجام نشد'
         })
 
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
     )
   }
   selectGridField(value){
@@ -332,7 +326,7 @@ class ProductHistory extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                      <Dropdown value={this.state.cat} options={this.state.cats} style={{width:250}} onChange={(e) => { this.setState({
+                      <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{width:250}} onChange={(e) => { this.setState({
                             cat:e.value
                           })
                           this.getProducts(0,10,e.value);

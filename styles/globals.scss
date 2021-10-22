@@ -131,8 +131,11 @@ a {
   color:var(--label-text)
 }
 
-.p-chip{
+.b-p-chip{
   background-color: #fff !important;
+}
+.b-p-chip2 {
+  background-color: var(--info_bg) !important;
 }
 .b-menu .p-panelmenu-content , .p-panelmenu-header-link {
     background: transparent  !important;
@@ -201,7 +204,7 @@ input , select{
 }
 .b-border{
   border: 1px solid var(--border-color);
-  padding: 10px;
+  /*padding: 10px;*/
   border-radius: 8px;
 }
 .bg{
@@ -256,4 +259,14 @@ button svg{
 }
 .b-menuBar .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
   background: #000;
+}
+.p-inline-message.p-inline-message-info {
+  background: transparent;
+  border-color: var(--border-color) !important;
+  color: var(--label-text );
+  background-color:var(--info_bg);
+
+}
+.p-inline-message-icon{
+  margin-left:8px;
 }

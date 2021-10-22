@@ -32,7 +32,22 @@ const items = [
 
           }
         },
-        
+        {
+          label:"مدیریت کالاهای قیمت ثابت",
+          command : (event) => {
+
+            Router.push('/admin/manageproduct')
+
+          }
+        },
+        {
+          label:"مدیریت کالاهای استعلامی",
+          command : (event) => {
+
+            Router.push('/admin/manageproduct2')
+
+          }
+        },
      ]
   },
   
