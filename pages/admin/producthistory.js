@@ -8,7 +8,7 @@ import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Close, Search,DeleteOutline } from '@material-ui/icons';
+import { Close, Search, DeleteOutline } from '@material-ui/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
@@ -30,10 +30,10 @@ class ProductHistory extends React.Component {
 
     this.state = {
       activeIndex: 0,
-      brandOptions:[],
-      cats:[],
-      brandOption:[],
-      showLoading:false,
+      brandOptions: [],
+      cats: [],
+      brandOption: [],
+      showLoading: false,
       Step: 1,
       GridData: [],
       currentCategoryUrl: '',
@@ -41,7 +41,7 @@ class ProductHistory extends React.Component {
     }
 
   }
-  
+
   componentDidMount() {
     this.setCategories(this.props.cats)
 
@@ -66,42 +66,41 @@ class ProductHistory extends React.Component {
 
 
   }
-  
+
   suggestproductInSearch(event) {
     if (!this.state.cat)
       return;
-    
+
     this.Server.post(`products/basic-search/${this.state.cat}`, { searchString: this.state.productInSearch },
       (response) => {
-        
+
         if (response.data) {
           let productInSearchSuggestions = []
-          debugger;
           response.data.map(function (v, i) {
             v.img = <img src={v.imageArr[0]} className="product-img" />
-            if(v.status == "ok"){
-              v.statusText =  "تایید شده";
-              v.add = <Button disabled label="موجود در انبار" onClick={() => {this.addToMyProducts(v._key)}} style={{ width: '100%' }} />
-            } else if(v.status == "nok"){
-              v.statusText =  "تایید نشده";
+            if (v.status == "ok") {
+              v.statusText = "تایید شده";
+              v.add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
+            } else if (v.status == "nok") {
+              v.statusText = "تایید نشده";
               v.add = <div>
-                                      <span></span>
-                                      <span></span>
-                                     </div>
-            }else{
-              v.statusText =  "در حال بررسی";
+                <span></span>
+                <span></span>
+              </div>
+            } else {
+              v.statusText = "در حال بررسی";
               v.add = <div></div>
             }
-            v.titleAndSubTitle = <div style={{display:'flex'}}>
-            <div>
-            <img src={v.imageArr[0]} className="product-img" />
+            v.titleAndSubTitle = <div style={{ display: 'flex' }}>
+              <div>
+                <img src={v.imageArr[0]} className="product-img" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold' }}>{v.title}</div>
+                <div>{v.description}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-              <div>{v.description}</div>
-            </div>
-          </div>
-            productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description,brand:v.brand,commissionPercent:v.commissionPercent,img:v.img,add:v.add,titleAndSubTitle:v.titleAndSubTitle,lowestPrice:v.lowestPrice,categoryName:v.categoryName })
+            productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
           })
 
           this.setState({ productInSearchSuggestions: productInSearchSuggestions });
@@ -109,43 +108,42 @@ class ProductHistory extends React.Component {
         }
 
       }, (error) => {
-        
+
 
       }
     )
 
   }
-  getProducts(offset,limit,categoryUrl) {
-    debugger;
+  getProducts(offset, limit, categoryUrl) {
     this.setState({
       GridData: [],
-      showLoading:true
+      showLoading: true
     })
-    this.Server.get(`suppliers/fav-product/${categoryUrl}?offset=${offset}&limit=${limit}&categoryUrl=${categoryUrl}`,'',
+    this.Server.get(`suppliers/fav-product/${categoryUrl}?offset=${offset}&limit=${limit}&categoryUrl=${categoryUrl}`, '',
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].img = <img src={response.data[i].imageArr[0]} className="product-img" />
-            if(response.data[i].status == "ok"){
-              response.data[i].statusText =  "تایید شده";
-              response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => {this.addToMyProducts(response.data[i]._key)}} style={{ width: '100%' }} />
-            } else if(response.data[i].status == "nok"){
-              response.data[i].statusText =  "تایید نشده";
+            if (response.data[i].status == "ok") {
+              response.data[i].statusText = "تایید شده";
+              response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            } else if (response.data[i].status == "nok") {
+              response.data[i].statusText = "تایید نشده";
               response.data[i].add = <div>
-                                      <span></span>
-                                      <span></span>
-                                     </div>
-            }else{
-              response.data[i].statusText =  "در حال بررسی";
+                <span></span>
+                <span></span>
+              </div>
+            } else {
+              response.data[i].statusText = "در حال بررسی";
               response.data[i].add = <div></div>
             }
-            
-            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
+
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
-              <img src={response.data[i].imageArr[0]} className="product-img" />
+                <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
@@ -161,32 +159,32 @@ class ProductHistory extends React.Component {
         })
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
 
-      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
+      }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
   }
   addToMyProducts(key) {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
     this.Server.post(`suppliers/add-fav/${this.state.cat}/${key}`, {},
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
-        if(response.data && !response.data.error){
+        if (response.data && !response.data.error) {
           MySwal.fire({
             icon: 'success',
-            showConfirmButton:false,
+            showConfirmButton: false,
             title: 'کالای مورد نظر به انبار شما اضافه شد',
-            html: <div className='title' style={{marginTop:80}}>
-            <div style={{textAlign:'center'}}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => {MySwal.close();} } style={{ width: '90%',marginBottom:30 }} /><br /><Button label="بازگشت" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div></div>
-        })
-        }else{
+            html: <div className='title' style={{ marginTop: 80 }}>
+              <div style={{ textAlign: 'center' }}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => { MySwal.close(); }} style={{ width: '90%', marginBottom: 30 }} /><br /><Button label="بازگشت" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div></div>
+          })
+        } else {
           this.setState({
-            showLoading:false
+            showLoading: false
           })
           MySwal.fire({
             icon: 'error',
@@ -197,9 +195,9 @@ class ProductHistory extends React.Component {
 
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
-      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
+      }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
 
   }
@@ -213,27 +211,27 @@ class ProductHistory extends React.Component {
     }
 
   }
-  sendProductSuggest(){
+  sendProductSuggest() {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
-    this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description,title: this.state.product_Suggest_title,imageUrl: this.state.product_Suggest_imageUrl,supplierKey: this.props.employKey },
+    this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description, title: this.state.product_Suggest_title, imageUrl: this.state.product_Suggest_imageUrl, supplierKey: this.props.employKey },
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         MySwal.fire({
           icon: 'success',
-          showConfirmButton:false,
+          showConfirmButton: false,
           title: 'درخواست ایجاد کالای شما ارسال شد',
-          html: <div className='title'><div>درخواست شما جهت بررسی کارشناسان با ما چوب ارسال شد</div><br/><br/>
-          <div style={{textAlign:'center'}}><Button label="ادامه" onClick={() => {MySwal.close();} } style={{ width: 120 }} /></div></div>
+          html: <div className='title'><div>درخواست شما جهت بررسی کارشناسان با ما چوب ارسال شد</div><br /><br />
+            <div style={{ textAlign: 'center' }}><Button label="ادامه" onClick={() => { MySwal.close(); }} style={{ width: 120 }} /></div></div>
         })
-        
+
 
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         MySwal.fire({
           icon: 'error',
@@ -241,24 +239,24 @@ class ProductHistory extends React.Component {
           text: 'عملیات انجام نشد'
         })
 
-      },{ Authorization: `Bearer ${this.props.accessToken||localStorage.getItem("accessToken")}` }
+      }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
   }
-  selectGridField(value){
+  selectGridField(value) {
     console.log(value);
     Router.push(`/admin/addprice?id=${value._id}`)
 
   }
   setCategories(categories) {
-      let cats=[];
-      for (let item of categories) {
-        
-        cats.push({
-          label:item.name,
-          value:item.url,
-          _key:item._key
-        })
-      }
+    let cats = [];
+    for (let item of categories) {
+
+      cats.push({
+        label: item.name,
+        value: item.url,
+        _key: item._key
+      })
+    }
 
     this.setState({
       cats: cats
@@ -269,17 +267,17 @@ class ProductHistory extends React.Component {
     return (
       <>
         <Header />
-        
+
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
-                      تاریخچه درخواست ایجاد کالا
+                    تاریخچه درخواست ایجاد کالا
                   </div>
                   <div className="small-title">
-                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                    لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
                   </div>
                 </div>
                 <div className="col-lg-3 col-12" >
@@ -295,27 +293,30 @@ class ProductHistory extends React.Component {
                         <Search style={{ position: 'absolute', top: 8 }} />
 
                         <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
-                          debugger;
                           let GridDate = [];
-                              GridDate.push(e.value);
+                          GridDate.push(e.value);
                           this.setState({
                             productInSearch: e.value.title,
-                            GridDataSearch:GridDate
+                            GridDataSearch: GridDate
                           })
-                      
+
                         }
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button label="جستجو" onClick={() => { this.setState({
-                          GridData:this.state.GridDataSearch
-                        }) }} style={{ width: '75%' }}></Button>
-                        <Button onClick={() => { this.setState({
-                          GridData:[],
-                          productInSearch:''
+                        <Button label="جستجو" onClick={() => {
+                          this.setState({
+                            GridData: this.state.GridDataSearch
+                          })
+                        }} style={{ width: '75%' }}></Button>
+                        <Button onClick={() => {
+                          this.setState({
+                            GridData: [],
+                            productInSearch: ''
 
-                        }) }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                          })
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
 
 
                       </div>
@@ -326,18 +327,19 @@ class ProductHistory extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                      <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{width:250}} onChange={(e) => { this.setState({
-                            cat:e.value
+                        <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
+                          this.setState({
+                            cat: e.value
                           })
-                          this.getProducts(0,10,e.value);
+                          this.getProducts(0, 10, e.value);
                         }
 
-                      } 
-                      placeholder="دسته بندی را انتخاب کنید"/>
+                        }
+                          placeholder="دسته بندی را انتخاب کنید" />
 
                       </div>
                     </div>
-                    
+
 
 
 
@@ -345,37 +347,37 @@ class ProductHistory extends React.Component {
                 </div>
               </div>
               <div className="row" >
-                
+
 
                 <div className="col-lg-12 col-12" style={{ position: 'relative' }}>
 
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
-                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} onSelectionChange={(e)=>{this.selectGridField(e.value)}} >
+                      <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} onSelectionChange={(e) => { this.selectGridField(e.value) }} >
                         <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />
                         <Column field="statusText" header="وضعیت" style={{ textAlign: 'right' }} className="title" />
 
-                        
+
                         <Column field="add" header="" style={{ textAlign: 'right' }} className="title" />
 
                       </DataTable>
                       :
                       <div>
-                        
-                          <div style={{textAlign:'center'}}>
-                              <p>موردی پیدا نشد</p>
-                              <p>محصولی با دسته بندی انتخاب شده در انبار شما وجود ندارد</p>
-                              <div className="row" style={{justifyContent:'space-evenly',marginTop:50}}>
-                               
-                                <div className="col-lg-4 col-12" >
-                                    <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
 
-                                </div>
-                              </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p>موردی پیدا نشد</p>
+                          <p>محصولی با دسته بندی انتخاب شده در انبار شما وجود ندارد</p>
+                          <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
+
+                            <div className="col-lg-4 col-12" >
+                              <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
+
+                            </div>
                           </div>
-                        
+                        </div>
+
                       </div>
                     }
 
@@ -394,12 +396,12 @@ class ProductHistory extends React.Component {
 
         </div>
         {this.state.showLoading &&
-        <div className="b-overlay">
-          <div className="b-loading">
-            <ProgressSpinner strokeWidth={5} style={{width: '50px', height: '50px'}}/>
+          <div className="b-overlay">
+            <div className="b-loading">
+              <ProgressSpinner strokeWidth={5} style={{ width: '50px', height: '50px' }} />
+            </div>
           </div>
-        </div>
-        
+
         }
         <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
           <div style={{ direction: 'rtl' }}>
@@ -464,11 +466,10 @@ export async function getStaticProps({ query }) {
 
 }
 
-
 const mapStateToProps = (state) => {
-  return{
-      employKey:state.employKey,
-      accessToken:state.accessToken
+  return {
+      employKey: state.token.employKey,
+      accessToken: state.token.accessToken
   }
 }
 export default connect(mapStateToProps)(ProductHistory)

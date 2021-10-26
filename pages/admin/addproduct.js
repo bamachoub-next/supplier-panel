@@ -8,7 +8,7 @@ import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Close, Search,DeleteOutline } from '@material-ui/icons';
+import { Close, Search, DeleteOutline } from '@material-ui/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
@@ -30,9 +30,9 @@ class AddProduct extends React.Component {
 
     this.state = {
       activeIndex: 0,
-      brandOptions:[],
-      brandOption:[],
-      showLoading:false,
+      brandOptions: [],
+      brandOption: [],
+      showLoading: false,
       Step: 1,
       GridData: [],
       currentCategoryUrl: '',
@@ -80,7 +80,6 @@ class AddProduct extends React.Component {
 
   }
   setCategories(categories, level, key) {
-    debugger;
 
     let cats = this.state.cats || [];
     if (level == 1) {
@@ -99,7 +98,7 @@ class AddProduct extends React.Component {
               currentCategoryKey: event.item._key,
               currentCategoryUrl: event.item._url
             })
-            this.getBrands(event.item._url,event.item._key)
+            this.getBrands(event.item._url, event.item._key)
 
           }
           temp["items"] = []
@@ -188,45 +187,46 @@ class AddProduct extends React.Component {
   }
   getCategories(level, key) {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
     this.Server.get("categories", `?level=${level}`,
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         this.setCategories(response.data, level, key)
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
 
       }
     )
   }
   suggestproductInSearch(event) {
+    debugger;
     if (!this.state.currentCategoryUrl)
       return;
-    
+
     this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
       (response) => {
-        
+
         if (response.data) {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img src={v.imageArr[0]} />
-            v.add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            v.titleAndSubTitle = <div style={{display:'flex'}}>
-            <div>
-            <img src={v.imageArr[0]} className="product-img" />
+            v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
+            v.titleAndSubTitle = <div style={{ display: 'flex' }}>
+              <div>
+                <img src={v.imageArr[0]} className="product-img" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold' }}>{v.title}</div>
+                <div>{v.description}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-              <div>{v.description}</div>
-            </div>
-          </div>
-            productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description,brand:v.brand,commissionPercent:v.commissionPercent,img:v.img,add:v.add,titleAndSubTitle:v.titleAndSubTitle,lowestPrice:v.lowestPrice,categoryName:v.categoryName })
+            productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
           })
 
           this.setState({ productInSearchSuggestions: productInSearchSuggestions });
@@ -234,37 +234,37 @@ class AddProduct extends React.Component {
         }
 
       }, (error) => {
-        
+
 
       }
     )
 
   }
-  searchByFilter(brandOption,offset,limit) {
+  searchByFilter(brandOption, offset, limit) {
     if (!this.state.currentCategoryUrl)
       return;
     this.setState({
-      showLoading:true
+      showLoading: true
     })
-    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, {brand:brandOption},
+    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, { brand: brandOption },
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => {debugger;this.addToMyProducts()}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
-            <div>
-            <img src={response.data[i].imageArr[0]} className="product-img" />
+            response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
+              <div>
+                <img src={response.data[i].imageArr[0]} className="product-img" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
+                <div>{response.data[i].description}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-              <div>{response.data[i].description}</div>
-            </div>
-          </div>
 
           }
         }
@@ -276,36 +276,36 @@ class AddProduct extends React.Component {
       }, (error) => {
 
         this.setState({
-          showLoading:false
+          showLoading: false
         })
       }
     )
 
   }
-  getBrands(currentCategoryUrl,currentCategoryKey) {
+  getBrands(currentCategoryUrl, currentCategoryKey) {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
-    this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`,'',
+    this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`, '',
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
-        let brandOptions =[];
-        for(let data of response.data){
+        let brandOptions = [];
+        for (let data of response.data) {
           brandOptions.push({
-            label:data,
-            value:data
+            label: data,
+            value: data
           })
         }
-        
+
         this.setState({
-          brandOptions:brandOptions
+          brandOptions: brandOptions
         })
 
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
 
       }
@@ -316,27 +316,27 @@ class AddProduct extends React.Component {
 
     this.setState({
       GridData: [],
-      showLoading:true
+      showLoading: true
     })
     this.Server.get(`products/cat/${item._url}/${item._key}`, `?categoryurl=${item._url}&categorykey=${item._key}&offset=0&limit=1000`,
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => {this.addToMyProducts(response.data[i]._key)}} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div style={{display:'flex'}}>
-            <div>
-            <img src={response.data[i].imageArr[0]} className="product-img" />
+            response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
+              <div>
+                <img src={response.data[i].imageArr[0]} className="product-img" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
+                <div>{response.data[i].description}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-              <div>{response.data[i].description}</div>
-            </div>
-          </div>
 
           }
         }
@@ -346,7 +346,7 @@ class AddProduct extends React.Component {
         })
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
 
       }
@@ -354,24 +354,24 @@ class AddProduct extends React.Component {
   }
   addToMyProducts(key) {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
     this.Server.post(`suppliers/add-fav/${this.state.currentCategoryUrl}/${key}`, {},
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
-        if(response.data && !response.data.error){
+        if (response.data && !response.data.error) {
           MySwal.fire({
             icon: 'success',
-            showConfirmButton:false,
+            showConfirmButton: false,
             title: 'کالای مورد نظر به انبار شما اضافه شد',
-            html: <div className='title' style={{marginTop:80}}>
-            <div style={{textAlign:'center'}}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => {MySwal.close();} } style={{ width: '90%',marginBottom:30 }} /><br /><Button label="بازگشت" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div></div>
-        })
-        }else{
+            html: <div className='title' style={{ marginTop: 80 }}>
+              <div style={{ textAlign: 'center' }}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => { MySwal.close(); }} style={{ width: '90%', marginBottom: 30 }} /><br /><Button label="بازگشت" onClick={() => { MySwal.close(); Router.push(`/admin/manageproduct`) }} style={{ width: '90%' }} /></div></div>
+          })
+        } else {
           this.setState({
-            showLoading:false
+            showLoading: false
           })
           MySwal.fire({
             icon: 'error',
@@ -382,9 +382,9 @@ class AddProduct extends React.Component {
 
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
 
   }
@@ -398,27 +398,27 @@ class AddProduct extends React.Component {
     }
 
   }
-  sendProductSuggest(){
+  sendProductSuggest() {
     this.setState({
-      showLoading:true
+      showLoading: true
     })
-    this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description,title: this.state.product_Suggest_title,imageUrl: this.state.product_Suggest_imageUrl,supplierKey: this.props.employKey },
+    this.Server.post(`product-suggestion`, { description: this.state.product_Suggest_description, title: this.state.product_Suggest_title, imageUrl: this.state.product_Suggest_imageUrl, supplierKey: this.props.employKey },
       (response) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         MySwal.fire({
           icon: 'success',
-          showConfirmButton:false,
+          showConfirmButton: false,
           title: 'درخواست ایجاد کالای شما ارسال شد',
-          html: <div className='title'><div>درخواست شما جهت بررسی کارشناسان با ما چوب ارسال شد</div><br/><br/>
-          <div style={{textAlign:'center'}}><Button label="ادامه" onClick={() => {MySwal.close();} } style={{ width: 120 }} /></div></div>
+          html: <div className='title'><div>درخواست شما جهت بررسی کارشناسان با ما چوب ارسال شد</div><br /><br />
+            <div style={{ textAlign: 'center' }}><Button label="ادامه" onClick={() => { MySwal.close(); }} style={{ width: 120 }} /></div></div>
         })
-        
+
 
       }, (error) => {
         this.setState({
-          showLoading:false
+          showLoading: false
         })
         MySwal.fire({
           icon: 'error',
@@ -426,7 +426,7 @@ class AddProduct extends React.Component {
           text: 'عملیات انجام نشد'
         })
 
-      },{ Authorization: `Bearer ${this.props.accessToken}` }
+      }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
   }
 
@@ -434,7 +434,7 @@ class AddProduct extends React.Component {
     return (
       <>
         <Header />
-        
+
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
@@ -461,24 +461,28 @@ class AddProduct extends React.Component {
 
                         <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
                           let GridDate = [];
-                              GridDate.push(e.value);
+                          GridDate.push(e.value);
                           this.setState({
                             productInSearch: e.value.title,
-                            GridDataSearch:GridDate
+                            GridDataSearch: GridDate
                           })
-                      
+
                         }
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button label="جستجو" onClick={() => { this.setState({
-                          GridData:this.state.GridDataSearch
-                        }) }} style={{ width: '75%' }}></Button>
-                        <Button onClick={() => { this.setState({
-                          GridData:[],
-                          productInSearch:''
-                        }) }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                        <Button label="جستجو" onClick={() => {
+                          this.setState({
+                            GridData: this.state.GridDataSearch
+                          })
+                        }} style={{ width: '75%' }}></Button>
+                        <Button onClick={() => {
+                          this.setState({
+                            GridData: [],
+                            productInSearch: ''
+                          })
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
 
 
                       </div>
@@ -493,16 +497,16 @@ class AddProduct extends React.Component {
                           this.setState({
                             brandOption: e.value
                           })
-                          this.searchByFilter(e.value[0],0,10)
+                          this.searchByFilter(e.value[0], 0, 10)
                         }
                         } placeholder="برند" />
-                        
+
 
 
                       </div>
                     </div>
                     <div className="row mt-3" >
-                      <div className="col-md-9 col-12" style={{display:'flex',justifyContent:'start',alignItems:'baseline'}}>
+                      <div className="col-md-9 col-12" style={{ display: 'flex', justifyContent: 'start', alignItems: 'baseline' }}>
                         <div>فیلترهای اعمال شده</div>
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.brandOption.map((v, i) => {
@@ -511,14 +515,14 @@ class AddProduct extends React.Component {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let brandOption = this.state.brandOption;
-                                for(let i=0;i<brandOption.length;i++){
-                                  if(brandOption[i] == brand){
-                                    remove=i;
+                                for (let i = 0; i < brandOption.length; i++) {
+                                  if (brandOption[i] == brand) {
+                                    remove = i;
                                   }
                                 }
                                 brandOption.splice(remove, 1)
                                 this.setState({
-                                  brandOption:brandOption
+                                  brandOption: brandOption
                                 })
                                 //this.searchByFilter(brandOption[0],0,10)
 
@@ -529,7 +533,7 @@ class AddProduct extends React.Component {
                           }
                         </div>
                       </div>
-                      <a className="col-md-3 col-12" href="#" onClick={()=>{this.setState({brandOption:[]});this.searchByFilter("",0,10)}} >
+                      <a className="col-md-3 col-12" href="#" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} >
                         <div style={{ textAlign: 'left' }}><span><DeleteOutline /></span><span> حذف همه فیلترها</span></div>
                       </a>
                     </div>
@@ -564,27 +568,27 @@ class AddProduct extends React.Component {
                       :
                       <div>
                         {this.state.brandOption.length == 0 ?
-                          <div style={{textAlign:'center'}}>
-                              <p>موردی برای نمایش وجود ندارد</p>
-                          </div>    
-
-                        :
-                          <div style={{textAlign:'center'}}>
-                              <p>موردی پیدا نشد</p>
-                              <p>محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</p>
-                              <div className="row" style={{justifyContent:'space-evenly',marginTop:50}}>
-                                <div className="col-lg-4 col-12" >
-                                    <button  className="btn btn-primary" onClick={()=>{this.setState({brandOption:[]});this.searchByFilter("",0,10)}} style={{ width: '100%' }} >حذف فیلترها</button>
-
-                                </div>
-                                <div className="col-lg-4 col-12" >
-                                    <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
-
-                                </div>
-                              </div>
+                          <div style={{ textAlign: 'center' }}>
+                            <p>موردی برای نمایش وجود ندارد</p>
                           </div>
 
-                        
+                          :
+                          <div style={{ textAlign: 'center' }}>
+                            <p>موردی پیدا نشد</p>
+                            <p>محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</p>
+                            <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
+                              <div className="col-lg-4 col-12" >
+                                <button className="btn btn-primary" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} style={{ width: '100%' }} >حذف فیلترها</button>
+
+                              </div>
+                              <div className="col-lg-4 col-12" >
+                                <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
+
+                              </div>
+                            </div>
+                          </div>
+
+
                         }
                       </div>
                     }
@@ -604,12 +608,12 @@ class AddProduct extends React.Component {
 
         </div>
         {this.state.showLoading &&
-        <div className="b-overlay">
-          <div className="b-loading">
-            <ProgressSpinner strokeWidth={5} style={{width: '50px', height: '50px'}}/>
+          <div className="b-overlay">
+            <div className="b-loading">
+              <ProgressSpinner strokeWidth={5} style={{ width: '50px', height: '50px' }} />
+            </div>
           </div>
-        </div>
-        
+
         }
         <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
           <div style={{ direction: 'rtl' }}>
@@ -676,9 +680,9 @@ export async function getStaticProps({ query }) {
 
 
 const mapStateToProps = (state) => {
-  return{
-      employKey:state.employKey,
-      accessToken:state.accessToken
+  return {
+      employKey: state.token.employKey,
+      accessToken: state.token.accessToken
   }
 }
 export default connect(mapStateToProps)(AddProduct)

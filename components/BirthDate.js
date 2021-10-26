@@ -157,9 +157,9 @@ class BirthDate extends React.Component {
 
 
 	}
-	/*
+	
 	componentWillReceiveProps(param) {
-        if(param.SelectedDay || param.SelectedMounth || param.SelectedYear){
+		if(param.SelectedDay || param.SelectedMounth || param.SelectedYear){
 			this.setState({
 				SelectedDay:param.SelectedDay,
 				SelectedMounth:param.SelectedMounth,
@@ -167,45 +167,45 @@ class BirthDate extends React.Component {
 			});
 			
 		}
-    }*/
+	}
 
 	render() {
 
 		return (
 			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-				<div style={{width:'30%'}}>
+				<div style={{ width: '30%' }}>
 
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedDay} options={Days} onChange={(event)=>{
+					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedDay} options={Days} onChange={(event) => {
 						this.setState({
-							SelectedDay:event.target.value
-							});
-							this.props.callback({SelectedDay:event.target.value,SelectedMounth:this.props.SelectedMounth,SelectedYear:this.props.SelectedYear});
+							SelectedDay: event.target.value
+						});
+						this.props.callback({ SelectedDay: event.target.value, SelectedMounth: this.props.SelectedMounth, SelectedYear: this.props.SelectedYear });
 
-						}}
-					
-					placeholder="روز" />
+					}}
 
-				</div>
-				<div style={{width:'30%'}}>
-
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedMounth} options={Mounths}  onChange={(event)=>{
-							this.setState({
-								SelectedDay:event.target.value
-							});
-							this.props.callback({SelectedDay:this.props.SelectedDay,SelectedMounth:event.target.value,SelectedYear:this.props.SelectedYear});
-
-						}}  placeholder="ماه" />
+						placeholder="روز" />
 
 				</div>
-				<div style={{width:'30%'}}>
+				<div style={{ width: '30%' }}>
 
-					<Dropdown style={{width:'100%'}} optionLabel="name" value={this.props.SelectedYear} options={Years} onChange={(event)=>{
-							this.setState({
-								SelectedDay:event.target.value
-							});
-							this.props.callback({SelectedDay:this.props.SelectedDay,SelectedMounth:this.props.SelectedMounth,SelectedYear:event.target.value});
+					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedMounth} options={Mounths} onChange={(event) => {
+						this.setState({
+							SelectedDay: event.target.value
+						});
+						this.props.callback({ SelectedDay: this.props.SelectedDay, SelectedMounth: event.target.value, SelectedYear: this.props.SelectedYear });
 
-						}} placeholder="سال" />
+					}} placeholder="ماه" />
+
+				</div>
+				<div style={{ width: '30%' }}>
+
+					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedYear} options={Years} onChange={(event) => {
+						this.setState({
+							SelectedDay: event.target.value
+						});
+						this.props.callback({ SelectedDay: this.props.SelectedDay, SelectedMounth: this.props.SelectedMounth, SelectedYear: event.target.value });
+
+					}} placeholder="سال" />
 
 				</div>
 			</div>

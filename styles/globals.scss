@@ -270,3 +270,8 @@ button svg{
 .p-inline-message-icon{
   margin-left:8px;
 }
+.nobutton{
+  border: 0;
+  background: transparent;
+  color: var(--label-text);
+}

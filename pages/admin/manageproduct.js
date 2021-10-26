@@ -47,7 +47,7 @@ class ManageProduct extends React.Component {
     }
   }
   componentDidMount() {
-   
+
     this.setCategories(this.props.cats)
 
 
@@ -88,10 +88,11 @@ class ManageProduct extends React.Component {
   }
 
   suggestproductInSearch(event) {
-    if (!this.state.currentCategoryUrl)
+    debugger;
+    if (!this.state.cat)
       return;
 
-    this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
+    this.Server.post(`products/basic-search/${this.state.cat}`, { searchString: this.state.productInSearch },
       (response) => {
 
         if (response.data) {
@@ -124,12 +125,12 @@ class ManageProduct extends React.Component {
 
   }
   searchByFilter(brandOption, offset, limit) {
-    if (!this.state.currentCategoryUrl)
+    if (!this.state.cat)
       return;
     this.setState({
       showLoading: true
     })
-    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, { brand: brandOption },
+    this.Server.post(`products/basic-filter/${this.state.cat}?offset=${offset}&limit=${limit}`, { brand: brandOption },
       (response) => {
         this.setState({
           showLoading: false
@@ -138,7 +139,7 @@ class ManageProduct extends React.Component {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => {  this.addToMyProducts() }} style={{ width: '100%' }} />
+            response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
@@ -167,9 +168,11 @@ class ManageProduct extends React.Component {
   }
 
   itemTemplate(p) {
+    debugger;
+
     return (
-      <div  className="title" style={{ direction: 'rtl',marginBottom:5 }} >
-        <div style={{ display: 'flex',alignItems:'center' }}>
+      <div className="title" style={{ direction: 'rtl', marginBottom: 5 }} >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ textAlign: 'center', width: '5%' }}>
 
           </div>
@@ -211,29 +214,29 @@ class ManageProduct extends React.Component {
           <div style={{ textAlign: 'center', width: '15%' }}>
             <div>
               <div className="row">
-                <BInput   value={this.state.products["price_" + p.price._key]||p.price.price.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="نقدی" absoluteLabel="نقدی" Val={(v) => {
+                <BInput value={this.state.products["price_" + p.price._key] || p.price.price?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="نقدی" absoluteLabel="نقدی" Val={(v) => {
                   let products = this.state.products;
                   products["price_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
-                    products: products  
+                    products: products
                   })
                 }} />
 
-                <BInput  value={this.state.products["oneMoundPrice_" + p.price._key]||p.price.oneMoundPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - یک ماهه" absoluteLabel="چکی - یک ماهه" Val={(v) => {
+                <BInput value={this.state.products["oneMoundPrice_" + p.price._key] || p.price.oneMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - یک ماهه" absoluteLabel="چکی - یک ماهه" Val={(v) => {
                   let products = this.state.products;
                   products["oneMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
-                <BInput value={this.state.products["twoMoundPrice_" + p.price._key]||p.price.twoMoundPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - دو ماهه" absoluteLabel="چکی - دو ماهه" Val={(v) => {
+                <BInput value={this.state.products["twoMoundPrice_" + p.price._key] || p.price.twoMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - دو ماهه" absoluteLabel="چکی - دو ماهه" Val={(v) => {
                   let products = this.state.products;
                   products["twoMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
-                <BInput value={this.state.products["threeMoundPrice_" + p.price._key]||p.price.threeMoundPrice.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - سه ماهه" absoluteLabel="چکی - سه ماهه" Val={(v) => {
+                <BInput value={this.state.products["threeMoundPrice_" + p.price._key] || p.price.threeMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - سه ماهه" absoluteLabel="چکی - سه ماهه" Val={(v) => {
                   let products = this.state.products;
                   products["threeMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
@@ -243,9 +246,9 @@ class ManageProduct extends React.Component {
               </div></div>
           </div>
           <div style={{ textAlign: 'center', width: '1%' }}></div>
-    
+
           <div style={{ textAlign: 'center', width: '7%' }}>
-            <BInput InputNumber={true} value={this.state.products["totalNumberInCart_" + p.price._key]||p.price.totalNumberInCart}  label="" absoluteLabel="" Val={(v) => {
+            <BInput InputNumber={true} value={this.state.products["totalNumberInCart_" + p.price._key] || p.price.totalNumberInCart} label="" absoluteLabel="" Val={(v) => {
               let products = this.state.products;
               products["totalNumberInCart_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
               this.setState({
@@ -256,7 +259,7 @@ class ManageProduct extends React.Component {
           <div style={{ textAlign: 'center', width: '1%' }}></div>
 
           <div style={{ textAlign: 'center', width: '8%' }}>
-            <BInput InputNumber={true} value={this.state.products["totalNumber_" + p.price._key]||p.price.totalNumber}  label="" absoluteLabel="" Val={(v) => {
+            <BInput InputNumber={true} value={this.state.products["totalNumber_" + p.price._key] || p.price.totalNumber} label="" absoluteLabel="" Val={(v) => {
               let products = this.state.products;
               products["totalNumber_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
               this.setState({
@@ -274,7 +277,7 @@ class ManageProduct extends React.Component {
                 }}  ></Button>
               </div>
               <div style={{ width: 40 }}>
-                <Button  onClick={() => {
+                <Button onClick={() => {
                   this.deleteProduct(p)
                 }} > <Delete /> </Button>
               </div>
@@ -284,20 +287,20 @@ class ManageProduct extends React.Component {
           <div style={{ textAlign: 'center', width: '1%' }}></div>
 
           <div style={{ textAlign: 'center', width: '8%' }}>
-            <div style={{textAlign:'center'}}>
-              <InputSwitch checked={this.state.products["show_" + p.price._key]||p.price.show} onChange={(e) => {
+            <div style={{ textAlign: 'center' }}>
+              <InputSwitch checked={this.state.products["show_" + p.price._key] || p.price.show} onChange={(e) => {
                 let products = this.state.products;
                 products["show_" + p.price._key] = e.value;
                 this.setState({
                   products: products
                 })
               }} />
-              <div style={{display:'flex',justifyContent:"center"}}>
-              <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
-                <div>10 رزرو</div>
-              </p>
+              <div style={{ display: 'flex', justifyContent: "center" }}>
+                <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
+                  <div>10 رزرو</div>
+                </p>
               </div>
-              
+
 
             </div>
           </div>
@@ -307,15 +310,15 @@ class ManageProduct extends React.Component {
 
 
   }
-  updateProduct(p,Verify){
-    if(!Verify){
+  updateProduct(p, Verify) {
+    if (!Verify) {
       MySwal.fire({
         icon: 'info',
-        showConfirmButton:false,
+        showConfirmButton: false,
         title: 'آیا از تغییرات اعمال شده شده اطمینان دارید؟',
         html: <div><span>با اعمال تفییرات شما همچنان موظف به تامین کالاهای رزرو شده هستید</span>
-        <Button label="اعمال تغییرات" className="mt-5" onClick={() => {MySwal.close(); this.updateProduct(p,true) }} style={{ width: '90%' }} />
-        <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => {MySwal.close(); }} style={{ width: '90%' }} /></div>
+          <Button label="اعمال تغییرات" className="mt-5" onClick={() => { MySwal.close(); this.updateProduct(p, true) }} style={{ width: '90%' }} />
+          <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
       })
       return;
     }
@@ -323,17 +326,17 @@ class ManageProduct extends React.Component {
     let priceKey = p.price._key;
     let param = {
       "codeForSupplier": p.price.codeForSupplier,
-      "oneMoundPrice": parseInt(p.price.oneMoundPrice),
-      "price": parseInt(p.price.price),
+      "oneMoundPrice": parseInt(p.price.oneMoundPrice||0),
+      "price": parseInt(p.price.price||0),
       "show": p.price.show,
-      "threeMoundPrice": parseInt(p.price.threeMoundPrice),
-      "totalNumber": parseInt(p.price.totalNumber),
-      "totalNumberInCart": parseInt(p.price.totalNumberInCart),
-      "twoMoundPrice": parseInt(p.price.twoMoundPrice)
+      "threeMoundPrice": parseInt(p.price.threeMoundPrice||0),
+      "totalNumber": parseInt(p.price.totalNumber||0),
+      "totalNumberInCart": parseInt(p.price.totalNumberInCart||0),
+      "twoMoundPrice": parseInt(p.price.twoMoundPrice||0)
     }
-    for(let pp in this.state.products) {
-      if(pp.indexOf(p.price._key) > -1){
-        param[pp.split("_"+p.price._key)[0]] = parseInt(this.state.products[pp])
+    for (let pp in this.state.products) {
+      if (pp.indexOf(p.price._key) > -1) {
+        param[pp.split("_" + p.price._key)[0]] = parseInt(this.state.products[pp])
       }
     }
     this.setState({
@@ -344,18 +347,17 @@ class ManageProduct extends React.Component {
         this.setState({
           showLoading: false
         })
-        debugger; 
 
-        if(response.data.codeForSupplier){
-          
+        if (response.data.codeForSupplier) {
+
           MySwal.fire({
             icon: 'success',
-            showConfirmButton:false,
+            showConfirmButton: false,
             title: 'عملیات با موفقیت انجام شد',
             html: <div><span>عملیات با موفقیت انجام شد</span>
-            <Button label="بستن" className="mt-5" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div>
-         })
-        }else{
+              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+          })
+        } else {
           MySwal.fire({
             icon: 'error',
             title: 'خطا',
@@ -363,7 +365,7 @@ class ManageProduct extends React.Component {
           })
 
         }
-        
+
 
       }, (error) => {
         this.setState({
@@ -378,17 +380,17 @@ class ManageProduct extends React.Component {
       }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
 
-      
+
   }
-  deleteProduct(p,Verify){
-    if(!Verify){
+  deleteProduct(p, Verify) {
+    if (!Verify) {
       MySwal.fire({
         icon: 'info',
-        showConfirmButton:false,
+        showConfirmButton: false,
         title: 'آیا از حذف موارد انتخاب شده اطمینان دارید؟',
         html: <div><span>با حذف موارد انتخاب شده، همچنان موظف به تامین کالاهای رزرو شده خواهید بود</span>
-        <Button label="اعمال تغییرات" className="mt-5" onClick={() => {MySwal.close(); this.deleteProduct(p,true) }} style={{ width: '90%' }} />
-        <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => {MySwal.close(); }} style={{ width: '90%' }} /></div>
+          <Button label="اعمال تغییرات" className="mt-5" onClick={() => { MySwal.close(); this.deleteProduct(p, true) }} style={{ width: '90%' }} />
+          <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
       })
       return;
     }
@@ -402,18 +404,17 @@ class ManageProduct extends React.Component {
         this.setState({
           showLoading: false
         })
-        debugger; 
 
-        if(response.data.codeForSupplier){
-          
+        if (response.data.codeForSupplier) {
+
           MySwal.fire({
             icon: 'success',
-            showConfirmButton:false,
+            showConfirmButton: false,
             title: 'عملیات با موفقیت انجام شد',
             html: <div><span>عملیات با موفقیت انجام شد</span>
-            <Button label="بستن" className="mt-5" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div>
-         })
-        }else{
+              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+          })
+        } else {
           MySwal.fire({
             icon: 'error',
             title: 'خطا',
@@ -421,7 +422,7 @@ class ManageProduct extends React.Component {
           })
 
         }
-        
+
 
       }, (error) => {
         this.setState({
@@ -436,7 +437,7 @@ class ManageProduct extends React.Component {
       }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
 
-      
+
   }
   getProducts(offset, limit, categoryUrl) {
     this.setState({
@@ -466,7 +467,7 @@ class ManageProduct extends React.Component {
     return (
       <>
         <Header />
-        
+
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
@@ -616,75 +617,75 @@ class ManageProduct extends React.Component {
                 <div className="col-lg-12 col-12" style={{ position: 'relative' }}>
 
                   <Card className="b-card2  mt-5">
-                   
-                      <div  className="title">
-                        <div className="row mb-5 " style={{ background: '#fff', padding: '0.5rem 0.25rem 0.5rem 2.125rem', borderRadius: 8, marginRight: 10, marginLeft: 10 }}>
-                          <div className="col-lg-3 col-12">
-                            <Dropdown optionLabel="name" value={this.state.sort} className="b-border" style={{ width: '100%' }} options={[{ name: "آخرین کالاهای اضافه شده", value: "" }]} onChange={(e) => this.setState({ sort: e.value })} placeholder="آخرین کالاهای اضافه شده" />
+
+                    <div className="title">
+                      <div className="row mb-5 " style={{ background: '#fff', padding: '0.5rem 0.25rem 0.5rem 2.125rem', borderRadius: 8, marginRight: 10, marginLeft: 10 }}>
+                        <div className="col-lg-3 col-12">
+                          <Dropdown optionLabel="name" value={this.state.sort} className="b-border" style={{ width: '100%' }} options={[{ name: "آخرین کالاهای اضافه شده", value: "" }]} onChange={(e) => this.setState({ sort: e.value })} placeholder="آخرین کالاهای اضافه شده" />
+                        </div>
+                        <div className="col-lg-6 col-12"  >
+                        </div>
+                        <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'flex-end' }}>
+                          <Dropdown optionLabel="name" value={this.state.pageNum} className="b-border" options={[{ name: "تعداد نمایش در صفحه", value: "" }]} onChange={(e) => this.setState({ pageNum: e.value })} placeholder="تعداد نمایش در صفحه" />
+                          <p style={{ marginRight: 30 }}>50 مورد</p>
+                        </div>
+
+                      </div>
+                      <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ textAlign: 'center', width: '5%' }}>
+
                           </div>
-                          <div className="col-lg-6 col-12"  >
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '13%' }}>
+                            <div style={{ width: '90%' }}>عنوان و کد کالا</div>
                           </div>
-                          <div className="col-lg-3 col-12" style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'flex-end' }}>
-                            <Dropdown optionLabel="name" value={this.state.pageNum} className="b-border" options={[{ name: "تعداد نمایش در صفحه", value: "" }]} onChange={(e) => this.setState({ pageNum: e.value })} placeholder="تعداد نمایش در صفحه" />
-                            <p style={{ marginRight: 30 }}>50 مورد</p>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '7%' }}>
+                            <div style={{ width: '90%' }}>کد محصول فروشنده</div>
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '5%' }}>
+                            <div style={{ width: '90%' }}>تنوع</div>
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+
+                          <div style={{ textAlign: 'center', width: '7%' }}>
+                            <div style={{ width: '90%' }}>دسته بندی</div>
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '5%' }}>
+                            <div style={{ width: '90%' }}>کمترین قیمت(تومان)</div>
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '15%' }}>
+                            <div style={{ width: '90%' }}>قیمت کالا (تومان)</div>
+
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '7%' }}>
+                            <div style={{ width: '90%' }}>موجودی</div>
+
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '8%' }}>
+                            <div style={{ width: '90%' }}>حداکثر در سبد</div>
+
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '10%' }}>
+                            <div style={{ width: '90%' }}>عملیات</div>
+
+                          </div>
+                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'center', width: '8%' }}>
+                            <div style={{ width: '90%' }}>وضعیت</div>
+
                           </div>
 
                         </div>
-                        <div className="p-clearfix" style={{ direction: 'rtl',background:'#fff',marginBottom:20 }} >
-                          <div style={{ display: 'flex',justifyContent:'space-between',alignItems:'center' }}>
-                            <div style={{ textAlign: 'center', width: '5%' }}>
-
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '13%' }}>
-                              <div style={{width:'90%'}}>عنوان و کد کالا</div>
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '7%' }}>
-                              <div style={{width:'90%'}}>کد محصول فروشنده</div>
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '5%' }}>
-                              <div style={{width:'90%'}}>تنوع</div>
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-
-                            <div style={{ textAlign: 'center', width: '7%' }}>
-                              <div style={{width:'90%'}}>دسته بندی</div>
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '5%' }}>
-                              <div style={{width:'90%'}}>کمترین قیمت(تومان)</div>
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '15%' }}>
-                              <div style={{width:'90%'}}>قیمت کالا (تومان)</div>
-
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '7%' }}>
-                              <div style={{width:'90%'}}>موجودی</div>
-
-                            </div> 
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '8%' }}>
-                              <div style={{width:'90%'}}>حداکثر در سبد</div>
-
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '10%' }}>
-                              <div style={{width:'90%'}}>عملیات</div>
-
-                            </div>
-                            <div style={{ textAlign: 'center', width: '1%' }}></div>
-                            <div style={{ textAlign: 'center', width: '8%' }}>
-                              <div style={{width:'90%'}}>وضعیت</div>
-
-                            </div>
-
-                          </div>
-                        </div>
-                        {this.state.GridData.length > 0 ?
+                      </div>
+                      {this.state.GridData.length > 0 ?
                         <DataView value={this.state.GridData} itemTemplate={this.itemTemplate}></DataView>
                         :
                         <div>
@@ -692,7 +693,7 @@ class ManageProduct extends React.Component {
                             <div style={{ textAlign: 'center' }}>
                               <p>موردی برای نمایش وجود ندارد</p>
                             </div>
-  
+
                             :
                             <div style={{ textAlign: 'center' }}>
                               <p>موردی پیدا نشد</p>
@@ -700,22 +701,22 @@ class ManageProduct extends React.Component {
                               <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
                                 <div className="col-lg-4 col-12" >
                                   <button className="btn btn-primary" onClick={() => { this.setState({ catOptions: [], payTypeOptions: [] }); this.searchByFilter("", 0, 10) }} style={{ width: '100%' }} >حذف فیلترها</button>
-  
+
                                 </div>
                                 <div className="col-lg-4 col-12" >
                                   <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
-  
+
                                 </div>
                               </div>
                             </div>
-  
-  
-                          }
-                          </div>
-                        }
-                      </div>
 
-                      
+
+                          }
+                        </div>
+                      }
+                    </div>
+
+
 
                   </Card>
                 </div>
@@ -761,8 +762,8 @@ export async function getStaticProps({ query }) {
 
 const mapStateToProps = (state) => {
   return {
-    employKey: state.employKey,
-    accessToken: state.accessToken
+      employKey: state.token.employKey,
+      accessToken: state.token.accessToken
   }
 }
 export default connect(mapStateToProps)(ManageProduct)

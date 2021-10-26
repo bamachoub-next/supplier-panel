@@ -88,10 +88,10 @@ class ManageProduct2 extends React.Component {
   }
 
   suggestproductInSearch(event) {
-    if (!this.state.currentCategoryUrl)
+    if (!this.state.cat)
       return;
 
-    this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
+    this.Server.post(`products/basic-search/${this.state.cat}`, { searchString: this.state.productInSearch },
       (response) => {
 
         if (response.data) {
@@ -124,12 +124,12 @@ class ManageProduct2 extends React.Component {
 
   }
   searchByFilter(brandOption, offset, limit) {
-    if (!this.state.currentCategoryUrl)
+    if (!this.state.cat)
       return;
     this.setState({
       showLoading: true
     })
-    this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, { brand: brandOption },
+    this.Server.post(`products/basic-filter/${this.state.cat}?offset=${offset}&limit=${limit}`, { brand: brandOption },
       (response) => {
         this.setState({
           showLoading: false
@@ -175,9 +175,7 @@ class ManageProduct2 extends React.Component {
       price: "نقدی",
     }
 
-    for (let vv in p.estelam.variantArr[0]) {
-      VariantArr.push(vv)
-    }
+    
     return (
       <div className="title" style={{ display: 'flex', alignItems: 'center', direction: 'rtl', marginBottom: 5, width: '100%' }}>
         <div style={{ textAlign: 'center', width: '5%' }}>
@@ -204,7 +202,7 @@ class ManageProduct2 extends React.Component {
         <div style={{ textAlign: 'center', width: '1%' }}></div>
 
         <div style={{ textAlign: 'center', width: '5%' }}>
-          <span>{p.estelam.variantArr[0]?.variant}</span>
+          <span>{p.estelam.variant}</span>
         </div>
         <div style={{ textAlign: 'center', width: '1%' }}></div>
 
@@ -221,26 +219,31 @@ class ManageProduct2 extends React.Component {
         <div style={{ textAlign: 'center', width: '20%' }}>
           <div>
             <div style={{ flexWrap: 'wrap', display: 'flex' }}>
-              {VariantArr.map((v, i) => {
-                if (map[v]) {
-                  return (
-                    <Chip className="b-p-chip2" label={map[v]} _id={v} style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                      let temp = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
-                      debugger;
-                      if (temp == "نقدی")
-                        p.estelam.variantArr[0].price = false;
-                      if (temp == "چکی - یک ماهه")
-                        p.estelam.variantArr[0].oneMoundPrice = false;
-                      if (temp == "چکی - دو ماهه")
-                        p.estelam.variantArr[0].twoMoundPrice = false;
-                      if (temp == "چکی - سه ماهه")
-                        p.estelam.variantArr[0].threeMoundPrice = false;
+                  {p.estelam.price &&
+                  <Chip className="b-p-chip2" label="نقدی" _id="price" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
+                    p.estelam.price = false;
 
-                    }} />
-                  )
-                }
+                  }} />
+                  }
+                  {p.estelam.oneMoundPrice &&
+                  <Chip className="b-p-chip2" label="چکی - یک ماهه" _id="oneMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
+                    p.estelam.oneMoundPrice = false;
 
-              })}
+                  }} />
+                  }
+                  {p.estelam.twoMoundPrice &&
+                  <Chip className="b-p-chip2" label="چکی - دو ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
+                    p.estelam.twoMoundPrice = false;
+
+                  }} />
+                  }
+                  {p.estelam.threeMoundPrice &&
+                  <Chip className="b-p-chip2" label="چکی - سه ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
+                    p.estelam.threeMoundPrice = false;
+                  
+                  }} />
+                  }
+                  
             </div>
           </div>
         </div>
@@ -266,7 +269,7 @@ class ManageProduct2 extends React.Component {
 
         <div style={{ textAlign: 'center', width: '14%' }}>
           <div style={{ textAlign: 'center' }}>
-            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] || p.estelam.variantArr[0].show} onChange={(e) => {
+            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] || p.estelam.show} onChange={(e) => {
               let showArr = this.state.showArr;
               showArr["show_" + p.estelam._key] = e.value;
               this.setState({
@@ -287,54 +290,61 @@ class ManageProduct2 extends React.Component {
 
 
   }
-  updateProduct(p,Verify) {
-    if(!Verify){
+  updateProduct(p, Verify) {
+    if (!Verify) {
       MySwal.fire({
         icon: 'info',
-        showConfirmButton:false,
+        showConfirmButton: false,
         title: 'آیا از تغییرات اعمال شده شده اطمینان دارید؟',
         html: <div><span>با اعمال تفییرات شما همچنان موظف به تامین کالاهای رزرو شده هستید</span>
-        <Button label="اعمال تغییرات" className="mt-5" onClick={() => {MySwal.close(); this.updateProduct(p,true) }} style={{ width: '90%' }} />
-        <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => {MySwal.close(); }} style={{ width: '90%' }} /></div>
+          <Button label="اعمال تغییرات" className="mt-5" onClick={() => { MySwal.close(); this.updateProduct(p, true) }} style={{ width: '90%' }} />
+          <Button label="انصراف" className="mt-2 btn btn-outline-primary" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
       })
       return;
     }
     let priceColName = p.estelam._id;
-    
-    let variantArr = [{
-      "oneMoundPrice": p.estelam.variantArr[0].oneMoundPrice,
-      "price": p.estelam.variantArr[0].price,
-      "show": p.estelam.variantArr[0].show,
-      "threeMoundPrice": p.estelam.variantArr[0].threeMoundPrice,
-      "twoMoundPrice": p.estelam.variantArr[0].twoMoundPrice
 
-    }]
-    
-    for(let pp in this.state.showArr) {
-      if(pp.indexOf(p.estelam._key) > -1){
-        variantArr[0]["show"] = this.state.showArr[pp]
+    let variantArr = {
+      "oneMoundPrice": p.estelam.oneMoundPrice||false,
+      "price": p.estelam.price||false,
+      "show": p.estelam.show||false,
+      "threeMoundPrice": p.estelam.threeMoundPrice||false,
+      "twoMoundPrice": p.estelam.twoMoundPrice||false
+
+    }
+
+    for (let pp in this.state.showArr) {
+      if (pp.indexOf(p.estelam._key) > -1) {
+        variantArr["show"] = this.state.showArr[pp]||false
       }
     }
     let param = {
+      "_from": p.estelam._from,
+      "_id": p.estelam._id,
+      "_key": p.estelam._key,
+      "_rev": p.estelam._rev,
+      "_to": p.estelam._to,
+      "createdAt":p.estelam.createdAt,
+      "variant":p.estelam.variant,
       "codeForSupplier": p.estelam.codeForSupplier,
-      "variantArr": variantArr
+      ...variantArr
     }
-    this.Server.put(`add-buy-method/price/${priceColName}/`, param,
+    this.Server.put(`add-buy-method/estelam/${priceColName}/`, param,
       (response) => {
         this.setState({
           showLoading: false
         })
 
-        if(response.data.codeForSupplier){
-          
+        if (response.data.codeForSupplier) {
+
           MySwal.fire({
             icon: 'success',
-            showConfirmButton:false,
+            showConfirmButton: false,
             title: 'عملیات با موفقیت انجام شد',
             html: <div><span>عملیات با موفقیت انجام شد</span>
-            <Button label="بستن" className="mt-5" onClick={() => {MySwal.close();} } style={{ width: '90%' }} /></div>
-         })
-        }else{
+              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+          })
+        } else {
           MySwal.fire({
             icon: 'error',
             title: 'خطا',
@@ -451,7 +461,7 @@ class ManageProduct2 extends React.Component {
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
-                    مدیریت کالاهای استعلامی 
+                    مدیریت کالاهای استعلامی
                   </div>
                   <div className="small-title mb-5">
                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
@@ -729,8 +739,8 @@ export async function getStaticProps({ query }) {
 
 const mapStateToProps = (state) => {
   return {
-    employKey: state.employKey,
-    accessToken: state.accessToken
+      employKey: state.token.employKey,
+      accessToken: state.token.accessToken
   }
 }
 export default connect(mapStateToProps)(ManageProduct2)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PersonOutlineOutlined, MailOutlineOutlined,AccountBalanceWalletOutlined } from '@material-ui/icons';
+import { PersonOutlineOutlined, MailOutlineOutlined, AccountBalanceWalletOutlined } from '@material-ui/icons';
 import { Menubar } from 'primereact/menubar';
 import { Badge } from 'primereact/badge';
 import Router from 'next/router'
@@ -14,105 +14,105 @@ Router.onRouteChangeError = () => NProgress.done()
 
 const items = [
   {
-     label:'فروشگاه',
-     items:[
-        {
-          label:"ایجاد کالای جدید",
-          command : (event) => {
+    label: 'فروشگاه',
+    items: [
+      {
+        label: "ایجاد کالای جدید",
+        command: (event) => {
 
-            Router.push('/admin/addproduct')
+          Router.push('/admin/addproduct')
 
-          }
-        },
-        {
-          label:"تاریخچه درخواست کالا",
-          command : (event) => {
+        }
+      },
+      {
+        label: "تاریخچه درخواست کالا",
+        command: (event) => {
 
-            Router.push('/admin/producthistory')
+          Router.push('/admin/producthistory')
 
-          }
-        },
-        {
-          label:"مدیریت کالاهای قیمت ثابت",
-          command : (event) => {
+        }
+      },
+      {
+        label: "مدیریت کالاهای قیمت ثابت",
+        command: (event) => {
 
-            Router.push('/admin/manageproduct')
+          Router.push('/admin/manageproduct')
 
-          }
-        },
-        {
-          label:"مدیریت کالاهای استعلامی",
-          command : (event) => {
+        }
+      },
+      {
+        label: "مدیریت کالاهای استعلامی",
+        command: (event) => {
 
-            Router.push('/admin/manageproduct2')
+          Router.push('/admin/manageproduct2')
 
-          }
-        },
-     ]
+        }
+      },
+    ]
   },
-  
+
   {
-     label:'سفارشات',
-     items:[
-        {}
-     ]
+    label: 'سفارشات',
+    items: [
+      {}
+    ]
   },
   {
-     label:'گزارشات',
-     items:[
-     {}
-     ]
+    label: 'گزارشات',
+    items: [
+      {}
+    ]
   }
 ];
 
 
 class Header extends React.Component {
   constructor(props) {
-		super(props);
-		this.state = {
-      activeIndex:0
-		}
+    super(props);
+    this.state = {
+      activeIndex: 0
+    }
   }
   render() {
     return (
-      <div className="bg b-menuBar"  style={{direction:'rtl'}}  >
+      <div className="bg b-menuBar" style={{ direction: 'rtl' }}  >
 
-      <div className="row" style={{paddingTop:25}} >
-        <div className="col-lg-4 col-12 large-title" style={{textAlign:'right'}} >
-          <a href="#" onClick={()=>{Router.push('/admin/dashboard')}} style={{textDecoration:'none'}} >
-            <span style={{paddingRight:20}}>پنل فروشندگان</span>
+        <div className="row" style={{ paddingTop: 25 }} >
+          <div className="col-lg-4 col-12 large-title" style={{ textAlign: 'right' }} >
+            <a href="#" onClick={() => { Router.push('/admin/dashboard') }} style={{ textDecoration: 'none' }} >
+              <span style={{ paddingRight: 20 }}>پنل فروشندگان</span>
 
-          </a>
-        </div>
-        <div className="col-lg-5 col-12 large-title" style={{textAlign:'center'}} >
-          <span>Logo</span>
-        </div>
-        <div className="col-lg-3 col-12 title" style={{textAlign:'center'}} >
-          <div style={{display:'flex',justifyContent:'space-evenly'}}>
-            <div>
-              <PersonOutlineOutlined />
-              <span>پارس چوب</span>
-            </div>
-            <div style={{position:'relative'}}>
-            <Badge value="18" style={{position:'absolute',top:-12,left:14}}  severity="info"></Badge>
-              <MailOutlineOutlined />
-              
+            </a>
+          </div>
+          <div className="col-lg-5 col-12 large-title" style={{ textAlign: 'center' }} >
+            <span>Logo</span>
+          </div>
+          <div className="col-lg-3 col-12 title" style={{ textAlign: 'center' }} >
+            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+              <div>
+                <PersonOutlineOutlined />
+                <span>پارس چوب</span>
+              </div>
+              <div style={{ position: 'relative' }}>
+                <Badge value="18" style={{ position: 'absolute', top: -12, left: 14 }} severity="info"></Badge>
+                <MailOutlineOutlined />
+
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="row" style={{paddingTop:50}} >
-        <div className="col-lg-10 col-12" style={{textAlign:'center'}} >
-        <Menubar
-        model={items}
-      />
-        </div>
-        <div className="col-lg-2 col-12" style={{textAlign:'center'}}  >
-          <AccountBalanceWalletOutlined />
-          <span>کیف پول</span>
+        <div className="row" style={{ paddingTop: 50 }} >
+          <div className="col-lg-10 col-12" style={{ textAlign: 'center' }} >
+            <Menubar
+              model={items}
+            />
+          </div>
+          <div className="col-lg-2 col-12" style={{ textAlign: 'center' }}  >
+            <AccountBalanceWalletOutlined />
+            <span>کیف پول</span>
 
+          </div>
         </div>
-      </div>
 
       </div>
     )

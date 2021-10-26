@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
-import reducer from './../reducer.js';
+import store from './../store.js';
 import { Provider } from 'react-redux'
 
-import { createStore } from 'redux';
 
 import "../node_modules/primereact/resources/primereact.min.css";
 import "../node_modules/primeicons/primeicons.css";
@@ -16,8 +15,7 @@ import '../styles/globals.scss'
 
 
 class MyApp extends Component {
-
-  store = createStore(reducer);
+  
   constructor(props) {
     super(props)
     this.state = {
@@ -31,9 +29,8 @@ class MyApp extends Component {
   }
   render() {
     const {Component, pageProps} = this.props;
-
     return ( 
-      <Provider store={this.store}>
+      <Provider store={store}>
         <Component {...pageProps} />
       </Provider>
     
