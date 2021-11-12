@@ -6,25 +6,30 @@ import { Dropdown } from 'primereact/dropdown';
 import { Message } from 'primereact/message';
 import { InputSwitch } from 'primereact/inputswitch';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import { Dialog } from 'primereact/dialog';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Close, Search, DeleteOutline, Delete } from '@material-ui/icons';
+import { Close, Search, DeleteOutline, Delete, ThreeSixty } from '@material-ui/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { InputText } from 'primereact/inputtext';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dialog } from 'primereact/dialog';
 import Server from './../../components/Server'
 import Header from './../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Checkbox } from 'primereact/checkbox';
 
+const switchBtn = [
+  { label: 'فعال', value: true },
+  { label: 'غیرفعال', value: false }
+];
 
 class ManageProduct extends React.Component {
   constructor(props) {
@@ -34,9 +39,12 @@ class ManageProduct extends React.Component {
     this.state = {
       activeIndex: 0,
       catOptions: [],
+      changeType_price_label:"",
+      showGroupChangeDialog:false,
       oneMoundPrice_1: "",
       catOption: [],
       payTypeOptions: [],
+      groupedSelect:{},
       payTypeOption: [],
       products: {},
       showLoading: false,
@@ -87,8 +95,64 @@ class ManageProduct extends React.Component {
 
   }
 
-  suggestproductInSearch(event) {
+  
+  setGroupChange(event) {
+
+    let param = {
+      "oneMonthPrice" : this.state.group_cheque1||false,
+      "threeMonthPrice": this.state.group_cheque3||false,
+      "twoMonthPrice": this.state.group_cheque2||false,
+      "price": this.state.group_price||false,
+      "changePrice":this.state.changePrice||false,
+      "changeStatus":this.state.changeStatus||false,
+      "changePriceMethod" : this.state.changePriceMethod||'',
+      "changePriceValue" : parseInt(this.state.changePriceValue)||0,
+      "changeNumberMethod" :  this.state.changeNumberMethod||'',
+      "changeNumberValue" : parseInt(this.state.changeNumberValue)||0,
+      "show":this.state.group_status || false
+
+
+
+    }
+    let priceKeys = [];
+    let priceColName = "";
     debugger;
+
+    for(let item in this.state.groupedSelect){
+      priceKeys.push(this.state.groupedSelect[item].price._key.toString())
+      priceColName = this.state.groupedSelect[item].price._id.split("/")[0];
+    }
+    param["priceKeys"] = priceKeys;
+    this.Server.put(`add-buy-method/price/group_update/${priceColName}`, param,
+      (response) => {
+        debugger;
+
+        if (response.data.codeForSupplier) {
+
+          MySwal.fire({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'عملیات با موفقیت انجام شد',
+            html: <div><span>عملیات با موفقیت انجام شد</span>
+              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+          })
+        } else {
+          MySwal.fire({
+            icon: 'error',
+            title: 'خطا',
+            text: response.data.message
+          })
+
+        }
+
+      }, (error) => {
+
+
+      },{ Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
+    )
+
+  }
+  suggestproductInSearch(event) {
     if (!this.state.cat)
       return;
 
@@ -168,12 +232,26 @@ class ManageProduct extends React.Component {
   }
 
   itemTemplate(p) {
-    debugger;
 
     return (
       <div className="title" style={{ direction: 'rtl', marginBottom: 5 }} >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ textAlign: 'center', width: '5%' }}>
+            <Checkbox onChange={e => {
+
+              let groupedSelect = this.state.groupedSelect;
+              if(!e.checked){
+                delete groupedSelect[p.price._key]
+              }else{
+                groupedSelect[p.price._key] = {
+                  price:p.price,
+                  product:p.product
+                }
+              }
+              debugger;  
+              this.setState({groupedSelect:groupedSelect})
+            
+            }} checked={this.state.groupedSelect[p.price._key]}></Checkbox>
 
           </div>
           <div style={{ textAlign: 'center', width: '1%' }}></div>
@@ -467,7 +545,40 @@ class ManageProduct extends React.Component {
     return (
       <>
         <Header />
+        {Object.entries(this.state.groupedSelect).length > 0 &&
+        <div style={{width:'100%',height:'4.5rem',color:'#fff',position:'fixed',bottom:0,zIndex:2,background:'#2699fb'}} >
+          <div style={{direction:'rtl',height:'100%',display:'flex',justifyContent:'space-around',flexWrap:'wrap'}}>
+           
+            
+            <div  style={{display:'flex',justifyContent:'space-evenly',alignItems:'center',minWidth:320}}>
+                  <span style={{color:'#fff'}}>{Object.entries(this.state.groupedSelect).length} مورد انتخاب شده </span>
+                  <Button className="title" onClick={() => {
+                    let groupedSelect = []
+                    for(let i=0;i<this.state.GridData.length;i++){
+                      groupedSelect[this.state.GridData[i].price._key] = {
+                        price:this.state.GridData[i].price,
+                        product:this.state.GridData[i].product
+                      }
+                    }
+                    this.setState({
+                      groupedSelect:groupedSelect
+                    })
+                  }} label="انتخاب همه" className="p-button-outlined" style={{border:0,background:'transparent',color:'#fff'}} >  </Button>
 
+
+            </div>
+         
+            <div style={{display:'flex',justifyContent:'space-around',alignItems:'center',minWidth:320}}>
+                        <Button className="title" onClick={() => {this.setState({showGroupChangeDialog:true})}} label="تغییر گروهی" className="p-button-outlined" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
+                        <Button className="title" onClick={() => {}} label="حذف" className="p-button-outlined" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
+                        <Button className="title" onClick={() => {this.setState({groupedSelect:{}})}} label="لغو انتخاب" className="p-button-outlined" style={{color:'#fff',background:'transparent',borderColor:'#fff'}} >  </Button>
+
+            </div>
+          </div>
+        </div>
+        
+        }
+        
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
@@ -730,7 +841,226 @@ class ManageProduct extends React.Component {
           </div>
 
 
+          <Dialog visible={this.state.showGroupChangeDialog}  onHide={() => { this.setState({ showGroupChangeDialog: false }) }} style={{ width: '50vw' }} maximizable={true}>
+          <div style={{display:'flex',flexDirection:'column',direction:'rtl'}} >
+              <div style={{width:'100%'}}>
+                <div style={{textAlign:'right',width:'100%'}}>
+                  <p>تغییراتی که میخواهید اعمال شود را انتخاب کنید</p>
 
+                </div>
+                <div style={{textAlign:'right',width:'100%'}}>
+                  <div style={{display:'flex'}}>
+                  <div style={{border:'1px solid #bce0fd',padding:' 0.75rem',borderRadius:8,display:'flex',alignItems:'center',marginLeft:30,width:'64rem'}}>
+                    <Checkbox onChange={e => {
+
+                      this.setState({changePrice:e.checked})
+
+                      }} checked={this.state.changePrice}></Checkbox>
+                    <span style={{marginRight:5}} className="title">تغییر قیمت</span>
+
+                  </div>
+                  <div style={{border:'1px solid #bce0fd',padding:' 0.75rem',borderRadius:8,display:'flex',alignItems:'center',marginLeft:30,width:'64rem'}}>
+                    <Checkbox onChange={e => {
+
+                      this.setState({changeNumber:e.checked})
+
+                      }} checked={this.state.changeNumber}></Checkbox>
+                    <span style={{marginRight:5}} className="title">تغییر موجودی</span>
+
+                  </div>
+                  <div style={{border:'1px solid #bce0fd',padding:' 0.75rem',borderRadius:8,display:'flex',alignItems:'center',marginLeft:30,width:'64rem'}}>
+                    <Checkbox onChange={e => {
+
+                      this.setState({changeStatus:e.checked})
+
+                      }} checked={this.state.changeStatus}></Checkbox>
+                    <span style={{marginRight:5}} className="title">تغییر وضعیت</span>
+
+                  </div>
+                  
+                  </div>
+                  <div>
+                    <div style={{border:'solid 1px #bce0fd',width:'100%',marginTop:16}} ></div>
+                  </div>
+                  <div>
+                    {this.state.changePrice &&
+                        <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
+                        <div>
+                        <p style={{marginTop:16,fontWeight:500}}>تغییر قیمت</p>
+                        </div>
+                        <div>
+                          <span className="small-title">اعمال تغییر روی</span>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center'}}>
+                          <div style={{marginLeft:15}}>
+                          <Checkbox onChange={e => {
+
+                          this.setState({group_price:e.checked})
+
+                          }} checked={this.state.group_price}></Checkbox>
+                          <span className="title" style={{marginRight:5}}>پرداخت نقدی</span>
+                          </div>
+                          <div style={{marginLeft:15}}>
+                          <Checkbox onChange={e => {
+
+                          this.setState({group_cheque1:e.checked})
+
+                          }} checked={this.state.group_cheque1}></Checkbox>
+                          <span className="title" style={{marginRight:5}}>پرداخت چکی - یک ماهه</span>
+                          </div>
+                          <div style={{marginLeft:15}}>
+                          <Checkbox onChange={e => {
+
+                          this.setState({group_cheque2:e.checked})
+
+                          }} checked={this.state.group_cheque2}></Checkbox>
+                          <span className="title" style={{marginRight:5}}>پرداخت چکی - دو ماهه</span>
+                          </div>
+                          <div style={{marginLeft:15}}>
+                          <Checkbox onChange={e => {
+
+                          this.setState({group_cheque3:e.checked})
+
+                          }} checked={this.state.group_cheque3}></Checkbox>
+                          <span className="title" style={{marginRight:5}}>پرداخت چکی - سه ماهه</span>
+                          </div>
+                        </div>
+                          <div>
+                          <p className="small-title" style={{marginTop:16,fontWeight:500}}>پرداخت نقدی</p>
+                          </div>
+                          <div>
+                            <span className="title" className="small-title">نحوه اعمال تغییر</span>
+                          </div>
+                          <div style={{display:'flex',alignItems:'end'}}>
+                          <div>
+                          <Dropdown value={this.state.changePriceMethod} className="b-border title" options={[{ label: "جایگزینی قیمت", value: "replace" },{ label: "کاهش قیمت", value: "mines" },{ label: "کاهش درصدی قیمت", value: "mines-percent" },{ label: "افزایش قیمت", value: "add" },{ label: "افزایش درصدی", value: "add-percent" }]} style={{ width: 250 }} onChange={(e) => {
+                            let changePriceMethod_label ="قیمت جدید (تومان)";
+                            if(e.value == "1")
+                              changePriceMethod_label ="قیمت جدید (تومان)";
+                            if(e.value == "2")
+                              changePriceMethod_label ="مقدار کاهش قیمت (تومان)";
+                            if(e.value == "3")
+                              changePriceMethod_label ="درصد کاهش قیمت";
+                            if(e.value == "3")
+                              changePriceMethod_label ="مقدار افزایش  قیمت (تومان)";
+                            if(e.value == "3")
+                              changePriceMethod_label ="درصد افزایش قیمت";
+                            this.setState({
+                              changePriceMethod: e.value,
+                              changePriceMethod_label:changePriceMethod_label
+                            })
+                          }
+
+                          }
+                            placeholder="انتخاب کنید" />
+                          </div>
+                          <div style={{marginRight:20}}>
+                          <label htmlFor="name" className="p-d-block">{this.state.changePriceMethod_label}</label>
+                          <BInput  value={this.state.changePriceValue} Val={(v) => {
+                          this.setState({
+                            changePriceValue: v
+                          })
+                        }} />
+                          </div>
+                          <div>
+
+                          </div>
+                        </div>
+                        
+                        
+                    </div>
+                    }
+                    {this.state.changeNumber &&
+                        <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
+                        <div>
+                        <p style={{marginTop:16,fontWeight:500}}>تغییر موجودی</p>
+                        </div>
+                        <div>
+                          <span className="small-title">نحوه اعمال تغییر</span>
+                        </div>
+                        <div style={{display:'flex',alignItems:'end'}}>
+                          <div>
+                          <Dropdown value={this.state.changeNumberMethod} className="b-border" options={[{ label: "جایگزینی موجودی", value: "replace" },{ label: "کاهش موجودی", value: "doown" },{ label: "افزایش موجودی", value: "up" },{ label: "ناموجود کردن", value: "zero" }]} style={{ width: 250 }} onChange={(e) => {
+                            let changeNumberMethod_label ="تعداد جدید";
+                            if(e.value == "replace")
+                              changeNumberMethod_label ="تعداد جدید";
+                            if(e.value == "minus")
+                              changeNumberMethod_label ="مقدار کاهش";
+                            if(e.value == "add")
+                              changeNumberMethod_label ="مقدار افزایش";
+
+                            this.setState({
+                              changeNumberMethod: e.value,
+                              changeType_number_label:changeNumberMethod_label
+                            })
+                          }
+
+                          }
+                            placeholder="انتخاب کنید" />
+                            {this.state.changeType_number == "zero" &&
+                              <div className="small-title">با صفر کردن موجودی، همچنان موظف به تامین 
+                              کالاهای رزرو شده هستید</div>
+                            }
+                            
+                          </div>
+                          {this.state.changeType_number != "4" &&
+                            <div style={{marginRight:20,position:'relative'}}>
+                            <label htmlFor="name" className="p-d-block">{this.state.changeNumberMethod_label}</label>
+                            <BInput value={this.state.changeNumberValue} Val={(v) => {
+                            this.setState({
+                              changeNumberValue: v
+                            })
+                          }} />
+                          <label htmlFor="name" className="p-d-block" style={{position:'absolute',bottom:-20}}>به واحدها توجه نمایید</label>
+
+
+
+                            </div>
+                          }
+                          
+                          <div>
+
+                          </div>
+                        </div>
+                        
+                    </div>
+                    }
+                    {this.state.changeStatus &&
+                        <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
+                        <div>
+                        <p style={{marginTop:16,fontWeight:500}}>تغییر وضعیت</p>
+                        </div>
+                        <div>
+                        <InputSwitch checked={this.state.group_status} onChange={(e) => this.setState({ group_status: e.value })} />
+                        <div className="small-title">با غیرفعال کردن، همچنان موظف به تامین کالاهای رزرو شده هستید</div>
+                        </div>
+                        
+                    </div>
+                    }
+                    
+                  </div>
+                  {(this.state.changePrice || this.state.changeNumber || this.state.changeStatus) &&
+                  <div style={{marginTop:36}}>
+                    <div style={{border:'solid 1px #bce0fd',width:'100%',marginTop:16}} ></div>
+                  </div>
+                  }
+                  <div>
+                    
+                  </div>
+
+                </div>
+                {(this.state.changePrice || this.state.changeNumber || this.state.changeStatus) &&
+                <div style={{textAlign:'right',width:'100%',display:'flex',justifyContent:'flex-end',marginTop:20}}>
+                  <Button label="انصراف" className="btn btn-outline-primary" style={{minWidth:200}} onClick={() => this.setState({showGroupChangeDialog:false})} />
+                  <Button label="اعمال تغییرات"  style={{minWidth:200}} onClick={() => this.setGroupChange()} style={{marginRight:20}} />
+
+                </div>
+                }
+                
+              </div>        
+              
+          </div>
+          </Dialog>
 
 
         </div>

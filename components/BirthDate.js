@@ -158,7 +158,7 @@ class BirthDate extends React.Component {
 
 	}
 	
-	componentWillReceiveProps(param) {
+	getDerivedStateFromProps(param) {
 		if(param.SelectedDay || param.SelectedMounth || param.SelectedYear){
 			this.setState({
 				SelectedDay:param.SelectedDay,
@@ -167,6 +167,7 @@ class BirthDate extends React.Component {
 			});
 			
 		}
+		return null;
 	}
 
 	render() {
