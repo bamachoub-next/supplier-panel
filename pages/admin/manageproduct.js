@@ -97,7 +97,32 @@ class ManageProduct extends React.Component {
 
   
   setGroupChange(event) {
-
+    debugger;
+    if(this.state.changePrice && !this.state.changePriceMethod  ){
+      this.setState({
+        changePriceValue_invalid:true
+      })
+      return;
+    }
+    if(this.state.changePrice && this.state.changePriceMethod && (!this.state.changePriceValue || this.state.changePriceValue == "0")  ){
+      this.setState({
+        changePriceValue_invalid:true
+      })
+      return;
+    }
+    
+    if(this.state.changeNumber && !this.state.changeNumberMethod  ){
+      this.setState({
+        changeNumberValue_inValid:true
+      })
+      return;
+    }
+    if(this.state.changeNumber && this.state.changeNumberMethod && ((this.state.changeNumberMethod == "add" || this.state.changeNumberMethod == "mines") && (!this.state.changeNumberValue || this.state.changeNumberValue == "0")) ){
+      this.setState({
+        changeNumberValue_inValid:true
+      })
+      return;
+    }
     let param = {
       "oneMonthPrice" : this.state.group_cheque1||false,
       "threeMonthPrice": this.state.group_cheque3||false,
@@ -127,13 +152,13 @@ class ManageProduct extends React.Component {
       (response) => {
         debugger;
 
-        if (response.data.codeForSupplier) {
+        if (response.data) {
 
           MySwal.fire({
             icon: 'success',
             showConfirmButton: false,
             title: 'عملیات با موفقیت انجام شد',
-            html: <div><span>عملیات با موفقیت انجام شد</span>
+            html: <div>
               <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
           })
         } else {
@@ -956,9 +981,10 @@ class ManageProduct extends React.Component {
                           </div>
                           <div style={{marginRight:20}}>
                           <label htmlFor="name" className="p-d-block">{this.state.changePriceMethod_label}</label>
-                          <BInput  value={this.state.changePriceValue} Val={(v) => {
+                          <BInput inValid={this.state.changePriceValue_invalid} HideInvalidLabel={true}  value={this.state.changePriceValue} Val={(v) => {
                           this.setState({
-                            changePriceValue: v
+                            changePriceValue: v,
+                            changePriceValue_invalid:false
                           })
                         }} />
                           </div>
@@ -980,35 +1006,36 @@ class ManageProduct extends React.Component {
                         </div>
                         <div style={{display:'flex',alignItems:'end'}}>
                           <div>
-                          <Dropdown value={this.state.changeNumberMethod} className="b-border" options={[{ label: "جایگزینی موجودی", value: "replace" },{ label: "کاهش موجودی", value: "doown" },{ label: "افزایش موجودی", value: "up" },{ label: "ناموجود کردن", value: "zero" }]} style={{ width: 250 }} onChange={(e) => {
+                          <Dropdown value={this.state.changeNumberMethod} className="b-border" options={[{ label: "جایگزینی موجودی", value: "replace" },{ label: "کاهش موجودی", value: "mines" },{ label: "افزایش موجودی", value: "add" },{ label: "ناموجود کردن", value: "zero" }]} style={{ width: 250 }} onChange={(e) => {
                             let changeNumberMethod_label ="تعداد جدید";
                             if(e.value == "replace")
                               changeNumberMethod_label ="تعداد جدید";
-                            if(e.value == "minus")
+                            if(e.value == "mines")
                               changeNumberMethod_label ="مقدار کاهش";
                             if(e.value == "add")
                               changeNumberMethod_label ="مقدار افزایش";
 
                             this.setState({
                               changeNumberMethod: e.value,
-                              changeType_number_label:changeNumberMethod_label
+                              changeNumberMethod_label:changeNumberMethod_label
                             })
                           }
 
                           }
                             placeholder="انتخاب کنید" />
-                            {this.state.changeType_number == "zero" &&
+                            {this.state.changeNumberMethod == "zero" &&
                               <div className="small-title">با صفر کردن موجودی، همچنان موظف به تامین 
                               کالاهای رزرو شده هستید</div>
                             }
                             
                           </div>
-                          {this.state.changeType_number != "4" &&
+                          {this.state.changeNumberMethod != "zero" &&
                             <div style={{marginRight:20,position:'relative'}}>
                             <label htmlFor="name" className="p-d-block">{this.state.changeNumberMethod_label}</label>
-                            <BInput value={this.state.changeNumberValue} Val={(v) => {
+                            <BInput inValid={this.state.changeNumberValue_inValid} HideInvalidLabel={true} value={this.state.changeNumberValue} Val={(v) => {
                             this.setState({
-                              changeNumberValue: v
+                              changeNumberValue: v,
+                              changeNumberValue_inValid:false
                             })
                           }} />
                           <label htmlFor="name" className="p-d-block" style={{position:'absolute',bottom:-20}}>به واحدها توجه نمایید</label>

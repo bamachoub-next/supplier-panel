@@ -72,7 +72,9 @@ class BInput extends React.Component {
 
 
           }
-          <small className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
+          {!this.props.HideInvalidLabel &&
+            <small className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
+          }
 
         </div>
 
