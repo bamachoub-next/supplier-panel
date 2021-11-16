@@ -22,7 +22,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import BInput from './../../components/BInput';
 
 
-class ManageProduct2 extends React.Component {
+class Estelams extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
@@ -45,7 +45,7 @@ class ManageProduct2 extends React.Component {
   }
   componentDidMount() {
 
-    this.setCategories(this.props.cats)
+    this.getProducts()
 
 
   }
@@ -164,106 +164,101 @@ class ManageProduct2 extends React.Component {
   }
 
   itemTemplate(p) {
-    let VariantArr = [];
-    let map = {
-      oneMoundPrice: "چکی - یک ماهه",
-      twoMoundPrice: "چکی - دو ماهه",
-      threeMoundPrice: "چکی - سه ماهه",
-      price: "نقدی",
-    }
-    
+    debugger;
+    const m = p.willExpireAt - p.createdAt;
+    const ExpTime = parseInt((m / (1000*60*60)) % 60) + ":" + parseInt((m / (1000*60)) % 60) + ":" +  parseInt((m / (1000)) % 60) ; 
     return (
-      <div className="title" style={{ display: 'flex', alignItems: 'center', direction: 'rtl', marginBottom: 5, width: '100%' }}>
-        <div style={{ textAlign: 'center', width: '5%' }}>
+      <div className="title" style={{ display: 'flex', alignItems: 'flex-start',padding:5, direction: 'rtl', marginBottom: 5, width: '100%' }}>
+         <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+        <div style={{ textAlign: 'right', width: '5%',alignSelf:'center' }}>
             <Checkbox onChange={e => {
 
               let groupedSelect = this.state.groupedSelect;
               if(!e.checked){
-                delete groupedSelect[p.estelam._key]
+                delete groupedSelect[p._key]
               }else{
-                groupedSelect[p.estelam._key] = {
+                groupedSelect[p._key] = {
                   estelam:p.estelam,
                   product:p.product
                 }
               }
               this.setState({groupedSelect:groupedSelect})
             
-            }} checked={this.state.groupedSelect[p.estelam._key]}></Checkbox>
+            }} checked={this.state.groupedSelect[p._key]}></Checkbox>
 
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'center', width: '15%' }}>
+        
+        <div style={{ textAlign: 'right', width: '15%' }}>
           <div style={{ display: 'flex' }}>
             <div>
-              <img src={p.product.imageArr[0]} className="product-img" />
+              <img src={p.imageUrl} className="product-img" />
             </div>
             <div>
-              <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>
-              <div>{p.product.description}</div>
+              <div style={{ fontWeight: 'bold' }}>{p.productTitle}</div>
+              <div>{p.description||""}</div>
             </div>
           </div>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        
 
-        <div style={{ textAlign: 'center', width: '7%' }}>
-          <span>{p.estelam.codeForSupplier}</span>
+        <div style={{ textAlign: 'right', width: '7%' }}>
+          <span>{p.supplierKey}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        
 
-        <div style={{ textAlign: 'center', width: '5%' }}>
-          <span>{p.estelam.variant}</span>
+        <div style={{ textAlign: 'right', width: '5%' }}>
+          <span>{p.variant}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        
 
-        <div style={{ textAlign: 'center', width: '9%' }}>
-          <span>{p.product.categoryName}</span>
+        <div style={{ textAlign: 'right', width: '9%' }}>
+          <span>{p.estelamCartKey}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        
 
-        <div style={{ textAlign: 'center', width: '7%' }}>
-          <span>{p.product.lowestPrice}</span>
+        <div style={{ textAlign: 'right', width: '7%' }}>
+          <span>{p.number}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        
 
-        <div style={{ textAlign: 'center', width: '20%' }}>
+        <div style={{ textAlign: 'right', width: '20%' }}>
           <div>
             <div style={{ flexWrap: 'wrap', display: 'flex' }}>
-                  {p.estelam.price &&
-                  <Chip className="b-p-chip2" label="نقدی" _id="price" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.price = false;
-
-                  }} />
+                  {p.price &&
+                  <span>نقدی</span>
                   }
-                  {p.estelam.oneMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - یک ماهه" _id="oneMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.oneMoundPrice = false;
-
-                  }} />
+                  {p.oneMoundPrice &&
+                  <span>چکی - یک ماهه</span>
                   }
-                  {p.estelam.twoMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - دو ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.twoMoundPrice = false;
-
-                  }} />
+                  {p.twoMoundPrice &&
+                  <span>چکی - دو ماهه</span>
                   }
-                  {p.estelam.threeMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - سه ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.threeMoundPrice = false;
-                  
-                  }} />
+                  {p.threeMoundPrice &&
+                  <span>چکی - سه ماهه</span>
                   }
                   
             </div>
           </div>
         </div>
 
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'center', width: '10%' }}>
+        
+        <div style={{ textAlign: 'right', width: '7%' }}>
+          <span>{p.status}</span>
+        </div>
+        
+        <div style={{ textAlign: 'right', width: '7%' }}>
+          <span>{ExpTime}</span>
+        </div>
+        <div style={{ textAlign: 'right', width: '22%' }}>
           <div style={{ display: 'flex' }}>
+            <div style={{ width: 115 }} >
+              <Button label="پاسخ دادن" onClick={() => {
+                this.updateProduct(p)
+              }}  ></Button>
+            </div>
             <div style={{ width: 100 }} >
-              <Button label="تایید" onClick={() => {
+              <Button label="رد کردن" onClick={() => {
                 this.updateProduct(p)
               }}  ></Button>
             </div>
@@ -275,26 +270,7 @@ class ManageProduct2 extends React.Component {
 
           </div>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'center', width: '14%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] || p.estelam.show || false} onChange={(e) => {
-              let showArr = this.state.showArr;
-              showArr["show_" + p.estelam._key] = e.value;
-              this.setState({
-                showArr: showArr
-              })
-            }} />
-            <div style={{ display: 'flex', justifyContent: "center" }}>
-              <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
-                <div>10 رزرو</div>
-              </p>
-            </div>
-
-
-          </div>
-        </div>
+        
       </div>
     );
 
@@ -492,18 +468,18 @@ class ManageProduct2 extends React.Component {
     )
 
   }
-  getProducts(offset, limit, categoryUrl) {
+  getProducts() {
     this.setState({
       GridData: [],
       showLoading: true
     })
-    this.Server.get(`add-buy-method/estelam/${categoryUrl}?offset=${offset}&limit=${limit}`, '',
+    this.Server.get(`estelam/supplier`, '',
       (response) => {
         this.setState({
           showLoading: false
         })
 
-
+        debugger;
         this.setState({
           GridData: response.data || []
         })
@@ -618,7 +594,7 @@ class ManageProduct2 extends React.Component {
                         }
 
                         }
-                          placeholder="دسته بندی را انتخاب کنید" />
+                          placeholder="نوع پرداخت" />
 
 
 
@@ -630,7 +606,7 @@ class ManageProduct2 extends React.Component {
                           })
                           //this.searchByFilter(e.value[0],0,10)
                         }
-                        } placeholder="وضعیت کالا" />
+                        } placeholder="وضعیت استعلام" />
 
 
 
@@ -718,44 +694,48 @@ class ManageProduct2 extends React.Component {
                       </div>
                       <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '15%' }}>
                             <div style={{ width: '90%' }}>عنوان و کد کالا</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>کد محصول فروشنده</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          
+                          <div style={{ textAlign: 'right', width: '5%' }}>
                             <div style={{ width: '90%' }}>تنوع</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          
 
-                          <div style={{ textAlign: 'center', width: '9%' }}>
-                            <div style={{ width: '90%' }}>دسته بندی</div>
+                          <div style={{ textAlign: 'right', width: '9%' }}>
+                            <div style={{ width: '90%' }}>کد استعلام</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
-                            <div style={{ width: '90%' }}>کمترین قیمت(تومان)</div>
+                          
+                          <div style={{ textAlign: 'right', width: '7%' }}>
+                            <div style={{ width: '90%' }}>تعداد</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '20%' }}>
-                            <div style={{ width: '90%' }}>قیمت کالا (تومان)</div>
-
-                          </div>
-
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '15%' }}>
-                            <div style={{ width: '90%' }}>عملیات</div>
+                          
+                          <div style={{ textAlign: 'right', width: '20%' }}>
+                            <div style={{ width: '90%' }}>نوع پرداخت</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '14%' }}>
-                            <div style={{ width: '90%' }}>وضعیت</div>
+
+                          
+                          <div style={{ textAlign: 'right', width: '7%' }}>
+                            <div style={{ width: '90%' }}>وضعیت استعلام</div>
+
+                          </div>
+                          
+                          <div style={{ textAlign: 'right', width: '7%' }}>
+                            <div style={{ width: '90%' }}>زمان باقیمانده</div>
+
+                          </div>
+                          
+                          <div style={{ textAlign: 'right', width: '22%' }}>
+                            <div style={{ width: '90%' }}>عملبات</div>
 
                           </div>
 
@@ -939,18 +919,7 @@ class ManageProduct2 extends React.Component {
     )
   }
 }
-export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
-  const cats = await res.json();
-
-  return {
-    props: {
-      cats
-    }
-  }
-
-}
 
 
 const mapStateToProps = (state) => {
@@ -959,4 +928,4 @@ const mapStateToProps = (state) => {
       accessToken: state.token.accessToken
   }
 }
-export default connect(mapStateToProps)(ManageProduct2)
+export default connect(mapStateToProps)(Estelams)

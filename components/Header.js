@@ -44,7 +44,7 @@ const items = [
         label: "مدیریت کالاهای استعلامی",
         command: (event) => {
 
-          Router.push('/admin/manageproduct2')
+          Router.push('/admin/manageestelam')
 
         }
       },
