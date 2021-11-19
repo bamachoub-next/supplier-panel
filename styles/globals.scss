@@ -275,3 +275,20 @@ button svg{
   background: transparent;
   color: var(--label-text);
 }
+.slider-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 100%;
+    background: #000;
+    opacity: .2;
+}
+.slider-pagination-bullet:hover,.slider-pagination-bullet-active {
+  opacity: 2;
+}
+.slider-pagination-container{
+  display: flex;
+  justify-content: space-evenly;
+  min-width: 100px;
+  align-items: center;
+}
