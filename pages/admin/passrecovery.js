@@ -82,7 +82,7 @@ class ChangePass extends React.Component {
         this.Server.post("supplier-employee-auth/changePassword-without-login", { phoneNumber: this.state.phoneNumber.toString(), code: this.state.code.toString(), password: this.state.password.toString() },
             (response) => {
                 if (!response.data.code || response.data.code == 200) {
-                    Router.push('/admin/dashboard');
+                    Router.push('/dashboard');
                 }
 
 

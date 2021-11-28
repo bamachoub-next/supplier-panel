@@ -577,7 +577,7 @@ class ManageProduct extends React.Component {
             
             <div  style={{display:'flex',justifyContent:'space-evenly',alignItems:'center',minWidth:320}}>
                   <span style={{color:'#fff'}}>{Object.entries(this.state.groupedSelect).length} مورد انتخاب شده </span>
-                  <Button className="title" onClick={() => {
+                  <Button  onClick={() => {
                     let groupedSelect = []
                     for(let i=0;i<this.state.GridData.length;i++){
                       groupedSelect[this.state.GridData[i].price._key] = {
@@ -588,15 +588,15 @@ class ManageProduct extends React.Component {
                     this.setState({
                       groupedSelect:groupedSelect
                     })
-                  }} label="انتخاب همه" className="p-button-outlined" style={{border:0,background:'transparent',color:'#fff'}} >  </Button>
+                  }} label="انتخاب همه" className="title p-button-outlined" style={{border:0,background:'transparent',color:'#fff'}} >  </Button>
 
 
             </div>
          
             <div style={{display:'flex',justifyContent:'space-around',alignItems:'center',minWidth:320}}>
-                        <Button className="title" onClick={() => {this.setState({showGroupChangeDialog:true})}} label="تغییر گروهی" className="p-button-outlined" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
-                        <Button className="title" onClick={() => {}} label="حذف" className="p-button-outlined" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
-                        <Button className="title" onClick={() => {this.setState({groupedSelect:{}})}} label="لغو انتخاب" className="p-button-outlined" style={{color:'#fff',background:'transparent',borderColor:'#fff'}} >  </Button>
+                        <Button  onClick={() => {this.setState({showGroupChangeDialog:true})}} label="تغییر گروهی" className="p-button-outlined title" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
+                        <Button  onClick={() => {}} label="حذف" className="p-button-outlined title" style={{color:'#2699fb',background:'#fff',borderColor:'#fff'}} >  </Button>
+                        <Button  onClick={() => {this.setState({groupedSelect:{}})}} label="لغو انتخاب" className="p-button-outlined title" style={{color:'#fff',background:'transparent',borderColor:'#fff'}} >  </Button>
 
             </div>
           </div>
@@ -693,7 +693,7 @@ class ManageProduct extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.catOptions.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip className="b-p-chip" label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip key={i} className="b-p-chip" label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let catOption = this.state.catOption;
@@ -717,7 +717,7 @@ class ManageProduct extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.payTypeOptions.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip className="b-p-chip" className="b-p-chip" label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip key={i} className="b-p-chip"  label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let payTypeOption = this.state.payTypeOption;
@@ -954,7 +954,7 @@ class ManageProduct extends React.Component {
                           <p className="small-title" style={{marginTop:16,fontWeight:500}}>پرداخت نقدی</p>
                           </div>
                           <div>
-                            <span className="title" className="small-title">نحوه اعمال تغییر</span>
+                            <span className="small-title">نحوه اعمال تغییر</span>
                           </div>
                           <div style={{display:'flex',alignItems:'end'}}>
                           <div>
@@ -1079,7 +1079,7 @@ class ManageProduct extends React.Component {
                 {(this.state.changePrice || this.state.changeNumber || this.state.changeStatus) &&
                 <div style={{textAlign:'right',width:'100%',display:'flex',justifyContent:'flex-end',marginTop:20}}>
                   <Button label="انصراف" className="btn btn-outline-primary" style={{minWidth:200}} onClick={() => this.setState({showGroupChangeDialog:false})} />
-                  <Button label="اعمال تغییرات"  style={{minWidth:200}} onClick={() => this.setGroupChange()} style={{marginRight:20}} />
+                  <Button label="اعمال تغییرات"  style={{minWidth:200,marginRight:20}} onClick={() => this.setGroupChange()}  />
 
                 </div>
                 }
@@ -1105,7 +1105,10 @@ class ManageProduct extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
+  let res = await fetch('https://bmch.liara.run/api/v1/categories');
+  //let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
+
+  
   const cats = await res.json();
 
   return {

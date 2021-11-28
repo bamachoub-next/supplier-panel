@@ -511,7 +511,7 @@ class AddProduct extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.brandOption.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip label={v} className="b-p-chip" _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip label={v} key={i} className="b-p-chip" _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let brandOption = this.state.brandOption;
@@ -667,7 +667,10 @@ class AddProduct extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://127.0.0.1:3000/api/v1/categories?level=1');
+  let res = await fetch('https://bmch.liara.run/api/v1/categories?level=1');
+  //let res = await fetch('http://127.0.0.1:3000/api/v1/categories?level=1');
+
+  
   const cats = await res.json();
 
   return {

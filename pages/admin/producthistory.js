@@ -455,7 +455,10 @@ class ProductHistory extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
+  let res = await fetch('https://bmch.liara.run/api/v1/categories');
+  //let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
+
+  
   const cats = await res.json();
 
   return {

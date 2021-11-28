@@ -33,7 +33,7 @@ class Slider extends React.Component {
                     <div style={{ direction: 'rtl', display: 'flex', transition: 'transform 500ms ease 0s', transform: `translate3d(${this.state.transformNum1}%, ${this.state.transformNum2}px, ${this.state.transformNum3}px)`  }}>
                         {this.state.items.map((p, i) => {
                             return (
-                                <div style={{ flex: '1 0 100%' }}>
+                                <div style={{ flex: '1 0 100%' }} key={i}>
                                     <div style={{ display: 'flex',padding:8 }}>
                                         <div style={{marginLeft:8}}>
                                             <img src={p.img} style={{ width: '4rem', height: '4rem',borderRadius:4 }} />
@@ -65,7 +65,7 @@ class Slider extends React.Component {
                     <div className="slider-pagination-container">
                         {this.state.items.map((v,i)=>{
                             return(
-                                <span className={(this.state.transformNum1 == (i*100) ) ?"slider-pagination-bullet slider-pagination-bullet-active" : "slider-pagination-bullet"} onClick={()=>{
+                                <span key={i} className={(this.state.transformNum1 == (i*100) ) ?"slider-pagination-bullet slider-pagination-bullet-active" : "slider-pagination-bullet"} onClick={()=>{
                                     debugger;
                                     this.setState({
                                         transformNum1 : (i*100)

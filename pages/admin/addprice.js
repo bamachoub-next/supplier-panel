@@ -276,7 +276,7 @@ class AddPrice extends React.Component {
                     <div className="col-12  mt-3" style={{ display: 'flex' }}>
                       {this.state.product && this.state.product.variationsObj && this.state.product.variationsObj.variations.map((v, i) => {
                         return (
-                          <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
+                          <div key={i} style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                             <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[i]?.status} checked={this.state.EstelamRecords[i]?.status} onChange={(e) => {
                               let EstelamRecords = this.state.EstelamRecords;
                               let insert = true;
@@ -320,7 +320,7 @@ class AddPrice extends React.Component {
                         if (u.status) {
                           return (
 
-                            <div className="row mb-3 p-3" style={{ border: '1px solid', borderRadius: 8 }} >
+                            <div className="row mb-3 p-3" key={i} style={{ border: '1px solid', borderRadius: 8 }} >
                               <div className="col-12">
                                 <div className="mt-3 mb-1">
                                   <span >واحد : {u.name}</span>
@@ -413,7 +413,7 @@ class AddPrice extends React.Component {
                 <div className="col-12" style={{ display: 'flex' }}>
                   {this.state.product && this.state.product.variationsObj && this.state.product.variationsObj.variations.map((v, i) => {
                     return (
-                      <button className={v.Count ? "b-button active" : "b-button"} style={{ border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}
+                      <button key={i} className={v.Count ? "b-button active" : "b-button"} style={{ border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}
                         onClick={(event) => {
                           v.Count = v.Count ? (v.Count + 1) : 1;
                           let VariationPrices = this.state.VariationPrices || [];
@@ -454,7 +454,7 @@ class AddPrice extends React.Component {
               {this.state.VariationPrices && this.state.VariationPrices.map((v, i) => {
                 const numLabel = `تعداد (${v.name})`;
                 return (
-                  <card className="row b-card2 p-4 mt-3 ">
+                  <card className="row b-card2 p-4 mt-3 " key={i}>
                     <div className="col-12" style={{ position: 'relative' }}>
 
                       <Close className="icon" style={{ position: 'absolute', left: 0, border: '1px solid', borderRadius: 4, cursor: 'pointer' }} onClick={() => {

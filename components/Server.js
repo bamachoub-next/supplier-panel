@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 
-const serverUrl = 'http://127.0.0.1:3000/api/v1/';
+const serverUrl = 'https://bmch.liara.run/api/v1/';
+//const serverUrl = 'http://127.0.0.1:3000/api/v1/';
+
 class Server extends React.Component {
    constructor(props) {
       super(props);

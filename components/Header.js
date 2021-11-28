@@ -58,9 +58,24 @@ const items = [
     ]
   },
   {
-    label: 'گزارشات',
+    label: 'تم ها',
     items: [
-      {}
+      {
+        label: "تم شماره 1",
+        command: (event) => {
+          localStorage.setItem("bamachoob_theme","theme1");
+          window.location.reload();
+
+        }
+      },
+      {
+        label: "تم شماره 2",
+        command: (event) => {
+          localStorage.setItem("bamachoob_theme","theme2");
+          window.location.reload();
+
+        }
+      }
     ]
   }
 ];

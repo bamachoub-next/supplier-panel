@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Button } from 'primereact/button';
 import axios from 'axios'
 import { ProgressBar } from 'primereact/progressbar';
-const ServerUrl = "http://127.0.0.1:3000/api/v1/"
+const ServerUrl = "https://bmch.liara.run/api/v1/"
+//const ServerUrl = "http://127.0.0.1:3000/api/v1/"
+
+
 
 class BInput extends React.Component {
   constructor(props) {
