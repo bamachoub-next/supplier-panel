@@ -101,9 +101,9 @@ class ManageEstelam extends React.Component {
               <div>
                 <img src={v.imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-                <div>{v.description}</div>
+                <div>{v.brand}</div>
               </div>
             </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
@@ -140,9 +140,9 @@ class ManageEstelam extends React.Component {
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-                <div>{response.data[i].description}</div>
+                <div>{response.data[i].brand}</div>
               </div>
             </div>
 
@@ -174,7 +174,7 @@ class ManageEstelam extends React.Component {
     
     return (
       <div className="title" style={{ display: 'flex', alignItems: 'center', direction: 'rtl', marginBottom: 5, width: '100%' }}>
-        <div style={{ textAlign: 'center', width: '5%' }}>
+        <div style={{ textAlign: 'right', width: '5%' }}>
             <Checkbox onChange={e => {
 
               let groupedSelect = this.state.groupedSelect;
@@ -191,42 +191,42 @@ class ManageEstelam extends React.Component {
             }} checked={this.state.groupedSelect[p.estelam._key]}></Checkbox>
 
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '15%' }}>
+        <div style={{ textAlign: 'right', width: '15%' }}>
           <div style={{ display: 'flex' }}>
             <div>
               <img src={p.product.imageArr[0]} className="product-img" />
             </div>
-            <div>
+            <div  style={{textAlign:'right'}}>
               <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>
-              <div>{p.product.description}</div>
+              <div>{p.product.brand}</div>
             </div>
           </div>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '7%' }}>
+        <div style={{ textAlign: 'right', width: '7%' }}>
           <span>{p.estelam.codeForSupplier}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '5%' }}>
+        <div style={{ textAlign: 'right', width: '5%' }}>
           <span>{p.estelam.variant}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '9%' }}>
+        <div style={{ textAlign: 'right', width: '9%' }}>
           <span>{p.product.categoryName}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '7%' }}>
+        <div style={{ textAlign: 'right', width: '7%' }}>
           <span>{p.product.lowestPrice}</span>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '20%' }}>
+        <div style={{ textAlign: 'right', width: '20%' }}>
           <div>
             <div style={{ flexWrap: 'wrap', display: 'flex' }}>
                   {p.estelam.price &&
@@ -258,9 +258,9 @@ class ManageEstelam extends React.Component {
           </div>
         </div>
 
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '10%' }}>
+        <div style={{ textAlign: 'right', width: '15%' }}>
           <div style={{ display: 'flex' }}>
             <div style={{ width: 100 }} >
               <Button label="تایید" onClick={() => {
@@ -275,18 +275,18 @@ class ManageEstelam extends React.Component {
 
           </div>
         </div>
-        <div style={{ textAlign: 'center', width: '1%' }}></div>
+        <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'center', width: '14%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] || p.estelam.show || false} onChange={(e) => {
+        <div style={{ textAlign: 'right', width: '9%' }}>
+          <div style={{ textAlign: 'right' }}>
+            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] != undefined ? this.state.showArr["show_" + p.estelam._key] : p.estelam.show || false} onChange={(e) => {
               let showArr = this.state.showArr;
               showArr["show_" + p.estelam._key] = e.value;
               this.setState({
                 showArr: showArr
               })
             }} />
-            <div style={{ display: 'flex', justifyContent: "center" }}>
+            <div style={{ display: 'flex', justifyContent: "right" }}>
               <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
                 <div>10 رزرو</div>
               </p>
@@ -590,9 +590,10 @@ class ManageEstelam extends React.Component {
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => {
-                          this.setState({
+                          debugger;
+                          /*this.setState({
                             GridData: this.state.GridDataSearch
-                          })
+                          })*/
                         }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => {
                           this.setState({
@@ -718,43 +719,43 @@ class ManageEstelam extends React.Component {
                       </div>
                       <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '15%' }}>
                             <div style={{ width: '90%' }}>عنوان و کد کالا</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>کد محصول فروشنده</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
                             <div style={{ width: '90%' }}>تنوع</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-                          <div style={{ textAlign: 'center', width: '9%' }}>
+                          <div style={{ textAlign: 'right', width: '9%' }}>
                             <div style={{ width: '90%' }}>دسته بندی</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>کمترین قیمت(تومان)</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '20%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '20%' }}>
                             <div style={{ width: '90%' }}>قیمت کالا (تومان)</div>
 
                           </div>
 
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '15%' }}>
                             <div style={{ width: '90%' }}>عملیات</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '14%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '9%' }}>
                             <div style={{ width: '90%' }}>وضعیت</div>
 
                           </div>

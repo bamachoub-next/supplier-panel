@@ -25,7 +25,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 class AddProduct extends React.Component {
   constructor(props) {
     super(props);
-
+    console.log(props);
     this.Server = new Server();
 
     this.state = {
@@ -217,13 +217,13 @@ class AddProduct extends React.Component {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img src={v.imageArr[0]} />
             v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
-            v.titleAndSubTitle = <div style={{ display: 'flex' }}>
+            v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={v.imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-                <div>{v.description}</div>
+                <div>{v.brand}</div>
               </div>
             </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
@@ -256,13 +256,13 @@ class AddProduct extends React.Component {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-                <div>{response.data[i].description}</div>
+                <div>{response.data[i].brand}</div>
               </div>
             </div>
 
@@ -328,13 +328,13 @@ class AddProduct extends React.Component {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
-            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-                <div>{response.data[i].description}</div>
+                <div>{response.data[i].brand}</div>
               </div>
             </div>
 

@@ -41,7 +41,7 @@ class ManageProduct extends React.Component {
       catOptions: [],
       changeType_price_label:"",
       showGroupChangeDialog:false,
-      oneMoundPrice_1: "",
+      oneMonthPrice_1: "",
       catOption: [],
       payTypeOptions: [],
       groupedSelect:{},
@@ -194,9 +194,9 @@ class ManageProduct extends React.Component {
               <div>
                 <img src={v.imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-                <div>{v.description}</div>
+                <div>{v.brand}</div>
               </div>
             </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
@@ -233,9 +233,9 @@ class ManageProduct extends React.Component {
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-                <div>{response.data[i].description}</div>
+                <div>{response.data[i].brand}</div>
               </div>
             </div>
 
@@ -261,7 +261,7 @@ class ManageProduct extends React.Component {
     return (
       <div className="title" style={{ direction: 'rtl', marginBottom: 5 }} >
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ textAlign: 'center', width: '5%' }}>
+          <div style={{ textAlign: 'right', width: '5%' }}>
             <Checkbox onChange={e => {
 
               let groupedSelect = this.state.groupedSelect;
@@ -273,106 +273,106 @@ class ManageProduct extends React.Component {
                   product:p.product
                 }
               }
-              debugger;  
               this.setState({groupedSelect:groupedSelect})
             
             }} checked={this.state.groupedSelect[p.price._key]}></Checkbox>
 
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '13%' }}>
+          <div style={{ textAlign: 'right', width: '13%' }}>
             <div style={{ display: 'flex' }}>
               <div>
                 <img src={p.product.imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>
-                <div>{p.product.description}</div>
+                <div>{p.product.brand}</div>
               </div>
             </div>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '7%' }}>
+          <div style={{ textAlign: 'right', width: '7%' }}>
             <span>{p.price.codeForSupplier}</span>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '5%' }}>
+          <div style={{ textAlign: 'right', width: '5%' }}>
             <span>{p.price.variant}</span>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '7%' }}>
+          <div style={{ textAlign: 'right', width: '7%' }}>
             <span>{p.product.categoryName}</span>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '5%' }}>
+          <div style={{ textAlign: 'right', width: '5%' }}>
             <span>{p.product.lowestPrice}</span>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '15%' }}>
+          <div style={{ textAlign: 'right', width: '15%' }}>
             <div>
               <div className="row">
-                <BInput value={this.state.products["price_" + p.price._key] || p.price.price?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="نقدی" absoluteLabel="نقدی" Val={(v) => {
+                <BInput value={this.state.products["price_" + p.price._key] != undefined ? this.state.products["price_" + p.price._key] : p.price.price?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="نقدی" absoluteLabel="نقدی" Val={(v) => {
                   let products = this.state.products;
+                  debugger;
                   products["price_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
 
-                <BInput value={this.state.products["oneMoundPrice_" + p.price._key] || p.price.oneMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - یک ماهه" absoluteLabel="چکی - یک ماهه" Val={(v) => {
+                <BInput value={this.state.products["oneMonthPrice_" + p.price._key] != undefined ? this.state.products["oneMonthPrice_" + p.price._key] : p.price.oneMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - یک ماهه" absoluteLabel="چکی - یک ماهه" Val={(v) => {
                   let products = this.state.products;
-                  products["oneMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  products["oneMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
-                <BInput value={this.state.products["twoMoundPrice_" + p.price._key] || p.price.twoMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - دو ماهه" absoluteLabel="چکی - دو ماهه" Val={(v) => {
+                <BInput value={this.state.products["twoMonthPrice_" + p.price._key] != undefined ? this.state.products["twoMonthPrice_" + p.price._key] :  p.price.twoMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - دو ماهه" absoluteLabel="چکی - دو ماهه" Val={(v) => {
                   let products = this.state.products;
-                  products["twoMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  products["twoMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
-                <BInput value={this.state.products["threeMoundPrice_" + p.price._key] || p.price.threeMoundPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - سه ماهه" absoluteLabel="چکی - سه ماهه" Val={(v) => {
+                <BInput value={this.state.products["threeMonthPrice_" + p.price._key] != undefined ? this.state.products["threeMonthPrice_" + p.price._key] :  p.price.threeMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - سه ماهه" absoluteLabel="چکی - سه ماهه" Val={(v) => {
                   let products = this.state.products;
-                  products["threeMoundPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  products["threeMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   this.setState({
                     products: products
                   })
                 }} />
               </div></div>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '7%' }}>
-            <BInput InputNumber={true} value={this.state.products["totalNumberInCart_" + p.price._key] || p.price.totalNumberInCart} label="" absoluteLabel="" Val={(v) => {
+          <div style={{ textAlign: 'right', width: '7%' }}>
+            <BInput InputNumber={true} value={this.state.products["totalNumberInCart_" + p.price._key] ? this.state.products["totalNumberInCart_" + p.price._key] : p.price.totalNumberInCart} label="" absoluteLabel="" Val={(v) => {
               let products = this.state.products;
-              products["totalNumberInCart_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              products["totalNumberInCart_" + p.price._key] = v ? v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
               this.setState({
                 products: products
               })
             }} />
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '8%' }}>
-            <BInput InputNumber={true} value={this.state.products["totalNumber_" + p.price._key] || p.price.totalNumber} label="" absoluteLabel="" Val={(v) => {
+          <div style={{ textAlign: 'right', width: '8%' }}>
+            <BInput InputNumber={true} value={this.state.products["totalNumber_" + p.price._key] != undefined ? this.state.products["totalNumber_" + p.price._key] : p.price.totalNumber} label="" absoluteLabel="" Val={(v) => {
               let products = this.state.products;
-              products["totalNumber_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              products["totalNumber_" + p.price._key] = v ? v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
               this.setState({
                 products: products
               })
             }} />
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '10%' }}>
+          <div style={{ textAlign: 'right', width: '10%' }}>
             <div style={{ display: 'flex' }}>
               <div style={{ width: 100 }} >
                 <Button label="تایید" onClick={() => {
@@ -387,18 +387,18 @@ class ManageProduct extends React.Component {
 
             </div>
           </div>
-          <div style={{ textAlign: 'center', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-          <div style={{ textAlign: 'center', width: '8%' }}>
-            <div style={{ textAlign: 'center' }}>
-              <InputSwitch checked={this.state.products["show_" + p.price._key] || p.price.show} onChange={(e) => {
+          <div style={{ textAlign: 'left', width: '8%' }}>
+            <div style={{ textAlign: 'right' }}>
+              <InputSwitch checked={this.state.products["show_" + p.price._key] != undefined ? this.state.products["show_" + p.price._key] : p.price.show} onChange={(e) => {
                 let products = this.state.products;
                 products["show_" + p.price._key] = e.value;
                 this.setState({
                   products: products
                 })
               }} />
-              <div style={{ display: 'flex', justifyContent: "center" }}>
+              <div style={{ display: 'flex', justifyContent: "right" }}>
                 <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
                   <div>10 رزرو</div>
                 </p>
@@ -429,13 +429,13 @@ class ManageProduct extends React.Component {
     let priceKey = p.price._key;
     let param = {
       "codeForSupplier": p.price.codeForSupplier,
-      "oneMoundPrice": parseInt(p.price.oneMoundPrice||0),
+      "oneMonthPrice": parseInt(p.price.oneMonthPrice||0),
       "price": parseInt(p.price.price||0),
       "show": p.price.show,
-      "threeMoundPrice": parseInt(p.price.threeMoundPrice||0),
+      "threeMonthPrice": parseInt(p.price.threeMonthPrice||0),
       "totalNumber": parseInt(p.price.totalNumber||0),
       "totalNumberInCart": parseInt(p.price.totalNumberInCart||0),
-      "twoMoundPrice": parseInt(p.price.twoMoundPrice||0)
+      "twoMonthPrice": parseInt(p.price.twoMonthPrice||0)
     }
     for (let pp in this.state.products) {
       if (pp.indexOf(p.price._key) > -1) {
@@ -641,9 +641,10 @@ class ManageProduct extends React.Component {
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => {
-                          this.setState({
+                          debugger;
+                          /*this.setState({
                             GridData: this.state.GridDataSearch
-                          })
+                          })*/
                         }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => {
                           this.setState({
@@ -769,52 +770,52 @@ class ManageProduct extends React.Component {
                       </div>
                       <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '13%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '13%' }}>
                             <div style={{ width: '90%' }}>عنوان و کد کالا</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>کد محصول فروشنده</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
                             <div style={{ width: '90%' }}>تنوع</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>دسته بندی</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
                             <div style={{ width: '90%' }}>کمترین قیمت(تومان)</div>
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '15%' }}>
                             <div style={{ width: '90%' }}>قیمت کالا (تومان)</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>موجودی</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '8%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '8%' }}>
                             <div style={{ width: '90%' }}>حداکثر در سبد</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '10%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '10%' }}>
                             <div style={{ width: '90%' }}>عملیات</div>
 
                           </div>
-                          <div style={{ textAlign: 'center', width: '1%' }}></div>
-                          <div style={{ textAlign: 'center', width: '8%' }}>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '8%' }}>
                             <div style={{ width: '90%' }}>وضعیت</div>
 
                           </div>

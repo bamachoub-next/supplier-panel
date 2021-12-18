@@ -67,7 +67,7 @@ class Server extends React.Component {
    }
    delete(url, params, SuccessCallBack, ErrorCallBack, Authorization) {
 
-      axios.post(serverUrl + url + '', params, {
+      axios.delete(serverUrl + url + '', params, {
          headers: {
             'Content-Type': 'application/json',
             ...Authorization

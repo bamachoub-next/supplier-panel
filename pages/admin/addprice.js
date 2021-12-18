@@ -23,7 +23,6 @@ import { AutoComplete } from 'primereact/autocomplete';
 import BInput from './../../components/BInput';
 import UpFile from './../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
-
 const switchBtn = [
   { label: 'فعال', value: true },
   { label: 'غیرفعال', value: false }
@@ -37,9 +36,24 @@ class AddPrice extends React.Component {
     this.state = {
       showCreateProduct: false,
       accessToken: this.props.accessToken ,
-      Variations: [],
-      EstelamRecords: []
+      Variations: []
     }
+  }
+  getDefault(catUrl) {
+    this.Server.get(`add-buy-method/price/sheet`, '',
+      (response) => {
+        this.setState({
+          showLoading:false
+        })
+        this.getProduct()
+      }, (error) => {
+        this.getProduct()
+        this.setState({
+          showLoading:false
+        })
+
+      }, { Authorization: `Bearer ${this.state.accessToken || localStorage.getItem("accessToken")}` }
+    )
   }
   componentDidMount() {
     this.setState({
@@ -47,17 +61,104 @@ class AddPrice extends React.Component {
     })
     this.getProduct()
 
+
+
   }
   getProduct() {
 
     this.Server.get(`products/one/${Router.router.query.id}`, '',
       (response) => {
-        console.log(response.data.Product);
+        let product = response.data.Product;
+        let priceArr=[];
+        let VariationPrices = []
+        let codeForSupplier = "";
+        let Count;
+
+        for(let i=0;i<response.data.priceArr.length;i++){
+          Count=0;
+          for(let j=0;j<response.data.priceArr.length;j++){
+            if(response.data.priceArr[i].variant == response.data.priceArr[j].variant && !response.data.priceArr[j].checked ){
+              response.data.priceArr[j].checked=1;
+              Count++;
+            } 
+          }
+          response.data.priceArr[i].Count = Count;
+        }
+        for(let i=0;i<response.data.priceArr.length;i++){
+          
+          codeForSupplier = response.data.priceArr[i].codeForSupplier;
+          response.data.priceArr[i].name = response.data.priceArr[i].variant;
+          let VariationPrices_temp = {
+            name: response.data.priceArr[i].variant,
+            description: response.data.priceArr[i].description,
+            number: response.data.priceArr[i].number||0,
+            maxNumber: response.data.priceArr[i].maxNumber||0,
+            code: response.data.priceArr[i].codeForSupplier,
+            cache: {
+              status: response.data.priceArr[i].price ? true : false,
+              value: response.data.priceArr[i].price
+            },
+            cheque1: {
+              status: response.data.priceArr[i].oneMonthPrice ? true : false,
+              value: response.data.priceArr[i].oneMonthPrice
+            },
+            cheque2: {
+              status: response.data.priceArr[i].twoMonthPrice ? true : false,
+              value: response.data.priceArr[i].twoMonthPrice
+            },
+            cheque3: {
+              status: response.data.priceArr[i].threeMonthPrice ? true : false,
+              value: response.data.priceArr[i].threeMonthPrice
+            },
+            status: response.data.priceArr[i].show
+          }
+
+         
+
+          VariationPrices_temp["Count"] = response.data.priceArr[i].Count,
+
+
+
+          VariationPrices.push(VariationPrices_temp)
+          if(response.data.priceArr[i].Count){
+            priceArr.push(response.data.priceArr[i]);
+          }
+          
+
+        }
+        debugger;
+        let EstelamRecords=[];
+        for(let m=0;m<priceArr.length;m++){
+          for(let k=0;k<response.data.estelamArr.length;k++){
+            if(response.data.estelamArr[k].variant == priceArr[m].variant){
+              EstelamRecords.push({
+                codeForSupplier : response.data.estelamArr[k].codeForSupplier,
+                name : response.data.estelamArr[k].variant,
+                cache : {status:response.data.estelamArr[k].cache||false},
+                cheque1 : {status:response.data.estelamArr[k].cheque1||false},
+                cheque2 : {status:response.data.estelamArr[k].cheque2||false},
+                cheque3 : {status:response.data.estelamArr[k].cheque3||false},
+                status : true
+              })
+            }
+        }
+        }
+        product.variationsObj = {
+          variations:priceArr
+        }
         this.setState({
-          product: response.data.Product
+          product: product,
+          estelamArr: response.data.estelamArr,
+          priceArr: response.data.priceArr,
+          VariationPrices: VariationPrices,
+          codeForSupplier:codeForSupplier,
+          estelam:response.data.estelamArr.length > 0 ? true : false,
+          EstelamRecords:EstelamRecords
+
+
         })
-
-
+        
+       // this.getDefault(Router.router.query.id);
       }, (error) => {
 
 
@@ -65,7 +166,6 @@ class AddPrice extends React.Component {
     )
   }
   addPrice() {
-
     let param = [];
     for (let VariationPrice of this.state.VariationPrices) {
       param.push({
@@ -75,12 +175,13 @@ class AddPrice extends React.Component {
         totalNumberInCart: VariationPrice.maxNumber,
         totalNumber: VariationPrice.number,
         show: VariationPrice.status,
-        oneMoundPrice: (VariationPrice.cheque1.status && VariationPrice.cheque1.value) ? parseInt(VariationPrice.cheque1.value.replace(/,/g, "")) : 0,
-        twoMoundPrice: (VariationPrice.cheque2.status && VariationPrice.cheque2.value) ? parseInt(VariationPrice.cheque2.value.replace(/,/g, "")) : 0,
-        threeMoundPrice: (VariationPrice.cheque3.status && VariationPrice.cheque3.value) ? parseInt(VariationPrice.cheque3.value.replace(/,/g, "")) : 0,
-        price: (VariationPrice.cache.status && VariationPrice.cache.value) ? parseInt(VariationPrice.cache.value.replace(/,/g, "")) : 0,
+        oneMoundPrice: (VariationPrice.cheque1.status && VariationPrice.cheque1.value) ? parseInt(VariationPrice.cheque1.value.toString().replace(/,/g, "")) : 0,
+        twoMoundPrice: (VariationPrice.cheque2.status && VariationPrice.cheque2.value) ? parseInt(VariationPrice.cheque2.value.toString().replace(/,/g, "")) : 0,
+        threeMoundPrice: (VariationPrice.cheque3.status && VariationPrice.cheque3.value) ? parseInt(VariationPrice.cheque3.value.toString().replace(/,/g, "")) : 0,
+        price: (VariationPrice.cache.status && VariationPrice.cache.value) ? parseInt(VariationPrice.cache.value.toString().replace(/,/g, "")) : 0,
       })
     }
+
     this.setState({
       addPriceParam: param
     })
@@ -92,6 +193,7 @@ class AddPrice extends React.Component {
 
   }
   addPriceServer() {
+
     this.setState({
       showLoading: true
     })
@@ -138,60 +240,75 @@ class AddPrice extends React.Component {
 
   }
   addEstelam() {
-    let param = {};
-
-    param.codeForSupplier = this.state.codeForSupplier.toString();
-    param.productId = this.state.productId;
-    param.variantArr = [];
-    for (let estelam of this.state.EstelamRecords) {
-      if (estelam.status) {
-        param.variantArr.push({
-          variant: estelam.name,
-          oneMoundPrice: estelam.cheque1.status ? true : false,
-          twoMoundPrice: estelam.cheque2.status ? true : false,
-          threeMoundPrice: estelam.cheque3.status ? true : false,
-          price: estelam.cache.status ? true : false,
-        })
-      }
+    let param = [];
+    for (let EstelamRecords of this.state.EstelamRecords) {
+      param.push({
+        productId: this.state.productId,
+        codeForSupplier: this.state.codeForSupplier.toString(),
+        variant: EstelamRecords.name,
+        oneMoundPrice: EstelamRecords.cheque1.status ? true : false,
+        twoMoundPrice: EstelamRecords.cheque2.status ? true : false,
+        threeMoundPrice: EstelamRecords.cheque3.status ? true : false,
+        price: EstelamRecords.cache.status ? true : false
+      })
     }
+
     this.setState({
-      showLoading: true
+      addEstelamParam: param
     })
+    setTimeout(() => {
+      this.addEstelamServer();
+    }, 0)
+    return;
 
-    this.Server.post(`add-buy-method/estelam`, param,
-      (response) => {
 
-        if (response.data) {
-          if (response.data.code != 200) {
-            MySwal.fire({
-              icon: 'error',
-              title: 'خطا',
-              text: response.data.message
-            })
-          } else {
-            MySwal.fire({
-              icon: 'success',
-              showConfirmButton: false,
-              title: 'کالای مورد نظر به انبار شما اضافه شد',
-              html: <div><span>عملیات با موفقیت انجام شد</span>
-                <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
-            })
+  }
+  addEstelamServer() {
+    debugger;
+    if (this.state.addEstelamParam[this.state.addEstelamParam.length - 1]) {
+      
+      this.setState({
+        showLoading: true
+      })
+
+      this.Server.post(`add-buy-method/estelam`, this.state.addEstelamParam[0],
+        (response) => {
+          if (response.data) {
+            if (response.data.code != 200) {
+              MySwal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: response.data
+              })
+            } else {
+              MySwal.fire({
+                icon: 'success',
+                showConfirmButton: false,
+                title: 'کالای مورد نظر به انبار شما اضافه شد',
+                html: <div><span>عملیات با موفقیت انجام شد</span>
+                  <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+              })
+            }
+            this.state.addEstelamParam.pop();
+            
+            if (this.state.addEstelamParam.length > 0)
+              this.addEstelamServer();
+
+
+
           }
+          this.setState({
+            showLoading: false
+          })
 
+        }, (error) => {
+          this.setState({
+            showLoading: false
+          })
 
-
-        }
-        this.setState({
-          showLoading: false
-        })
-
-      }, (error) => {
-        this.setState({
-          showLoading: false
-        })
-
-      }, { Authorization: `Bearer ${this.state.accessToken || localStorage.getItem("accessToken")}` }
-    )
+        }, { Authorization: `Bearer ${this.state.accessToken || localStorage.getItem("accessToken")}` }
+      )
+    }
   }
 
 
@@ -275,11 +392,13 @@ class AddPrice extends React.Component {
                     </div>
                     <div className="col-12  mt-3" style={{ display: 'flex' }}>
                       {this.state.product && this.state.product.variationsObj && this.state.product.variationsObj.variations.map((v, i) => {
+                        
+                        
                         return (
                           <div key={i} style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
-                            <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[i]?.status} checked={this.state.EstelamRecords[i]?.status} onChange={(e) => {
-                              let EstelamRecords = this.state.EstelamRecords;
+                            <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[i]?.status||v.oldEstelems?.status} checked={this.state.EstelamRecords[i]?.status||v.oldEstelems?.status} onChange={(e) => {
                               let insert = true;
+                              let EstelamRecords = this.state.EstelamRecords;
                               for (let i = 0; i < EstelamRecords.length; i++) {
 
                                 if (EstelamRecords[i].name == v.name) {
@@ -299,10 +418,10 @@ class AddPrice extends React.Component {
                                   status: e.checked
                                 })
                               }
-
                               this.setState({
-                                EstelamRecords: EstelamRecords
-                              })
+                                EstelamRecords:EstelamRecords
+                               })
+
 
 
                             }}
@@ -320,7 +439,7 @@ class AddPrice extends React.Component {
                         if (u.status) {
                           return (
 
-                            <div className="row mb-3 p-3" key={i} style={{ border: '1px solid', borderRadius: 8 }} >
+                            <div className="row mb-3 p-3" key={j} style={{ border: '1px solid', borderRadius: 8 }} >
                               <div className="col-12">
                                 <div className="mt-3 mb-1">
                                   <span >واحد : {u.name}</span>
@@ -334,11 +453,12 @@ class AddPrice extends React.Component {
                               <div className="col-lg-2 col-md-3 col-12" >
                                 <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                                   <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[j].cache.status} checked={this.state.EstelamRecords[j].cache.status} onChange={(e) => {
-                                    let EstelamRecords_temp = this.state.EstelamRecords;
-                                    EstelamRecords_temp[j].cache.status = e.checked
+                                    let EstelamRecords = this.state.EstelamRecords;
+                                    EstelamRecords[j].cache.status = e.checked;
                                     this.setState({
-                                      EstelamRecords: EstelamRecords_temp
-                                    })
+                                      EstelamRecords:EstelamRecords
+                                     })
+                                   
                                   }}
                                     style={{ marginBottom: 10 }}></Checkbox>
                                   <label htmlFor="IsTitle" className="p-checkbox-label title" style={{ marginRight: 10 }}>نقدی</label>
@@ -347,11 +467,14 @@ class AddPrice extends React.Component {
                               <div className="col-lg-2 col-md-3 col-12" >
                                 <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                                   <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[j].cheque1.status} checked={this.state.EstelamRecords[j].cheque1.status} onChange={(e) => {
-                                    let EstelamRecords_temp = this.state.EstelamRecords;
-                                    EstelamRecords_temp[j].cheque1.status = e.checked
-                                    this.setState({
-                                      EstelamRecords: EstelamRecords_temp
-                                    })
+                                   debugger;
+                                   let EstelamRecords = this.state.EstelamRecords;
+                                    debugger;
+                                   EstelamRecords[j].cheque1.status = e.checked;
+                                   this.setState({
+                                    EstelamRecords:EstelamRecords
+                                   })
+                                   
                                   }}
                                     style={{ marginBottom: 10 }}></Checkbox>
                                   <label htmlFor="IsTitle" className="p-checkbox-label title" style={{ marginRight: 10 }}>چکی - یک ماهه</label>
@@ -360,11 +483,12 @@ class AddPrice extends React.Component {
                               <div className="col-lg-2 col-md-3 col-12" >
                                 <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                                   <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[j].cheque2.status} checked={this.state.EstelamRecords[j].cheque2.status} onChange={(e) => {
-                                    let EstelamRecords_temp = this.state.EstelamRecords;
-                                    EstelamRecords_temp[j].cheque2.status = e.checked
+                                    let EstelamRecords = this.state.EstelamRecords;
+                                    EstelamRecords[j].cheque2.status = e.checked;
                                     this.setState({
-                                      EstelamRecords: EstelamRecords_temp
-                                    })
+                                      EstelamRecords:EstelamRecords
+                                     })
+                                    
                                   }}
                                     style={{ marginBottom: 10 }}></Checkbox>
                                   <label htmlFor="IsTitle" className="p-checkbox-label title" style={{ marginRight: 10 }}>چکی - دو ماهه</label>
@@ -373,11 +497,12 @@ class AddPrice extends React.Component {
                               <div className="col-lg-2 col-md-3 col-12" >
                                 <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                                   <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[j].cheque3.status} checked={this.state.EstelamRecords[j].cheque3.status} onChange={(e) => {
-                                    let EstelamRecords_temp = this.state.EstelamRecords;
-                                    EstelamRecords_temp[j].cheque3.status = e.checked
+                                    let EstelamRecords = this.state.EstelamRecords;
+                                    EstelamRecords[j].cheque3.status = e.checked;
                                     this.setState({
-                                      EstelamRecords: EstelamRecords_temp
-                                    })
+                                      EstelamRecords:EstelamRecords
+                                     })
+                                    
                                   }}
                                     style={{ marginBottom: 10 }}></Checkbox>
                                   <label htmlFor="IsTitle" className="p-checkbox-label title" style={{ marginRight: 10 }}>چکی - سه ماهه</label>
@@ -412,6 +537,7 @@ class AddPrice extends React.Component {
 
                 <div className="col-12" style={{ display: 'flex' }}>
                   {this.state.product && this.state.product.variationsObj && this.state.product.variationsObj.variations.map((v, i) => {
+
                     return (
                       <button key={i} className={v.Count ? "b-button active" : "b-button"} style={{ border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}
                         onClick={(event) => {
@@ -421,8 +547,8 @@ class AddPrice extends React.Component {
                             Count: v.Count,
                             name: v.name,
                             description: v.description,
-                            number: '',
-                            maxNumber: '',
+                            number: 0,
+                            maxNumber: 0,
                             code: '',
                             cache: {},
                             cheque1: {},
@@ -433,7 +559,6 @@ class AddPrice extends React.Component {
                           this.setState({
                             VariationPrices: VariationPrices
                           })
-                          console.log(VariationPrices);
 
                         }}>
                         <span>
@@ -458,7 +583,6 @@ class AddPrice extends React.Component {
                     <div className="col-12" style={{ position: 'relative' }}>
 
                       <Close className="icon" style={{ position: 'absolute', left: 0, border: '1px solid', borderRadius: 4, cursor: 'pointer' }} onClick={() => {
-                        console.log(this.state.VariationPrices)
                         let VariationPrices = this.state.VariationPrices;
                         for (let variations of this.state.product.variationsObj.variations) {
                           if (variations.name == v.name) {
@@ -528,7 +652,7 @@ class AddPrice extends React.Component {
                           </div>
                           {this.state.VariationPrices[i].cache.status &&
                             <div style={{ position: 'relative' }}>
-                              <BInput value={this.state.VariationPrices[i].cache.value} inValid={this.state.VariationPrices[i].cache.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش" absoluteLabel="قیمت فروش" Val={(v) => {
+                              <BInput value={this.state.VariationPrices[i].cache.value} inValid={this.state.VariationPrices[i].cache.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش (قیمت هر ورق)" absoluteLabel="قیمت فروش" Val={(v) => {
                                 let VariationPrices_temp = this.state.VariationPrices;
                                 VariationPrices_temp[i].cache.value = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                 VariationPrices_temp[i].cache.value_inValid = v ? false : true;
@@ -555,7 +679,7 @@ class AddPrice extends React.Component {
                           </div>
                           {this.state.VariationPrices[i].cheque1.status &&
                             <div style={{ position: 'relative' }}>
-                              <BInput value={this.state.VariationPrices[i].cheque1.value} inValid={this.state.VariationPrices[i].cheque1.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش" absoluteLabel="قیمت فروش" Val={(v) => {
+                              <BInput value={this.state.VariationPrices[i].cheque1.value} inValid={this.state.VariationPrices[i].cheque1.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش (قیمت هر ورق)" absoluteLabel="قیمت فروش" Val={(v) => {
                                 let VariationPrices_temp = this.state.VariationPrices;
                                 VariationPrices_temp[i].cheque1.value = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                 VariationPrices_temp[i].cheque1.value_inValid = v ? false : true;
@@ -583,7 +707,7 @@ class AddPrice extends React.Component {
                           </div>
                           {this.state.VariationPrices[i].cheque2.status &&
                             <div style={{ position: 'relative' }}>
-                              <BInput value={this.state.VariationPrices[i].cheque2.value} inValid={this.state.VariationPrices[i].cheque2.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش" absoluteLabel="قیمت فروش" Val={(v) => {
+                              <BInput value={this.state.VariationPrices[i].cheque2.value} inValid={this.state.VariationPrices[i].cheque2.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش (قیمت هر ورق)" absoluteLabel="قیمت فروش" Val={(v) => {
                                 let VariationPrices_temp = this.state.VariationPrices;
                                 VariationPrices_temp[i].cheque2.value = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                                 VariationPrices_temp[i].cheque2.value_inValid = v ? false : true;
@@ -611,7 +735,7 @@ class AddPrice extends React.Component {
                           </div>
                           {this.state.VariationPrices[i].cheque3.status &&
                             <div style={{ position: 'relative' }}>
-                              <BInput value={this.state.VariationPrices[i].cheque3.value} inValid={this.state.VariationPrices[i].cheque3.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش" absoluteLabel="قیمت فروش" Val={(v) => {
+                              <BInput value={this.state.VariationPrices[i].cheque3.value} inValid={this.state.VariationPrices[i].cheque3.value_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="قیمت فروش (قیمت هر ورق)" absoluteLabel="قیمت فروش" Val={(v) => {
                                 let VariationPrices_temp = this.state.VariationPrices;
                                 VariationPrices_temp[i].cheque3.value = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                                 VariationPrices_temp[i].cheque3.value_inValid = v ? false : true;

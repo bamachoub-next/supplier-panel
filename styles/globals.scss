@@ -265,3 +265,12 @@ button svg{
   min-width: 100px;
   align-items: center;
 }
+.ellipsisContainer{
+  width:inherit;
+}
+.ellipsisContainer div{
+  width:100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

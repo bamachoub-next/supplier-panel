@@ -25,14 +25,16 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 class ProductHistory extends React.Component {
   constructor(props) {
     super(props);
-
+    debugger;
+   // this.getProducts(0,10,props.cats[0].url)
     this.Server = new Server();
+    this.catsRef = React.createRef();
 
     this.state = {
       activeIndex: 0,
       brandOptions: [],
       cats: [],
-      brandOption: [],
+      brandOption: [],  
       showLoading: false,
       Step: 1,
       GridData: [],
@@ -91,13 +93,13 @@ class ProductHistory extends React.Component {
               v.statusText = "در حال بررسی";
               v.add = <div></div>
             }
-            v.titleAndSubTitle = <div style={{ display: 'flex' }}>
+            v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={v.imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
-                <div>{v.description}</div>
+                <div>{v.brand}</div>
               </div>
             </div>
             productInSearchSuggestions.push({ _id: v._id, title: v.title, desc: v.description, brand: v.brand, commissionPercent: v.commissionPercent, img: v.img, add: v.add, titleAndSubTitle: v.titleAndSubTitle, lowestPrice: v.lowestPrice, categoryName: v.categoryName })
@@ -141,13 +143,13 @@ class ProductHistory extends React.Component {
               response.data[i].add = <div></div>
             }
 
-            response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
+            response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div>
+              <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
-                <div>{response.data[i].description}</div>
+                <div>{response.data[i].brand}</div>
               </div>
             </div>
 
@@ -257,10 +259,20 @@ class ProductHistory extends React.Component {
         _key: item._key
       })
     }
-
     this.setState({
-      cats: cats
+      cats: cats,
+      cat:cats[0]
     })
+    this.handleChangeCats(cats[0]?.value);
+
+    
+  }
+  handleChangeCats(value){
+    debugger;
+    this.setState({
+      cat: value
+    })
+    this.getProducts(0, 10, value);
   }
 
   render() {
@@ -327,11 +339,8 @@ class ProductHistory extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                        <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
-                          this.setState({
-                            cat: e.value
-                          })
-                          this.getProducts(0, 10, e.value);
+                        <Dropdown value={this.state.cat} ref={this.catsRef} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
+                          this.handleChangeCats(e.value);
                         }
 
                         }
