@@ -204,19 +204,21 @@ class AddProduct extends React.Component {
     )
   }
   suggestproductInSearch(event) {
-    debugger;
     if (!this.state.currentCategoryUrl)
       return;
 
     this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
       (response) => {
-
         if (response.data) {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img src={v.imageArr[0]} />
-            v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
+            if(v.status != "ok"){
+              v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
+            }else{
+              v.add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
+            }
             v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={v.imageArr[0]} className="product-img" />
@@ -246,6 +248,7 @@ class AddProduct extends React.Component {
     this.setState({
       showLoading: true
     })
+    debugger;
     this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, { brand: brandOption },
       (response) => {
         this.setState({
@@ -255,7 +258,11 @@ class AddProduct extends React.Component {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
+            if(v.status != "ok"){
+              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            }else{
+              response.data[i].add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
+            }
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
@@ -323,11 +330,16 @@ class AddProduct extends React.Component {
         this.setState({
           showLoading: false
         })
+
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img src={response.data[i].imageArr[0]} />
-            response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            if(response.data[i].status != "ok"){
+              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            }else{
+              response.data[i].add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
+            }
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
                 <img src={response.data[i].imageArr[0]} className="product-img" />
@@ -473,9 +485,7 @@ class AddProduct extends React.Component {
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => {
-                          this.setState({
-                            GridData: this.state.GridDataSearch
-                          })
+                          
                         }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => {
                           this.setState({

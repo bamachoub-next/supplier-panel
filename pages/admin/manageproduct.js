@@ -74,6 +74,8 @@ class ManageProduct extends React.Component {
     this.setState({
       cats: cats
     })
+    this.handleChangeCats(cats[0]?.value);
+
   }
 
   itemTemplateSearch(product) {
@@ -565,6 +567,13 @@ class ManageProduct extends React.Component {
       }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
   }
+  handleChangeCats(value){
+    debugger;
+    this.setState({
+      cat: value
+    })
+    this.getProducts(0, 10, value);
+  }
 
   render() {
     return (
@@ -663,10 +672,7 @@ class ManageProduct extends React.Component {
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
                         <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
-                          this.setState({
-                            cat: e.value
-                          })
-                          this.getProducts(0, 10, e.value);
+                          this.handleChangeCats(e.value);
                         }
 
                         }

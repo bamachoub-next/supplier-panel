@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import Router from 'next/router'
+import { Chip } from 'primereact/chip';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -81,16 +82,16 @@ class ProductHistory extends React.Component {
           response.data.map(function (v, i) {
             v.img = <img src={v.imageArr[0]} className="product-img" />
             if (v.status == "ok") {
-              v.statusText = "تایید شده";
+              v.statusText = <Chip label="تایید شده" />;
               v.add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
             } else if (v.status == "nok") {
-              v.statusText = "تایید نشده";
+              v.statusText = <Chip label="تایید نشده" />;
               v.add = <div>
                 <span></span>
                 <span></span>
               </div>
             } else {
-              v.statusText = "در حال بررسی";
+              v.statusText =<Chip label="در حال بررسی" />;
               v.add = <div></div>
             }
             v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
@@ -130,16 +131,16 @@ class ProductHistory extends React.Component {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].img = <img src={response.data[i].imageArr[0]} className="product-img" />
             if (response.data[i].status == "ok") {
-              response.data[i].statusText = "تایید شده";
+              response.data[i].statusText = <Chip label="تایید شده" />;
               response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
             } else if (response.data[i].status == "nok") {
-              response.data[i].statusText = "تایید نشده";
+              response.data[i].statusText = <Chip label="تایید نشده" />;
               response.data[i].add = <div>
                 <span></span>
                 <span></span>
               </div>
             } else {
-              response.data[i].statusText = "در حال بررسی";
+              response.data[i].statusText = <Chip label="در حال بررسی" />;
               response.data[i].add = <div></div>
             }
 
