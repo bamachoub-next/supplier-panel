@@ -17,11 +17,11 @@ import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import Server from './../../components/Server'
-import Header from './../../components/Header';
+import Server from '../../components/Server'
+import Header from '../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
-import BInput from './../../components/BInput';
-import UpFile from './../../components/UpFile';
+import BInput from '../../components/BInput';
+import UpFile from '../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
 const switchBtn = [
   { label: 'فعال', value: true },
@@ -126,7 +126,6 @@ class AddPrice extends React.Component {
           
 
         }
-        debugger;
         let EstelamRecords=[];
         for(let m=0;m<priceArr.length;m++){
           for(let k=0;k<response.data.estelamArr.length;k++){
@@ -143,9 +142,11 @@ class AddPrice extends React.Component {
             }
         }
         }
-        product.variationsObj = {
-          variations:priceArr
-        }
+        debugger;
+        if(priceArr.length >0)
+          product.variationsObj = {
+            variations:priceArr
+          }
         this.setState({
           product: product,
           estelamArr: response.data.estelamArr,
@@ -264,7 +265,6 @@ class AddPrice extends React.Component {
 
   }
   addEstelamServer() {
-    debugger;
     if (this.state.addEstelamParam[this.state.addEstelamParam.length - 1]) {
       
       this.setState({
@@ -435,7 +435,7 @@ class AddPrice extends React.Component {
 
                     <div className="col-12  mt-3">
 
-                      {this.state.EstelamRecords.map((u, j) => {
+                      {this.state.EstelamRecords && this.state.EstelamRecords.map((u, j) => {
                         if (u.status) {
                           return (
 
@@ -467,9 +467,7 @@ class AddPrice extends React.Component {
                               <div className="col-lg-2 col-md-3 col-12" >
                                 <div style={{ background: '#fff', border: 1, borderRadius: 8, minWidth: 150, padding: 10, marginLeft: 20, display: 'flex', justifyContent: 'space-between' }}>
                                   <Checkbox inputId="IsTitle" value={this.state.EstelamRecords[j].cheque1.status} checked={this.state.EstelamRecords[j].cheque1.status} onChange={(e) => {
-                                   debugger;
                                    let EstelamRecords = this.state.EstelamRecords;
-                                    debugger;
                                    EstelamRecords[j].cheque1.status = e.checked;
                                    this.setState({
                                     EstelamRecords:EstelamRecords

@@ -66,7 +66,6 @@ class Slider extends React.Component {
                         {this.state.items.map((v,i)=>{
                             return(
                                 <span key={i} className={(this.state.transformNum1 == (i*100) ) ?"slider-pagination-bullet slider-pagination-bullet-active" : "slider-pagination-bullet"} onClick={()=>{
-                                    debugger;
                                     this.setState({
                                         transformNum1 : (i*100)
                                     })

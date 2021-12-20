@@ -20,7 +20,7 @@ const items = [
         label: "ایجاد کالای جدید",
         command: (event) => {
 
-          Router.push('/admin/addproduct')
+          Router.push('/admin/add-product')
 
         }
       },
@@ -28,7 +28,7 @@ const items = [
         label: "تاریخچه درخواست کالا",
         command: (event) => {
 
-          Router.push('/admin/producthistory')
+          Router.push('/admin/create-product-history')
 
         }
       },
@@ -36,7 +36,7 @@ const items = [
         label: "مدیریت کالاهای قیمت ثابت",
         command: (event) => {
 
-          Router.push('/admin/manageproduct')
+          Router.push('/admin/manage-variant-price')
 
         }
       },
@@ -44,7 +44,15 @@ const items = [
         label: "مدیریت کالاهای استعلامی",
         command: (event) => {
 
-          Router.push('/admin/manageestelam')
+          Router.push('/admin/manage-estelams-product')
+
+        }
+      },
+      {
+        label: "استعلام های خریداران",
+        command: (event) => {
+
+          Router.push('/admin/estelams')
 
         }
       },

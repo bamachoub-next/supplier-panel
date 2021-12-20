@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Chip } from 'primereact/chip';
 import Router from 'next/router'
 import { Dropdown } from 'primereact/dropdown';
+import { Message } from 'primereact/message';
 import { InputSwitch } from 'primereact/inputswitch';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dialog } from 'primereact/dialog';
@@ -12,17 +13,25 @@ import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
-import { Close, Search, DeleteOutline, Delete } from '@material-ui/icons';
+import { Close, Search, DeleteOutline, Delete, ThreeSixty } from '@material-ui/icons';
 import { MultiSelect } from 'primereact/multiselect';
-import { Checkbox } from 'primereact/checkbox';
-import Server from './../../components/Server'
-import Header from './../../components/Header';
+import { InputText } from 'primereact/inputtext';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import Server from '../../components/Server'
+import Header from '../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
+import BInput from '../../components/BInput';
+import UpFile from '../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import BInput from './../../components/BInput';
+import { Checkbox } from 'primereact/checkbox';
 
+const switchBtn = [
+  { label: 'فعال', value: true },
+  { label: 'غیرفعال', value: false }
+];
 
-class ManageEstelam extends React.Component {
+class ManageProduct extends React.Component {
   constructor(props) {
     super(props);
     this.Server = new Server();
@@ -30,12 +39,14 @@ class ManageEstelam extends React.Component {
     this.state = {
       activeIndex: 0,
       catOptions: [],
-      oneMoundPrice_1: "",
+      changeType_price_label:"",
+      showGroupChangeDialog:false,
+      oneMonthPrice_1: "",
       catOption: [],
       payTypeOptions: [],
-      payTypeOption: [],
       groupedSelect:{},
-      showArr: {},
+      payTypeOption: [],
+      products: {},
       showLoading: false,
       Step: 1,
       GridData: [],
@@ -86,6 +97,85 @@ class ManageEstelam extends React.Component {
 
   }
 
+  
+  setGroupChange(event) {
+    if(this.state.changePrice && !this.state.changePriceMethod  ){
+      this.setState({
+        changePriceValue_invalid:true
+      })
+      return;
+    }
+    if(this.state.changePrice && this.state.changePriceMethod && (!this.state.changePriceValue || this.state.changePriceValue == "0")  ){
+      this.setState({
+        changePriceValue_invalid:true
+      })
+      return;
+    }
+    
+    if(this.state.changeNumber && !this.state.changeNumberMethod  ){
+      this.setState({
+        changeNumberValue_inValid:true
+      })
+      return;
+    }
+    if(this.state.changeNumber && this.state.changeNumberMethod && ((this.state.changeNumberMethod == "add" || this.state.changeNumberMethod == "mines") && (!this.state.changeNumberValue || this.state.changeNumberValue == "0")) ){
+      this.setState({
+        changeNumberValue_inValid:true
+      })
+      return;
+    }
+    let param = {
+      "oneMonthPrice" : this.state.group_cheque1||false,
+      "threeMonthPrice": this.state.group_cheque3||false,
+      "twoMonthPrice": this.state.group_cheque2||false,
+      "price": this.state.group_price||false,
+      "changePrice":this.state.changePrice||false,
+      "changeStatus":this.state.changeStatus||false,
+      "changePriceMethod" : this.state.changePriceMethod||'',
+      "changePriceValue" : parseInt(this.state.changePriceValue)||0,
+      "changeNumberMethod" :  this.state.changeNumberMethod||'',
+      "changeNumberValue" : parseInt(this.state.changeNumberValue)||0,
+      "show":this.state.group_status || false
+
+
+
+    }
+    let priceKeys = [];
+    let priceColName = "";
+
+    for(let item in this.state.groupedSelect){
+      priceKeys.push(this.state.groupedSelect[item].price._key.toString())
+      priceColName = this.state.groupedSelect[item].price._id.split("/")[0];
+    }
+    param["priceKeys"] = priceKeys;
+    this.Server.put(`add-buy-method/price/group_update/${priceColName}`, param,
+      (response) => {
+
+        if (response.data) {
+
+          MySwal.fire({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'عملیات با موفقیت انجام شد',
+            html: <div>
+              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
+          })
+        } else {
+          MySwal.fire({
+            icon: 'error',
+            title: 'خطا',
+            text: response.data.message
+          })
+
+        }
+
+      }, (error) => {
+
+
+      },{ Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
+    )
+
+  }
   suggestproductInSearch(event) {
     if (!this.state.cat)
       return;
@@ -166,135 +256,154 @@ class ManageEstelam extends React.Component {
   }
 
   itemTemplate(p) {
-    let VariantArr = [];
-    let map = {
-      oneMoundPrice: "چکی - یک ماهه",
-      twoMoundPrice: "چکی - دو ماهه",
-      threeMoundPrice: "چکی - سه ماهه",
-      price: "نقدی",
-    }
-    
+
     return (
-      <div className="title" style={{ display: 'flex', alignItems: 'center', direction: 'rtl', marginBottom: 5, width: '100%' }}>
-        <div style={{ textAlign: 'right', width: '5%' }}>
+      <div className="title" style={{ direction: 'rtl', marginBottom: 5 }} >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ textAlign: 'right', width: '5%' }}>
             <Checkbox onChange={e => {
 
               let groupedSelect = this.state.groupedSelect;
               if(!e.checked){
-                delete groupedSelect[p.estelam._key]
+                delete groupedSelect[p.price._key]
               }else{
-                groupedSelect[p.estelam._key] = {
-                  estelam:p.estelam,
+                groupedSelect[p.price._key] = {
+                  price:p.price,
                   product:p.product
                 }
               }
               this.setState({groupedSelect:groupedSelect})
             
-            }} checked={this.state.groupedSelect[p.estelam._key]}></Checkbox>
+            }} checked={this.state.groupedSelect[p.price._key]}></Checkbox>
 
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'right', width: '15%' }}>
-          <div style={{ display: 'flex' }}>
+          <div style={{ textAlign: 'right', width: '13%' }}>
+            <div style={{ display: 'flex' }}>
+              <div>
+                <img src={p.product.imageArr[0]} className="product-img" />
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>
+                <div>{p.product.brand}</div>
+              </div>
+            </div>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '7%' }}>
+            <span>{p.price.codeForSupplier}</span>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '5%' }}>
+            <span>{p.price.variant}</span>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '7%' }}>
+            <span>{p.product.categoryName}</span>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '5%' }}>
+            <span>{p.product.lowestPrice}</span>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '15%' }}>
             <div>
-              <img src={p.product.imageArr[0]} className="product-img" />
-            </div>
-            <div  style={{textAlign:'right'}}>
-              <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>
-              <div>{p.product.brand}</div>
-            </div>
+              <div className="row">
+                <BInput value={this.state.products["price_" + p.price._key] != undefined ? this.state.products["price_" + p.price._key] : p.price.price?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="نقدی" absoluteLabel="نقدی" Val={(v) => {
+                  let products = this.state.products;
+                  products["price_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  this.setState({
+                    products: products
+                  })
+                }} />
+
+                <BInput value={this.state.products["oneMonthPrice_" + p.price._key] != undefined ? this.state.products["oneMonthPrice_" + p.price._key] : p.price.oneMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - یک ماهه" absoluteLabel="چکی - یک ماهه" Val={(v) => {
+                  let products = this.state.products;
+                  products["oneMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  this.setState({
+                    products: products
+                  })
+                }} />
+                <BInput value={this.state.products["twoMonthPrice_" + p.price._key] != undefined ? this.state.products["twoMonthPrice_" + p.price._key] :  p.price.twoMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - دو ماهه" absoluteLabel="چکی - دو ماهه" Val={(v) => {
+                  let products = this.state.products;
+                  products["twoMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  this.setState({
+                    products: products
+                  })
+                }} />
+                <BInput value={this.state.products["threeMonthPrice_" + p.price._key] != undefined ? this.state.products["threeMonthPrice_" + p.price._key] :  p.price.threeMonthPrice?.toString()?.replace(/,/g, "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ContainerClass="col-lg-6 col-12" label="چکی - سه ماهه" absoluteLabel="چکی - سه ماهه" Val={(v) => {
+                  let products = this.state.products;
+                  products["threeMonthPrice_" + p.price._key] = v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  this.setState({
+                    products: products
+                  })
+                }} />
+              </div></div>
           </div>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'right', width: '7%' }}>
-          <span>{p.estelam.codeForSupplier}</span>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '5%' }}>
-          <span>{p.estelam.variant}</span>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '9%' }}>
-          <span>{p.product.categoryName}</span>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '7%' }}>
-          <span>{p.product.lowestPrice}</span>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '20%' }}>
-          <div>
-            <div style={{ flexWrap: 'wrap', display: 'flex' }}>
-                  {p.estelam.price &&
-                  <Chip className="b-p-chip2" label="نقدی" _id="price" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.price = false;
-
-                  }} />
-                  }
-                  {p.estelam.oneMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - یک ماهه" _id="oneMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.oneMoundPrice = false;
-
-                  }} />
-                  }
-                  {p.estelam.twoMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - دو ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.twoMoundPrice = false;
-
-                  }} />
-                  }
-                  {p.estelam.threeMoundPrice &&
-                  <Chip className="b-p-chip2" label="چکی - سه ماهه" _id="twoMoundPrice" style={{ marginRight: 5, borderRadius: 0, marginBottom: 5 }} removable onRemove={(event) => {
-                    p.estelam.threeMoundPrice = false;
-                  
-                  }} />
-                  }
-                  
-            </div>
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '15%' }}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ width: 100 }} >
-              <Button label="تایید" onClick={() => {
-                this.updateProduct(p)
-              }}  ></Button>
-            </div>
-            <div style={{ width: 40 }}>
-              <Button onClick={() => {
-                this.deleteProduct(p)
-              }}  > <Delete /> </Button>
-            </div>
-
-          </div>
-        </div>
-        <div style={{ textAlign: 'right', width: '1%' }}></div>
-
-        <div style={{ textAlign: 'right', width: '9%' }}>
-          <div style={{ textAlign: 'right' }}>
-            <InputSwitch checked={this.state.showArr["show_" + p.estelam._key] != undefined ? this.state.showArr["show_" + p.estelam._key] : p.estelam.show || false} onChange={(e) => {
-              let showArr = this.state.showArr;
-              showArr["show_" + p.estelam._key] = e.value;
+          <div style={{ textAlign: 'right', width: '7%' }}>
+            <BInput InputNumber={true} value={this.state.products["totalNumberInCart_" + p.price._key] ? this.state.products["totalNumberInCart_" + p.price._key] : p.price.totalNumberInCart} label="" absoluteLabel="" Val={(v) => {
+              let products = this.state.products;
+              products["totalNumberInCart_" + p.price._key] = v ? v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
               this.setState({
-                showArr: showArr
+                products: products
               })
             }} />
-            <div style={{ display: 'flex', justifyContent: "right" }}>
-              <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
-                <div>10 رزرو</div>
-              </p>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '8%' }}>
+            <BInput InputNumber={true} value={this.state.products["totalNumber_" + p.price._key] != undefined ? this.state.products["totalNumber_" + p.price._key] : p.price.totalNumber} label="" absoluteLabel="" Val={(v) => {
+              let products = this.state.products;
+              products["totalNumber_" + p.price._key] = v ? v.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
+              this.setState({
+                products: products
+              })
+            }} />
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'right', width: '10%' }}>
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: 100 }} >
+                <Button label="تایید" onClick={() => {
+                  this.updateProduct(p)
+                }}  ></Button>
+              </div>
+              <div style={{ width: 40 }}>
+                <Button onClick={() => {
+                  this.deleteProduct(p)
+                }} > <Delete /> </Button>
+              </div>
+
             </div>
+          </div>
+          <div style={{ textAlign: 'right', width: '1%' }}></div>
+
+          <div style={{ textAlign: 'left', width: '8%' }}>
+            <div style={{ textAlign: 'right' }}>
+              <InputSwitch checked={this.state.products["show_" + p.price._key] != undefined ? this.state.products["show_" + p.price._key] : p.price.show} onChange={(e) => {
+                let products = this.state.products;
+                products["show_" + p.price._key] = e.value;
+                this.setState({
+                  products: products
+                })
+              }} />
+              <div style={{ display: 'flex', justifyContent: "right" }}>
+                <p className="b-card" style={{ borderRadius: 0, width: 60, padding: 5 }}>
+                  <div>10 رزرو</div>
+                </p>
+              </div>
 
 
+            </div>
           </div>
         </div>
       </div>
@@ -314,34 +423,27 @@ class ManageEstelam extends React.Component {
       })
       return;
     }
-    let priceColName = p.estelam._id;
-
-    let variantArr = {
-      "oneMoundPrice": p.estelam.oneMoundPrice||false,
-      "price": p.estelam.price||false,
-      "show": p.estelam.show||false,
-      "threeMoundPrice": p.estelam.threeMoundPrice||false,
-      "twoMoundPrice": p.estelam.twoMoundPrice||false
-
+    let priceColName = p.price._id;
+    let priceKey = p.price._key;
+    let param = {
+      "codeForSupplier": p.price.codeForSupplier,
+      "oneMonthPrice": parseInt(p.price.oneMonthPrice||0),
+      "price": parseInt(p.price.price||0),
+      "show": p.price.show,
+      "threeMonthPrice": parseInt(p.price.threeMonthPrice||0),
+      "totalNumber": parseInt(p.price.totalNumber||0),
+      "totalNumberInCart": parseInt(p.price.totalNumberInCart||0),
+      "twoMonthPrice": parseInt(p.price.twoMonthPrice||0)
     }
-
-    for (let pp in this.state.showArr) {
-      if (pp.indexOf(p.estelam._key) > -1) {
-        variantArr["show"] = this.state.showArr[pp]||false
+    for (let pp in this.state.products) {
+      if (pp.indexOf(p.price._key) > -1) {
+        param[pp.split("_" + p.price._key)[0]] = parseInt(this.state.products[pp])
       }
     }
-    let param = {
-      "_from": p.estelam._from,
-      "_id": p.estelam._id,
-      "_key": p.estelam._key,
-      "_rev": p.estelam._rev,
-      "_to": p.estelam._to,
-      "createdAt":p.estelam.createdAt,
-      "variant":p.estelam.variant,
-      "codeForSupplier": p.estelam.codeForSupplier,
-      ...variantArr
-    }
-    this.Server.put(`add-buy-method/estelam/${priceColName}/`, param,
+    this.setState({
+      showLoading: true
+    })
+    this.Server.put(`add-buy-method/price/${priceColName}`, param,
       (response) => {
         this.setState({
           showLoading: false
@@ -365,6 +467,7 @@ class ManageEstelam extends React.Component {
 
         }
 
+
       }, (error) => {
         this.setState({
           showLoading: false
@@ -380,7 +483,6 @@ class ManageEstelam extends React.Component {
 
 
   }
-
   deleteProduct(p, Verify) {
     if (!Verify) {
       MySwal.fire({
@@ -398,7 +500,7 @@ class ManageEstelam extends React.Component {
     this.setState({
       showLoading: true
     })
-    this.Server.delete(`add-buy-method/estelam/${this.state.cat}/${p.estelam._key}`, param,
+    this.Server.delete(`add-buy-method/price/${this.state.cat}/${p.price._key}`, param,
       (response) => {
         this.setState({
           showLoading: false
@@ -438,68 +540,12 @@ class ManageEstelam extends React.Component {
 
 
   }
-  
-  setGroupChange(event) {
-    debugger;
-   
-    let param = {
-      "oneMonthPrice" : this.state.group_cheque1||false,
-      "threeMonthPrice": this.state.group_cheque3||false,
-      "twoMonthPrice": this.state.group_cheque2||false,
-      "price": this.state.group_price||false,
-      "changeBuyMode":this.state.changePrice||false,
-      "changeStatus":this.state.changeStatus||false,
-      "show":this.state.group_status || false
-
-
-
-    }
-    let priceKeys = [];
-    let estelamColName = "";
-
-    for(let item in this.state.groupedSelect){
-      priceKeys.push(this.state.groupedSelect[item].estelam._key.toString())
-      estelamColName = this.state.groupedSelect[item].estelam._id.split("/")[0];
-    }
-    param["priceKeys"] = priceKeys;
-
-    debugger;
-
-    this.Server.put(`add-buy-method/estelam/group_update/${estelamColName}`, param,
-      (response) => {
-        debugger;
-
-        if (response.data) {
-
-          MySwal.fire({
-            icon: 'success',
-            showConfirmButton: false,
-            title: 'عملیات با موفقیت انجام شد',
-            html: <div>
-              <Button label="بستن" className="mt-5" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div>
-          })
-        } else {
-          MySwal.fire({
-            icon: 'error',
-            title: 'خطا',
-            text: response.data.message
-          })
-
-        }
-
-      }, (error) => {
-
-
-      },{ Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
-    )
-
-  }
   getProducts(offset, limit, categoryUrl) {
     this.setState({
       GridData: [],
       showLoading: true
     })
-    this.Server.get(`add-buy-method/estelam/${categoryUrl}?offset=${offset}&limit=${limit}`, '',
+    this.Server.get(`add-buy-method/price/${categoryUrl}?offset=${offset}&limit=${limit}`, '',
       (response) => {
         this.setState({
           showLoading: false
@@ -518,7 +564,6 @@ class ManageEstelam extends React.Component {
     )
   }
   handleChangeCats(value){
-    debugger;
     this.setState({
       cat: value
     })
@@ -539,15 +584,15 @@ class ManageEstelam extends React.Component {
                   <Button  onClick={() => {
                     let groupedSelect = []
                     for(let i=0;i<this.state.GridData.length;i++){
-                      groupedSelect[this.state.GridData[i].estelam._key] = {
-                        price:this.state.GridData[i].estelam,
+                      groupedSelect[this.state.GridData[i].price._key] = {
+                        price:this.state.GridData[i].price,
                         product:this.state.GridData[i].product
                       }
                     }
                     this.setState({
                       groupedSelect:groupedSelect
                     })
-                  }} label="انتخاب همه" className="p-button-outlined title" style={{border:0,background:'transparent',color:'#fff'}} >  </Button>
+                  }} label="انتخاب همه" className="title p-button-outlined" style={{border:0,background:'transparent',color:'#fff'}} >  </Button>
 
 
             </div>
@@ -562,16 +607,16 @@ class ManageEstelam extends React.Component {
         </div>
         
         }
-
+        
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
             <div className="col-11" >
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
-                    مدیریت کالاهای استعلامی
+                    مدیریت کالاهای قیمت ثابت
                   </div>
-                  <div className="small-title mb-5">
+                  <div className="small-title">
                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
                   </div>
                 </div>
@@ -579,6 +624,7 @@ class ManageEstelam extends React.Component {
               </div>
               <div className="row" >
                 <div className="col-12" >
+                  <Message severity="info" className="mt-5 mb-2 " style={{ justifyContent: 'flex-start', width: '100%' }} text="هر کدام از انواع پرداخت که مبلغ آن صفر باشد، به معنای غیرفعال بودن آن پرداخت است"></Message>
 
                   <Card className="b-card2  ">
                     <div className="row" >
@@ -599,7 +645,6 @@ class ManageEstelam extends React.Component {
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => {
-                          debugger;
                           /*this.setState({
                             GridData: this.state.GridDataSearch
                           })*/
@@ -637,7 +682,7 @@ class ManageEstelam extends React.Component {
                           })
                           //this.searchByFilter(e.value[0],0,10)
                         }
-                        } placeholder="وضعیت کالا" />
+                        } placeholder="نوع پرداخت" />
 
 
 
@@ -649,7 +694,7 @@ class ManageEstelam extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.catOptions.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip key={i} label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip key={i} className="b-p-chip" label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let catOption = this.state.catOption;
@@ -673,7 +718,7 @@ class ManageEstelam extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.payTypeOptions.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip key={i} className="b-p-chip" label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip key={i} className="b-p-chip"  label={v} _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let payTypeOption = this.state.payTypeOption;
@@ -723,13 +768,13 @@ class ManageEstelam extends React.Component {
                         </div>
 
                       </div>
-                      <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
+                      <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20,borderRadius:8 }} >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ textAlign: 'right', width: '5%' }}>
 
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
-                          <div style={{ textAlign: 'right', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '13%' }}>
                             <div style={{ width: '90%' }}>عنوان و کد کالا</div>
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
@@ -742,26 +787,35 @@ class ManageEstelam extends React.Component {
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-                          <div style={{ textAlign: 'right', width: '9%' }}>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
                             <div style={{ width: '90%' }}>دسته بندی</div>
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
-                          <div style={{ textAlign: 'right', width: '7%' }}>
+                          <div style={{ textAlign: 'right', width: '5%' }}>
                             <div style={{ width: '90%' }}>کمترین قیمت(تومان)</div>
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
-                          <div style={{ textAlign: 'right', width: '20%' }}>
+                          <div style={{ textAlign: 'right', width: '15%' }}>
                             <div style={{ width: '90%' }}>قیمت کالا (تومان)</div>
 
                           </div>
-
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
-                          <div style={{ textAlign: 'right', width: '15%' }}>
+                          <div style={{ textAlign: 'right', width: '7%' }}>
+                            <div style={{ width: '90%' }}>موجودی</div>
+
+                          </div>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '8%' }}>
+                            <div style={{ width: '90%' }}>حداکثر در سبد</div>
+
+                          </div>
+                          <div style={{ textAlign: 'right', width: '1%' }}></div>
+                          <div style={{ textAlign: 'right', width: '10%' }}>
                             <div style={{ width: '90%' }}>عملیات</div>
 
                           </div>
                           <div style={{ textAlign: 'right', width: '1%' }}></div>
-                          <div style={{ textAlign: 'right', width: '9%' }}>
+                          <div style={{ textAlign: 'right', width: '8%' }}>
                             <div style={{ width: '90%' }}>وضعیت</div>
 
                           </div>
@@ -769,7 +823,7 @@ class ManageEstelam extends React.Component {
                         </div>
                       </div>
                       {this.state.GridData.length > 0 ?
-                        <DataView value={this.state.GridData} itemTemplate={this.itemTemplate}></DataView>
+                        <DataView value={this.state.GridData} itemTemplate={this.itemTemplate} className="customDataShow"></DataView>
                         :
                         <div>
                           {this.state.catOptions.length == 0 ?
@@ -812,6 +866,7 @@ class ManageEstelam extends React.Component {
             </div>
           </div>
 
+
           <Dialog visible={this.state.showGroupChangeDialog}  onHide={() => { this.setState({ showGroupChangeDialog: false }) }} style={{ width: '50vw' }} maximizable={true}>
           <div style={{display:'flex',flexDirection:'column',direction:'rtl'}} >
               <div style={{width:'100%'}}>
@@ -827,10 +882,18 @@ class ManageEstelam extends React.Component {
                       this.setState({changePrice:e.checked})
 
                       }} checked={this.state.changePrice}></Checkbox>
-                    <span style={{marginRight:5}} className="title">تغییر نوع پرداخت</span>
+                    <span style={{marginRight:5}} className="title">تغییر قیمت</span>
 
                   </div>
-                 
+                  <div style={{border:'1px solid #bce0fd',padding:' 0.75rem',borderRadius:8,display:'flex',alignItems:'center',marginLeft:30,width:'64rem'}}>
+                    <Checkbox onChange={e => {
+
+                      this.setState({changeNumber:e.checked})
+
+                      }} checked={this.state.changeNumber}></Checkbox>
+                    <span style={{marginRight:5}} className="title">تغییر موجودی</span>
+
+                  </div>
                   <div style={{border:'1px solid #bce0fd',padding:' 0.75rem',borderRadius:8,display:'flex',alignItems:'center',marginLeft:30,width:'64rem'}}>
                     <Checkbox onChange={e => {
 
@@ -849,10 +912,10 @@ class ManageEstelam extends React.Component {
                     {this.state.changePrice &&
                         <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
                         <div>
-                        <p style={{marginTop:16,fontWeight:500}}>تغییر نوع پرداخت</p>
+                        <p style={{marginTop:16,fontWeight:500}}>تغییر قیمت</p>
                         </div>
                         <div>
-                          <span className="small-title">کدام پرداخت ها فعال باشند ؟ </span>
+                          <span className="small-title">اعمال تغییر روی</span>
                         </div>
                         <div style={{display:'flex',alignItems:'center'}}>
                           <div style={{marginLeft:15}}>
@@ -888,12 +951,108 @@ class ManageEstelam extends React.Component {
                           <span className="title" style={{marginRight:5}}>پرداخت چکی - سه ماهه</span>
                           </div>
                         </div>
-                         
+                          <div>
+                          <p className="small-title" style={{marginTop:16,fontWeight:500}}>پرداخت نقدی</p>
+                          </div>
+                          <div>
+                            <span className="small-title">نحوه اعمال تغییر</span>
+                          </div>
+                          <div style={{display:'flex',alignItems:'end'}}>
+                          <div>
+                          <Dropdown value={this.state.changePriceMethod} className="b-border title" options={[{ label: "جایگزینی قیمت", value: "replace" },{ label: "کاهش قیمت", value: "mines" },{ label: "کاهش درصدی قیمت", value: "mines-percent" },{ label: "افزایش قیمت", value: "add" },{ label: "افزایش درصدی", value: "add-percent" }]} style={{ width: 250 }} onChange={(e) => {
+                            let changePriceMethod_label ="قیمت جدید (تومان)";
+                            if(e.value == "1")
+                              changePriceMethod_label ="قیمت جدید (تومان)";
+                            if(e.value == "2")
+                              changePriceMethod_label ="مقدار کاهش قیمت (تومان)";
+                            if(e.value == "3")
+                              changePriceMethod_label ="درصد کاهش قیمت";
+                            if(e.value == "3")
+                              changePriceMethod_label ="مقدار افزایش  قیمت (تومان)";
+                            if(e.value == "3")
+                              changePriceMethod_label ="درصد افزایش قیمت";
+                            this.setState({
+                              changePriceMethod: e.value,
+                              changePriceMethod_label:changePriceMethod_label
+                            })
+                          }
+
+                          }
+                            placeholder="انتخاب کنید" />
+                          </div>
+                          <div style={{marginRight:20}}>
+                          <label htmlFor="name" className="p-d-block">{this.state.changePriceMethod_label}</label>
+                          <BInput inValid={this.state.changePriceValue_invalid} HideInvalidLabel={true}  value={this.state.changePriceValue} Val={(v) => {
+                          this.setState({
+                            changePriceValue: v,
+                            changePriceValue_invalid:false
+                          })
+                        }} />
+                          </div>
+                          <div>
+
+                          </div>
+                        </div>
                         
                         
                     </div>
                     }
-                    
+                    {this.state.changeNumber &&
+                        <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
+                        <div>
+                        <p style={{marginTop:16,fontWeight:500}}>تغییر موجودی</p>
+                        </div>
+                        <div>
+                          <span className="small-title">نحوه اعمال تغییر</span>
+                        </div>
+                        <div style={{display:'flex',alignItems:'end'}}>
+                          <div>
+                          <Dropdown value={this.state.changeNumberMethod} className="b-border" options={[{ label: "جایگزینی موجودی", value: "replace" },{ label: "کاهش موجودی", value: "mines" },{ label: "افزایش موجودی", value: "add" },{ label: "ناموجود کردن", value: "zero" }]} style={{ width: 250 }} onChange={(e) => {
+                            let changeNumberMethod_label ="تعداد جدید";
+                            if(e.value == "replace")
+                              changeNumberMethod_label ="تعداد جدید";
+                            if(e.value == "mines")
+                              changeNumberMethod_label ="مقدار کاهش";
+                            if(e.value == "add")
+                              changeNumberMethod_label ="مقدار افزایش";
+
+                            this.setState({
+                              changeNumberMethod: e.value,
+                              changeNumberMethod_label:changeNumberMethod_label
+                            })
+                          }
+
+                          }
+                            placeholder="انتخاب کنید" />
+                            {this.state.changeNumberMethod == "zero" &&
+                              <div className="small-title">با صفر کردن موجودی، همچنان موظف به تامین 
+                              کالاهای رزرو شده هستید</div>
+                            }
+                            
+                          </div>
+                          {this.state.changeNumberMethod != "zero" &&
+                            <div style={{marginRight:20,position:'relative'}}>
+                            <label htmlFor="name" className="p-d-block">{this.state.changeNumberMethod_label}</label>
+                            <BInput inValid={this.state.changeNumberValue_inValid} HideInvalidLabel={true} value={this.state.changeNumberValue} Val={(v) => {
+                            this.setState({
+                              changeNumberValue: v,
+                              changeNumberValue_inValid:false
+                            })
+                          }} />
+                          <label htmlFor="name" className="p-d-block" style={{position:'absolute',bottom:-20}}>به واحدها توجه نمایید</label>
+
+
+
+                            </div>
+                          }
+                          
+                          <div>
+
+                          </div>
+                        </div>
+                        
+                    </div>
+                    }
                     {this.state.changeStatus &&
                         <div style={{display:'flex',flexDirection:'column',direction:'rtl'}}>
                         <div>
@@ -921,7 +1080,7 @@ class ManageEstelam extends React.Component {
                 {(this.state.changePrice || this.state.changeNumber || this.state.changeStatus) &&
                 <div style={{textAlign:'right',width:'100%',display:'flex',justifyContent:'flex-end',marginTop:20}}>
                   <Button label="انصراف" className="btn btn-outline-primary" style={{minWidth:200}} onClick={() => this.setState({showGroupChangeDialog:false})} />
-                  <Button label="اعمال تغییرات"  style={{minWidth:200,marginRight:20}} onClick={() => this.setGroupChange()} />
+                  <Button label="اعمال تغییرات"  style={{minWidth:200,marginRight:20}} onClick={() => this.setGroupChange()}  />
 
                 </div>
                 }
@@ -930,7 +1089,6 @@ class ManageEstelam extends React.Component {
               
           </div>
           </Dialog>
-
 
 
         </div>
@@ -948,7 +1106,7 @@ class ManageEstelam extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://bmch.liara.run/api/v1/categories');
+  let res = await fetch('https://bmch.liara.run/api/v1/categories');
   //let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
 
   
@@ -969,4 +1127,4 @@ const mapStateToProps = (state) => {
       accessToken: state.token.accessToken
   }
 }
-export default connect(mapStateToProps)(ManageEstelam)
+export default connect(mapStateToProps)(ManageProduct)

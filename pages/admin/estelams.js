@@ -164,14 +164,12 @@ class Estelams extends React.Component {
   }
 
   itemTemplate(p) {
-    debugger;
     const m = p.willExpireAt - p.createdAt;
     const ExpTime = parseInt((m / (1000*60*60)) % 60) + ":" + parseInt((m / (1000*60)) % 60) + ":" +  parseInt((m / (1000)) % 60) ; 
     return (
       <div className="title" style={{ display: 'flex', alignItems: 'flex-start',padding:5, direction: 'rtl', marginBottom: 5, width: '100%' }}>
-         <div style={{ textAlign: 'right', width: '1%' }}></div>
 
-        <div style={{ textAlign: 'right', width: '5%',alignSelf:'center' }}>
+        <div style={{ textAlign: 'right', width: '6%',alignSelf:'center' }}>
             <Checkbox onChange={e => {
 
               let groupedSelect = this.state.groupedSelect;
@@ -250,7 +248,7 @@ class Estelams extends React.Component {
         <div style={{ textAlign: 'right', width: '7%' }}>
           <span>{ExpTime}</span>
         </div>
-        <div style={{ textAlign: 'right', width: '22%' }}>
+        <div style={{ textAlign: 'right', width: '17%' }}>
           <div style={{ display: 'flex' }}>
             <div style={{ width: 115 }} >
               <Button label="پاسخ دادن" onClick={() => {
@@ -414,7 +412,6 @@ class Estelams extends React.Component {
   }
   
   setGroupChange(event) {
-    debugger;
    
     let param = {
       "oneMonthPrice" : this.state.group_cheque1||false,
@@ -437,11 +434,9 @@ class Estelams extends React.Component {
     }
     param["priceKeys"] = priceKeys;
 
-    debugger;
 
     this.Server.put(`add-buy-method/estelam/group_update/${estelamColName}`, param,
       (response) => {
-        debugger;
 
         if (response.data) {
 
@@ -479,7 +474,6 @@ class Estelams extends React.Component {
           showLoading: false
         })
 
-        debugger;
         this.setState({
           GridData: response.data || []
         })
@@ -536,10 +530,10 @@ class Estelams extends React.Component {
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
-                    مدیریت کالاهای استعلامی
+                  استعلام ها
                   </div>
                   <div className="small-title mb-5">
-                    لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                  لیست استعلام خریداران
                   </div>
                 </div>
 
@@ -566,9 +560,9 @@ class Estelams extends React.Component {
                       </div>
                       <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button label="جستجو" onClick={() => {
-                          this.setState({
+                          /*this.setState({
                             GridData: this.state.GridDataSearch
-                          })
+                          })*/
                         }} style={{ width: '75%' }}></Button>
                         <Button onClick={() => {
                           this.setState({
@@ -692,9 +686,9 @@ class Estelams extends React.Component {
                         </div>
 
                       </div>
-                      <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20 }} >
+                      <div className="p-clearfix" style={{ direction: 'rtl', background: '#fff', marginBottom: 20,borderRadius:8 }} >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ textAlign: 'right', width: '5%' }}>
+                          <div style={{ textAlign: 'right', width: '6%' }}>
 
                           </div>
                           <div style={{ textAlign: 'right', width: '15%' }}>
@@ -734,7 +728,7 @@ class Estelams extends React.Component {
 
                           </div>
                           
-                          <div style={{ textAlign: 'right', width: '22%' }}>
+                          <div style={{ textAlign: 'right', width: '17%' }}>
                             <div style={{ width: '90%' }}>عملبات</div>
 
                           </div>
@@ -742,7 +736,7 @@ class Estelams extends React.Component {
                         </div>
                       </div>
                       {this.state.GridData.length > 0 ?
-                        <DataView value={this.state.GridData} itemTemplate={this.itemTemplate}></DataView>
+                        <DataView value={this.state.GridData} itemTemplate={this.itemTemplate} className="customDataShow"></DataView>
                         :
                         <div>
                           {this.state.catOptions.length == 0 ?

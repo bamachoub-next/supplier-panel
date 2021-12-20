@@ -274,3 +274,12 @@ button svg{
   white-space: nowrap;
   overflow: hidden;
 }
+.customDataShow .p-grid > div , .p-selectable-row {
+  margin-bottom: 10px !important;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+.customDataShow.p-dataview .p-dataview-content {
+  background: transparent;
+}

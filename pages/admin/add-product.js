@@ -14,11 +14,11 @@ import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import Server from './../../components/Server'
-import Header from './../../components/Header';
+import Server from '../../components/Server'
+import Header from '../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
-import BInput from './../../components/BInput';
-import UpFile from './../../components/UpFile';
+import BInput from '../../components/BInput';
+import UpFile from '../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 
@@ -248,7 +248,6 @@ class AddProduct extends React.Component {
     this.setState({
       showLoading: true
     })
-    debugger;
     this.Server.post(`products/basic-filter/${this.state.currentCategoryUrl}?offset=${offset}&limit=${limit}`, { brand: brandOption },
       (response) => {
         this.setState({

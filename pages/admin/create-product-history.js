@@ -15,18 +15,17 @@ import { PanelMenu } from 'primereact/panelmenu';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import Server from './../../components/Server'
-import Header from './../../components/Header';
+import Server from '../../components/Server'
+import Header from '../../components/Header';
 import { AutoComplete } from 'primereact/autocomplete';
-import BInput from './../../components/BInput';
-import UpFile from './../../components/UpFile';
+import BInput from '../../components/BInput';
+import UpFile from '../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 
 class ProductHistory extends React.Component {
   constructor(props) {
     super(props);
-    debugger;
    // this.getProducts(0,10,props.cats[0].url)
     this.Server = new Server();
     this.catsRef = React.createRef();
@@ -247,7 +246,7 @@ class ProductHistory extends React.Component {
   }
   selectGridField(value) {
     console.log(value);
-    Router.push(`/admin/addprice?id=${value._id}`)
+    Router.push(`/admin/add-variant-price?id=${value._id}`)
 
   }
   setCategories(categories) {
@@ -269,7 +268,6 @@ class ProductHistory extends React.Component {
     
   }
   handleChangeCats(value){
-    debugger;
     this.setState({
       cat: value
     })
