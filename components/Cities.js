@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
 
 
 
@@ -79,13 +79,13 @@ class Cities extends React.Component {
 	render() {
 
 		return (
-			<div className="row">
+			<Fragment>
 				<div className={this.props.className ? this.props.className : "col-12"}>
 					<label htmlFor="name">استان</label>
 
 					{this.state.Cities.length > 0 &&
 						<>
-							<select style={{ width: '100%' }} className="form-control" onChange={(event) => this.ChangeCity(event.target.value, 1)} value={this.state.SelectedCity}>
+							<select style={{ width: '100%' }} disabled={this.props.disabled} className="form-control" onChange={(event) => this.ChangeCity(event.target.value, 1)} value={this.state.SelectedCity}>
 								{this.state.Cities.map(function (item, index) {
 									if (index == 0)
 										return (
@@ -106,7 +106,7 @@ class Cities extends React.Component {
 				<div className={this.props.className ? this.props.className : "col-12"} style={this.props.className ? {} :  { marginTop: 16 }}>
 					<label htmlFor="name">شهر</label>
 
-					<select style={{ width: '100%' }} className="form-control" onChange={(event) => {
+					<select style={{ width: '100%' }} disabled={this.props.disabled} className="form-control" onChange={(event) => {
 						this.setState({
 							SelectedSubCity: event.target.value
 						});
@@ -132,7 +132,7 @@ class Cities extends React.Component {
 
 
 
-			</div>
+			</Fragment>
 		)
 	}
 }

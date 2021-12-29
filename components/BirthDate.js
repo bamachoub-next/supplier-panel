@@ -176,7 +176,7 @@ class BirthDate extends React.Component {
 			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 				<div style={{ width: '30%' }}>
 
-					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedDay} options={Days} onChange={(event) => {
+					<Dropdown style={{ width: '100%' }}  disabled={this.props.disabled} optionLabel="name" value={this.props.SelectedDay} options={Days} onChange={(event) => {
 						this.setState({
 							SelectedDay: event.target.value
 						});
@@ -189,7 +189,7 @@ class BirthDate extends React.Component {
 				</div>
 				<div style={{ width: '30%' }}>
 
-					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedMounth} options={Mounths} onChange={(event) => {
+					<Dropdown style={{ width: '100%' }}  disabled={this.props.disabled} optionLabel="name" value={this.props.SelectedMounth} options={Mounths} onChange={(event) => {
 						this.setState({
 							SelectedDay: event.target.value
 						});
@@ -200,7 +200,7 @@ class BirthDate extends React.Component {
 				</div>
 				<div style={{ width: '30%' }}>
 
-					<Dropdown style={{ width: '100%' }} optionLabel="name" value={this.props.SelectedYear} options={Years} onChange={(event) => {
+					<Dropdown style={{ width: '100%' }}  disabled={this.props.disabled} optionLabel="name" value={this.props.SelectedYear} options={Years} onChange={(event) => {
 						this.setState({
 							SelectedDay: event.target.value
 						});

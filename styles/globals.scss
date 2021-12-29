@@ -63,7 +63,7 @@ a {
 }
 .b-card2{
   background-color: var(--info_bg);
-  border-radius: 8px;
+  border-radius: 16px;
   
 }
 
@@ -283,3 +283,32 @@ button svg{
 .customDataShow.p-dataview .p-dataview-content {
   background: transparent;
 }
+.form-control{
+  -webkit-appearance: auto;
+  -moz-appearance: auto;
+  appearance: auto;
+  border-radius: 8px;
+}
+button{
+  font-size: $meduimSize !important;
+}
+.inputLabel{
+  margin-bottom: 0.25rem;
+}
+.profile_menu .p-menuitem-text{
+  width:100%;
+}
+
+.profile_menu .p-menuitem{
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-card{
+  box-shadow: none;
+}
+
+.profile_menu .p-menuitem.active{
+  background-color:  var(--border-color);
+  border-radius: 8px;
+}
+

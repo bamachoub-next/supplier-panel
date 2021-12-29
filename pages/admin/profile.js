@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Button } from 'primereact/button';
 import Router from 'next/router'
 import { Card } from 'primereact/card';
-import { Store } from '@material-ui/icons';
+import { Store,ArrowBackIos } from '@material-ui/icons';
 import { Menu } from 'primereact/menu';
 import BInput from './../../components/BInput';
 import BirthDate from './../../components/BirthDate';
@@ -37,16 +37,38 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.Server = new Server();
+        this.itemRef = React.createRef();
 
         this.state = {
             activeIndex: 0,
-            Type: 1,
+            firstName:'',
             items:[
-                { label: 'اطلاعات فروشنده',command:()=>{ this.setState({Type:1}) } },
-                { label: 'اطلاعات فروشگاه',command:()=>{ this.setState({Type:2})  } },
-                { label: 'اطلاعات حساب بانکی',command:()=>{ this.setState({Type:3}) }},
-                { label: 'مدارک',command:()=>{ this.setState({Type:4}) }}
-            ]
+                { label: <div style={{display:'flex',justifyContent:'space-between'}}><span>اطلاعات فروشنده</span><span><ArrowBackIos /></span></div>,command:(event)=>{ 
+                    for(let i=0;i<event.originalEvent.currentTarget.parentElement.parentElement.children.length;i++)
+                        event.originalEvent.currentTarget.parentElement.parentElement.children[i].className = "p-menuitem";
+                    event.originalEvent.currentTarget.parentElement.className="p-menuitem active";
+                    this.setState({Type:1}) 
+                } },
+                { label: <div style={{display:'flex',justifyContent:'space-between'}}><span>اطلاعات فروشگاه</span><span><ArrowBackIos /></span></div>,command:(event)=>{ 
+                    for(let i=0;i<event.originalEvent.currentTarget.parentElement.parentElement.children.length;i++)
+                        event.originalEvent.currentTarget.parentElement.parentElement.children[i].className = "p-menuitem";
+                    event.originalEvent.currentTarget.parentElement.className="p-menuitem active";
+                    this.setState({Type:2}) 
+                 } },
+                { label: <div style={{display:'flex',justifyContent:'space-between'}}><span>اطلاعات حساب بانکی</span><span><ArrowBackIos /></span></div>,command:(event)=>{
+                    for(let i=0;i<event.originalEvent.currentTarget.parentElement.parentElement.children.length;i++)
+                        event.originalEvent.currentTarget.parentElement.parentElement.children[i].className = "p-menuitem";
+                    event.originalEvent.currentTarget.parentElement.className="p-menuitem active";
+                    this.setState({Type:3}) 
+                }},
+                { label: <div style={{display:'flex',justifyContent:'space-between'}}><span>مدارک</span><span><ArrowBackIos /></span></div>,command:(event)=>{ for(let i=0;i<event.originalEvent.currentTarget.parentElement.parentElement.children.length;i++)
+                    for(let i=0;i<event.originalEvent.currentTarget.parentElement.parentElement.children.length;i++)
+                        event.originalEvent.currentTarget.parentElement.parentElement.children[i].className = "p-menuitem";
+                    event.originalEvent.currentTarget.parentElement.className="p-menuitem active";
+                    this.setState({Type:4}) 
+                }}
+            ],
+            step:0
         }
     }
     getBirthDateResponse(value) {
@@ -66,7 +88,6 @@ class Profile extends React.Component {
         })
     }
     componentDidMount(){
-
      this.Server.get(`supplier-employee/one`, '',
       (response) => {
         this.setState({
@@ -74,8 +95,11 @@ class Profile extends React.Component {
           SelectedDay:{ name: response.data.birthDate.split("/")[0], code: response.data.birthDate.split("/")[0]},
           SelectedMounth: Mounths[response.data.birthDate.split("/")[1]-1],
           SelectedYear: { name: response.data.birthDate.split("/")[2], code: response.data.birthDate.split("/")[2]},
+          Type: 1,
           ...response.data
         })
+        let menu = this.itemRef.current;
+        menu.menuRef.current.childNodes[0].children[0].className = 'p-menuitem active';
 
       }, (error) => {
         this.setState({
@@ -86,6 +110,26 @@ class Profile extends React.Component {
       }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
     )
     }
+    editProfile(){
+        this.Server.get(`supplier-employee/one`, '',
+         (response) => {
+           this.setState({
+             showLoading: false,
+             SelectedDay:{ name: response.data.birthDate.split("/")[0], code: response.data.birthDate.split("/")[0]},
+             SelectedMounth: Mounths[response.data.birthDate.split("/")[1]-1],
+             SelectedYear: { name: response.data.birthDate.split("/")[2], code: response.data.birthDate.split("/")[2]},
+             ...response.data
+           })
+   
+         }, (error) => {
+           this.setState({
+             showLoading: false
+           })
+           
+   
+         }, { Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
+       )
+       }
 
 
 
@@ -106,92 +150,106 @@ class Profile extends React.Component {
 
                                     </Card>
                                     <Card className="b-card2  mt-4" style={{ textAlign: 'center' }}>
-                                        <Menu model={this.state.items} className="b-menu" style={{ background: 'transparent', border: 0, width: '100%' }} />
+                                        <Menu ref={this.itemRef} model={this.state.items} className="b-menu" style={{ background: 'transparent', border: 0, width: '100%' }} className="profile_menu" />
                                     </Card>
 
 
 
                                 </div>
-                                <div className="col-lg-9 col-12">
+                                <div className="col-lg-9 col-12" >
                                     <Card className={this.state.Type  == 1 ? "b-card2 mt-5" : "d-none"}  >
+                                        <div style={{maxWidth:700}}>
                                         <div className="row">
                                             <div className="col-lg-6 col-12" >
                                                 <p>اطلاعات فروشنده</p>
                                             </div>
                                             <div className="col-lg-6 col-12" >
-                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 300 }} onClick={() => {
-
+                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 200 }} onClick={() => {
+                                                    if(this.state.step){
+                                                        this.editProfile()
+                                                    }else{
+                                                        this.setState({
+                                                            step:1
+                                                        })
+                                                    }
                                                 }} />
                                             </div>
 
                                         </div>
                                         <div className="row mt-5" >
-                                            <BInput value={this.state.firstName} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="نام" absoluteLabel="نام" Val={(v) => {
+                                            <BInput value={this.state.firstName} disabled={!this.state.step}   ContainerClass="col-lg-6 col-12 mt-3" label="نام" absoluteLabel="نام" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    firstName: v
                                                 })
                                             }} />
 
-                                            <BInput value={this.state.lastName} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="نام خانوادگی" absoluteLabel="نام خانوادگی" Val={(v) => {
+                                            <BInput value={this.state.lastName} disabled={!this.state.step}   ContainerClass="col-lg-6 col-12 mt-3" label="نام خانوادگی" absoluteLabel="نام خانوادگی" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    lastName: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.nationalCode} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="کد ملی" absoluteLabel="کد ملی" Val={(v) => {
+                                            <BInput value={this.state.nationalCode} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="کد ملی" absoluteLabel="کد ملی" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    nationalCode: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.shenasNameCode} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) => {
+                                            <BInput value={this.state.shenasNameCode} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    shenasNameCode: v
                                                 })
                                             }} />
                                             <div className="col-lg-6 col-12 mt-3" >
-                                            <small >تاریخ تولد</small>
+                                            <label >تاریخ تولد</label>
 
-                                            <BirthDate callback={this.getBirthDateResponse.bind(this)} placeholder={false} SelectedYear={this.state.SelectedYear} SelectedMounth={this.state.SelectedMounth} SelectedDay={this.state.SelectedDay} />
+                                            <BirthDate callback={this.getBirthDateResponse.bind(this)} disabled={!this.state.step} placeholder={false} SelectedYear={this.state.SelectedYear} SelectedMounth={this.state.SelectedMounth} SelectedDay={this.state.SelectedDay} />
 
                                             </div>
                                         </div>
-
+                                            </div>
                                     </Card>
                                     <Card className={this.state.Type  == 2 ? "b-card2 mt-5" : "d-none"}  >
+                                    <div style={{maxWidth:700}}>
                                         <div className="row" >
                                             <div className="col-lg-6 col-12" >
                                                 <p>اطلاعات فروشگاه</p>
                                             </div>
                                             <div className="col-lg-6 col-12" >
-                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 300 }} onClick={() => {
-
+                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 200 }} onClick={() => {
+                                                    if(this.state.step){
+                                                        this.editProfile()
+                                                    }else{
+                                                        this.setState({
+                                                            step:1
+                                                        })
+                                                    }
                                                 }} />
                                             </div>
 
                                         </div>
                                         <div className="row mt-5" style={{alignItems:'end'}} >
-                                            <BInput value={this.state.shopName} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="نام فروشگاه" absoluteLabel="نام فروشگاه" Val={(v) => {
+                                            <BInput value={this.state.shopName} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="نام فروشگاه" absoluteLabel="نام فروشگاه" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    shopName: v
                                                 })
                                             }} />
                                             <div className="col-lg-6 col-12" >
 
                                             </div>
-                                            <Cities className="col-lg-6 col-12" callback={this.getCityResponse.bind(this)} subCity_inValid={this.state.subCity_inValid} city_inValid={this.state.city_inValid} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
+                                            <Cities className="col-lg-6 col-12" disabled={!this.state.step} callback={this.getCityResponse.bind(this)} subCity_inValid={this.state.subCity_inValid} city_inValid={this.state.city_inValid} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
                                             
-                                            <BInput value={this.state.address} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="آدرس" absoluteLabel="آدرس" Val={(v) => {
+                                            <BInput value={this.state.codePosti} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="آدرس" absoluteLabel="آدرس" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    codePosti: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.codePosti} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="ک پستی" absoluteLabel="ک پستی" Val={(v) => {
+                                            <BInput value={this.state.codePosti} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="کد پستی" absoluteLabel="ک پستی" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    codePosti: v
                                                 })
                                             }} />
                                             {this.state.brandOptions &&
                                             <div className="col-lg-6 col-12">
-                                            <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} className="b-border" style={{ width: '100%' }} onChange={(e) => {
+                                            <MultiSelect value={this.state.brandOption} disabled={!this.state.step} options={this.state.brandOptions} className="b-border" style={{ width: '100%' }} onChange={(e) => {
                                                 this.setState({
                                                     brandOption: e.value
                                                 })
@@ -205,24 +263,33 @@ class Profile extends React.Component {
                                         
 
                                         </div>
-
+                                            </div>
                                     </Card>
                                     <Card className={this.state.Type  == 3 ? "b-card2 mt-5" : "d-none"}  >
+                                    <div style={{maxWidth:700}}>
                                         <div className="row" >
                                             <div className="col-lg-6 col-12" >
                                                 <p>اطلاعات حساب بانکی</p>
                                             </div>
                                             <div className="col-lg-6 col-12" >
-                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 300 }} onClick={() => {
+                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 200 }} onClick={() => {
+                                                    if(this.state.step){
+                                                        this.editProfile()
+                                                    }else{
+                                                        this.setState({
+                                                            step:1
+                                                        })
+                                                    }
+                                                   
 
                                                 }} />
                                             </div>
 
                                         </div>
                                         <div className="row mt-5" style={{alignItems:'end'}} >
-                                            <BInput value={this.state.shabaNumber} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شبا" absoluteLabel="شماره شبا" Val={(v) => {
+                                            <BInput value={this.state.shabaNumber} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شبا" absoluteLabel="شماره شبا" Val={(v) => {
                                                 this.setState({
-                                                    name: v
+                                                    shabaNumber: v
                                                 })
                                             }} />
                                             <div className="col-lg-6 col-12">
@@ -235,16 +302,23 @@ class Profile extends React.Component {
                                             </div>
 
                                         </div>
-
+                                            </div>
                                     </Card>
                                     <Card className={this.state.Type  == 4 ? "b-card2 mt-5" : "d-none"}  >
+                                    <div style={{maxWidth:700}}>
                                         <div className="row" >
                                             <div className="col-lg-6 col-12" >
                                                 <p>مدارک</p>
                                             </div>
                                             <div className="col-lg-6 col-12" >
-                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 300 }} onClick={() => {
-
+                                                <Button label="درخواست ویرایش اطلاعات" style={{ width: 200 }} onClick={() => {
+                                                    if(this.state.step){
+                                                        this.editProfile()
+                                                    }else{
+                                                        this.setState({
+                                                            step:1
+                                                        })
+                                                    }
                                                 }} />
                                             </div>
 
@@ -277,7 +351,7 @@ class Profile extends React.Component {
                                         
 
                                         </div>
-
+                                                </div>
                                     </Card>
                                 </div>
 

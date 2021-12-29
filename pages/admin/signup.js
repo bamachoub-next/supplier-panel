@@ -402,12 +402,12 @@ class Signup extends React.Component {
                                                     lastName: v,
                                                     lastName_inValid: false
                                                 })} />
-                                            <BInput value={this.state.nationalCode} inValid={this.state.nationalCode_inValid} InputNumber={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد ملی" absoluteLabel="کد ملی" Val={(v) =>
+                                            <BInput value={this.state.nationalCode} inValid={this.state.nationalCode_inValid}   ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد ملی" absoluteLabel="کد ملی" Val={(v) =>
                                                 this.setState({
                                                     nationalCode: v,
                                                     nationalCode_inValid: false
                                                 })} />
-                                            <BInput value={this.state.shenasname} inValid={this.state.shenasname_inValid} InputNumber={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) =>
+                                            <BInput value={this.state.shenasname} inValid={this.state.shenasname_inValid}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) =>
                                                 this.setState({
                                                     shenasname: v,
                                                     shenasname_inValid: false
