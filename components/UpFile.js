@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'primereact/button';
 import axios from 'axios'
+import Image from 'next/image'
+
 import { ProgressBar } from 'primereact/progressbar';
 const ServerUrl = "https://bmch.liara.run/api/v1/"
 //const ServerUrl = "http://127.0.0.1:3000/api/v1/"
@@ -108,7 +110,7 @@ class BInput extends React.Component {
           <div className={this.props.className || "col-lg-8 col-12 mt-3"} style={{ background: '#fff' }}>
             <div className="row" style={{ padding: 10 }}>
               <div className="col-5">
-                <img src={this.state.uploadImage} style={{ height: 75 }} />
+                <Image src={this.state.uploadImage} alt="" style={{ height: 75 }} />
               </div>
               <div className="col-7">
                 <div className="small-title">

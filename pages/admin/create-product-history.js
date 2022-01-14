@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import Router from 'next/router'
 import { Chip } from 'primereact/chip';
+import Image from 'next/image'
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -79,7 +80,7 @@ class ProductHistory extends React.Component {
         if (response.data) {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
-            v.img = <img src={v.imageArr[0]} className="product-img" />
+            v.img = <Image alt=""  src={v.imageArr[0]} className="product-img" />
             if (v.status == "ok") {
               v.statusText = <Chip label="تایید شده" />;
               v.add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
@@ -95,7 +96,7 @@ class ProductHistory extends React.Component {
             }
             v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <img src={v.imageArr[0]} className="product-img" />
+                <Image alt=""  src={v.imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
@@ -128,7 +129,7 @@ class ProductHistory extends React.Component {
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
-            response.data[i].img = <img src={response.data[i].imageArr[0]} className="product-img" />
+            response.data[i].img = <Image alt=""  src={response.data[i].imageArr[0]} className="product-img" />
             if (response.data[i].status == "ok") {
               response.data[i].statusText = <Chip label="تایید شده" />;
               response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
@@ -145,7 +146,7 @@ class ProductHistory extends React.Component {
 
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <img src={response.data[i].imageArr[0]} className="product-img" />
+                <image src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>

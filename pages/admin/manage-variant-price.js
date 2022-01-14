@@ -7,6 +7,7 @@ import { Message } from 'primereact/message';
 import { InputSwitch } from 'primereact/inputswitch';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dialog } from 'primereact/dialog';
+import Image from 'next/image'
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -187,11 +188,11 @@ class ManageProduct extends React.Component {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
-            v.img = <img src={v.imageArr[0]} />
+            v.img = <Image alt="" src={v.imageArr[0]} />
             v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
             v.titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
-                <img src={v.imageArr[0]} className="product-img" />
+                <Image alt="" src={v.imageArr[0]} className="product-img" />
               </div>
               <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
@@ -226,11 +227,11 @@ class ManageProduct extends React.Component {
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <img src={response.data[i].imageArr[0]} />
+            response.data[i].img = <Image alt="" src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
-                <img src={response.data[i].imageArr[0]} className="product-img" />
+                <Image alt="" src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
@@ -282,7 +283,7 @@ class ManageProduct extends React.Component {
           <div style={{ textAlign: 'right', width: '13%' }}>
             <div style={{ display: 'flex' }}>
               <div>
-                <img src={p.product.imageArr[0]} className="product-img" />
+                <Image alt="" src={p.product.imageArr[0]} className="product-img" />
               </div>
               <div style={{textAlign:'right'}}>
                 <div style={{ fontWeight: 'bold' }}>{p.product.title}</div>

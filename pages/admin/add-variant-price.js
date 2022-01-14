@@ -5,6 +5,7 @@ import Router from 'next/router'
 import { InputSwitch } from 'primereact/inputswitch';
 import { SelectButton } from 'primereact/selectbutton';
 import { Checkbox } from 'primereact/checkbox';
+import Image from 'next/image'
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -335,7 +336,7 @@ class AddPrice extends React.Component {
                 <card className="row b-card2 p-4">
                   <div className="col-lg-4 col-12">
                     <div style={{ display: 'flex' }}>
-                      <img src={this.state.product.imageArr[0]} className="product-img" />
+                      <Image alt=""  src={this.state.product.imageArr[0]} className="product-img" />
                       <div>
                         <div>{this.state.product.title}</div>
                         <div>{this.state.product.description}</div>
