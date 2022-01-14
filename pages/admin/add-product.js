@@ -214,7 +214,7 @@ class AddProduct extends React.Component {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
-            v.img = <Image alt=""  src={v.imageArr[0]} />
+            v.img = <img alt=""  src={v.imageArr[0]} />
             if(v.status != "ok"){
               v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
             }else{
@@ -222,7 +222,7 @@ class AddProduct extends React.Component {
             }
             v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <Image alt=""  src={v.imageArr[0]} className="product-img" />
+                <img alt=""  src={v.imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
@@ -257,7 +257,7 @@ class AddProduct extends React.Component {
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <Image alt=""  src={response.data[i].imageArr[0]} />
+            response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
             if(v.status != "ok"){
               response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
             }else{
@@ -265,7 +265,7 @@ class AddProduct extends React.Component {
             }
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <Image alt=""  src={response.data[i].imageArr[0]} className="product-img" />
+                <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
@@ -334,7 +334,7 @@ class AddProduct extends React.Component {
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <Image alt=""  src={response.data[i].imageArr[0]} />
+            response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
             if(response.data[i].status != "ok"){
               response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
             }else{
@@ -342,7 +342,7 @@ class AddProduct extends React.Component {
             }
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <Image alt=""  src={response.data[i].imageArr[0]} className="product-img" />
+                <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>

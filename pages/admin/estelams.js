@@ -96,11 +96,11 @@ class Estelams extends React.Component {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
-            v.img = <Image  alt=""  src={v.imageArr[0]} />
+            v.img = <img  alt=""  src={v.imageArr[0]} />
             v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
             v.titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
-                <Image alt=""  src={v.imageArr[0]} className="product-img" />
+                <img alt=""  src={v.imageArr[0]} className="product-img" />
               </div>
               <div>
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
@@ -135,11 +135,11 @@ class Estelams extends React.Component {
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
-            response.data[i].img = <Image alt=""  src={response.data[i].imageArr[0]} />
+            response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
             response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts() }} style={{ width: '100%' }} />
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex' }}>
               <div>
-                <Image alt=""  src={response.data[i].imageArr[0]} className="product-img" />
+                <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
@@ -191,7 +191,7 @@ class Estelams extends React.Component {
         <div style={{ textAlign: 'right', width: '15%' }}>
           <div style={{ display: 'flex' }}>
             <div>
-              <Image alt=""  src={p.imageUrl} className="product-img" />
+              <img alt=""  src={p.imageUrl} className="product-img" />
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{p.productTitle}</div>

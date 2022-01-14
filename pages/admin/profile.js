@@ -328,25 +328,36 @@ class Profile extends React.Component {
                                             <div className="col-lg-6 col-12" >
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>جواز کسب</div>
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>
-                                                    <Image src={this.state.salesPermitImage} alt=""  style={{width:100,height:100}} />
+                                                    {this.state.salesPermitImage &&
+                                                        <img src={this.state.salesPermitImage} alt=""  style={{width:100,height:100}} />
+                                                    }
                                                 </div>
                                             </div>
                                             <div className="col-lg-6 col-12" >
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>کارت ملی</div>
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>
-                                                    <Image src={this.state.idCardImage} alt=""  style={{width:100,height:100}} />
+                                                {this.state.idCardImage &&
+
+                                                    <img src={this.state.idCardImage} alt=""  style={{width:100,height:100}} />
+                                                }
                                                 </div>
                                             </div>
                                             <div className="col-lg-6 col-12" >
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>شناسنامه - صفحه اول</div>
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>
-                                                    <Image src={this.state.idBookPageOneImage} alt=""  style={{width:100,height:100}} />
+                                                {this.state.idBookPageOneImage &&
+
+                                                    <img src={this.state.idBookPageOneImage} alt=""  style={{width:100,height:100}} />
+                                                }
                                                 </div>
                                             </div>
                                             <div className="col-lg-6 col-12" >
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>شناسنامه - صفحه دوم</div>
                                                 <div style={{background:'#fff',padding:10,borderRadius:8,marginTop:10}}>
-                                                    <Image src={this.state.idBookPageTwoImage} alt=""  style={{width:100,height:100}} />
+                                                {this.state.idBookPageTwoImage &&
+
+                                                    <img src={this.state.idBookPageTwoImage} alt=""  style={{width:100,height:100}} />
+                                                }
                                                 </div>
                                             </div>
                                         

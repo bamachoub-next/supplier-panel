@@ -80,7 +80,7 @@ class ProductHistory extends React.Component {
         if (response.data) {
           let productInSearchSuggestions = []
           response.data.map(function (v, i) {
-            v.img = <Image alt=""  src={v.imageArr[0]} className="product-img" />
+            v.img = <img alt=""  src={v.imageArr[0]} className="product-img" />
             if (v.status == "ok") {
               v.statusText = <Chip label="تایید شده" />;
               v.add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
@@ -96,7 +96,7 @@ class ProductHistory extends React.Component {
             }
             v.titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <Image alt=""  src={v.imageArr[0]} className="product-img" />
+                <img alt=""  src={v.imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
@@ -129,7 +129,7 @@ class ProductHistory extends React.Component {
         })
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
-            response.data[i].img = <Image alt=""  src={response.data[i].imageArr[0]} className="product-img" />
+            response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
             if (response.data[i].status == "ok") {
               response.data[i].statusText = <Chip label="تایید شده" />;
               response.data[i].add = <Button disabled label="موجود در انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
@@ -146,7 +146,7 @@ class ProductHistory extends React.Component {
 
             response.data[i].titleAndSubTitle = <div style={{ display: 'flex',width:'100%' }}>
               <div>
-                <image src={response.data[i].imageArr[0]} className="product-img" />
+                <img src={response.data[i].imageArr[0]} className="product-img" />
               </div>
               <div className="ellipsisContainer">
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>

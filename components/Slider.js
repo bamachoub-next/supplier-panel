@@ -37,7 +37,9 @@ class Slider extends React.Component {
                                 <div style={{ flex: '1 0 100%' }} key={i}>
                                     <div style={{ display: 'flex',padding:8 }}>
                                         <div style={{marginLeft:8}}>
-                                            <Image src={p.img} alt=""  style={{ width: '4rem', height: '4rem',borderRadius:4 }} />
+                                            {p.img &&
+                                                <img src={p.img} alt=""  style={{ width: '4rem', height: '4rem',borderRadius:4 }} />
+                                            }
                                         </div>
                                         <div style={{display:'flex',justifyContent:'space-between',flexDirection:'column'}}>
                                             <p className="small-title">

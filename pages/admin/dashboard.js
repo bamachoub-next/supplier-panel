@@ -33,7 +33,6 @@ class Dashboard extends React.Component {
     render() {
         return (
             <>
-                <Header />
                 <div className="justify-content-center" style={{ direction: 'rtl' }}  >
                     <div className="row justify-content-center">
                         <div className="col-11" >
@@ -67,23 +66,7 @@ class Dashboard extends React.Component {
 
                                             </div>
                                         </div>
-                                        <div className="row" >
-                                            <div className="col-lg-4 col-12">
-                                                
-                                            <p className="title">سفارشات جدید (5)</p>    
-                                            <Slider contentStyle={{background:'#fff',height:'5rem',borderRadius:8}}/>
-                                            </div>
-                                            <div className="col-lg-4 col-12">
-                                            <p className="title">سفارشات تحویل امروز (5)</p>    
-
-                                            <Slider contentStyle={{background:'#fff',height:'5rem',borderRadius:8}} />
-                                            </div>
-                                            <div className="col-lg-4 col-12">
-                                            <p className="title">سفارشات تحویل فردا به بعد (5)</p>    
-
-                                            <Slider contentStyle={{background:'#fff',height:'5rem',borderRadius:8}} />
-                                            </div>
-                                        </div>
+                                       
                                     </Card>
                                     <Card className="b-card2  mt-3" style={{ textAlign: 'right' }}>
                                     <div style={{display:'flex',justifyContent:'space-between'}} className="mb-4">

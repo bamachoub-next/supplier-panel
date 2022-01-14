@@ -110,7 +110,7 @@ class BInput extends React.Component {
           <div className={this.props.className || "col-lg-8 col-12 mt-3"} style={{ background: '#fff' }}>
             <div className="row" style={{ padding: 10 }}>
               <div className="col-5">
-                <Image src={this.state.uploadImage} alt="" style={{ height: 75 }} />
+                <img src={this.state.uploadImage} alt="" style={{ height: 75 }} />
               </div>
               <div className="col-7">
                 <div className="small-title">

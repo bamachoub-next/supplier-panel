@@ -336,7 +336,7 @@ class AddPrice extends React.Component {
                 <card className="row b-card2 p-4">
                   <div className="col-lg-4 col-12">
                     <div style={{ display: 'flex' }}>
-                      <Image alt=""  src={this.state.product.imageArr[0]} className="product-img" />
+                      <img alt=""  src={this.state.product.imageArr[0]} className="product-img" />
                       <div>
                         <div>{this.state.product.title}</div>
                         <div>{this.state.product.description}</div>
