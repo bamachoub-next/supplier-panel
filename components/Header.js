@@ -17,7 +17,7 @@ const items = [
     label: 'فروشگاه',
     items: [
       {
-        label: "ایجاد کالای جدید",
+        label: "اضافه کردن کالا به انبار",
         command: (event) => {
 
           Router.push('/admin/add-product')
