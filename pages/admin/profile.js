@@ -121,6 +121,13 @@ class Profile extends React.Component {
              SelectedYear: { name: response.data.birthDate.split("/")[2], code: response.data.birthDate.split("/")[2]},
              ...response.data
            })
+           MySwal.fire({
+            icon: 'success',
+            showConfirmButton: false,
+            title: 'عملیات با موفقیت انجام شد',
+            html: <div className='title' style={{ marginTop: 80 }}>
+              <div style={{ textAlign: 'center' }}><Button label="بستن" onClick={() => { MySwal.close(); }} style={{ width: '90%' }} /></div></div>
+          })
    
          }, (error) => {
            this.setState({
@@ -140,7 +147,7 @@ class Profile extends React.Component {
                 <Header />
                 <div className="justify-content-center" style={{ direction: 'rtl' }}  >
                     <div className="row justify-content-center">
-                        <div className="col-11" >
+                        <div className="col-10" >
                             <div className="row">
                                 <div className="col-lg-3 col-12">
                                     <Card className="b-card2  mt-5" style={{ textAlign: 'center' }}  >
@@ -189,12 +196,12 @@ class Profile extends React.Component {
                                                     lastName: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.nationalCode} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="کد ملی" absoluteLabel="کد ملی" Val={(v) => {
+                                            <BInput value={this.state.nationalCode} InputNumber={true} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="کد ملی" absoluteLabel="کد ملی" Val={(v) => {
                                                 this.setState({
                                                     nationalCode: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.shenasNameCode} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) => {
+                                            <BInput value={this.state.shenasNameCode} InputNumber={true} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="شماره شناسنامه" absoluteLabel="شماره شناسنامه" Val={(v) => {
                                                 this.setState({
                                                     shenasNameCode: v
                                                 })
@@ -238,12 +245,12 @@ class Profile extends React.Component {
                                             </div>
                                             <Cities className="col-lg-6 col-12" disabled={!this.state.step} callback={this.getCityResponse.bind(this)} subCity_inValid={this.state.subCity_inValid} city_inValid={this.state.city_inValid} SelectedCity={this.state.SelectedCity} SelectedSubCity={this.state.SelectedSubCity} />
                                             
-                                            <BInput value={this.state.codePosti} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="آدرس" absoluteLabel="آدرس" Val={(v) => {
+                                            <BInput value={this.state.address} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="آدرس" absoluteLabel="آدرس" Val={(v) => {
                                                 this.setState({
-                                                    codePosti: v
+                                                    address: v
                                                 })
                                             }} />
-                                            <BInput value={this.state.codePosti} disabled={!this.state.step}  ContainerClass="col-lg-6 col-12 mt-3" label="کد پستی" absoluteLabel="ک پستی" Val={(v) => {
+                                            <BInput value={this.state.codePosti} disabled={!this.state.step} InputNumber={true}  ContainerClass="col-lg-6 col-12 mt-3" label="کد پستی" absoluteLabel="ک پستی" Val={(v) => {
                                                 this.setState({
                                                     codePosti: v
                                                 })

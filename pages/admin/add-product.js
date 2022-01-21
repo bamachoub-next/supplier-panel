@@ -28,7 +28,6 @@ class AddProduct extends React.Component {
     super(props);
     console.log(props);
     this.Server = new Server();
-
     this.state = {
       activeIndex: 0,
       brandOptions: [],
@@ -40,6 +39,8 @@ class AddProduct extends React.Component {
       showCreateProduct: false
     }
   }
+  
+
   componentDidMount() {
     /*
     let token = this.props.accessToken||localStorage.getItem("accessToken")
@@ -57,11 +58,12 @@ class AddProduct extends React.Component {
 
       }
     )*/
+    
     this.setCategories(this.props.cats, 1)
 
 
   }
-
+  
   itemTemplateSearch(product) {
 
     return (
@@ -224,7 +226,7 @@ class AddProduct extends React.Component {
               <div>
                 <img alt=""  src={v.imageArr[0]} className="product-img" />
               </div>
-              <div className="ellipsisContainer">
+              <div>
                 <div style={{ fontWeight: 'bold' }}>{v.title}</div>
                 <div>{v.brand}</div>
               </div>
@@ -267,7 +269,7 @@ class AddProduct extends React.Component {
               <div>
                 <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div className="ellipsisContainer">
+              <div>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
                 <div>{response.data[i].brand}</div>
               </div>
@@ -344,7 +346,7 @@ class AddProduct extends React.Component {
               <div>
                 <img alt=""  src={response.data[i].imageArr[0]} className="product-img" />
               </div>
-              <div className="ellipsisContainer">
+              <div>
                 <div style={{ fontWeight: 'bold' }}>{response.data[i].title}</div>
                 <div>{response.data[i].brand}</div>
               </div>
@@ -407,6 +409,8 @@ class AddProduct extends React.Component {
       this.setState({
         showCreateProduct: true
       })
+      
+      
     }
 
   }
@@ -449,8 +453,8 @@ class AddProduct extends React.Component {
 
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
-            <div className="col-11" >
-              <div className="row">
+            <div className="col-10" >
+              <div className="row" >
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
                     جستجو و افزودن کالا
@@ -567,7 +571,7 @@ class AddProduct extends React.Component {
                   <Card className="b-card2  mt-5">
                     {this.state.GridData.length > 0 ?
                       <DataTable responsive value={this.state.GridData} selectionMode="single" selection={this.state.gridId} >
-                        <Column field="titleAndSubTitle" header="عنوان و کد کالا" style={{ textAlign: 'right' }} className="title" />
+                        <Column field="titleAndSubTitle" header="عنوان و کد کالا"  style={{ textAlign: 'right',width:300 }} className="title" />
                         <Column field="categoryName" header="دسته بندی" style={{ textAlign: 'right' }} className="title" />
                         <Column field="brand" header="برند" style={{ textAlign: 'right' }} className="title" />
                         <Column field="commissionPercent" header="کمیسیون فروش کالا" style={{ textAlign: 'right' }} className="title" />
@@ -645,21 +649,25 @@ class AddProduct extends React.Component {
                   product_Suggest_description: v,
                   product_Suggest_description_inValid: false
                 })} />
-              <UpFile label={
-                <div style={{ textAlign: 'center' }}><div>تصاویر خود را جهت بارگزاری داخل کادر بیاندازید
-                  </div>
-                  <div>
-                    یا از دکمه زیر استفاده کنید
-                  </div>
+              <div >
+                <UpFile  label={
+                  <div  style={{ textAlign: 'center' }}><div>تصاویر خود را جهت بارگزاری داخل کادر بیاندازید
+                    </div>
+                    <div>
+                      یا از دکمه زیر استفاده کنید
+                    </div>
 
-                </div>
-              } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
-                this.setState({
-                  product_Suggest_imageUrl: v.uploadImage,
-                  product_Suggest_imageUrl_inValid: false
-                })
-              }
-              } />
+                  </div>
+                } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
+                  this.setState({
+                    product_Suggest_imageUrl: v.uploadImage,
+                    product_Suggest_imageUrl_inValid: false
+                  })
+                }
+                } />
+              </div>  
+              
+
               <div className="row" style={{ justifyContent: 'end', marginTop: 32 }} >
 
                 <div className="col-lg-4 col-12" >

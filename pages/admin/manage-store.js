@@ -24,7 +24,7 @@ import UpFile from '../../components/UpFile';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 
-class ProductHistory extends React.Component {
+class ManageStore extends React.Component {
   constructor(props) {
     super(props);
    // this.getProducts(0,10,props.cats[0].url)
@@ -484,4 +484,4 @@ const mapStateToProps = (state) => {
       accessToken: state.token.accessToken
   }
 }
-export default connect(mapStateToProps)(ProductHistory)
+export default connect(mapStateToProps)(ManageStore)

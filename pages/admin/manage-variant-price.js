@@ -611,7 +611,7 @@ class ManageProduct extends React.Component {
         
         <div className="justify-content-center" style={{ marginTop: 50, marginBottom: 50, direction: 'rtl' }}  >
           <div className="row justify-content-center">
-            <div className="col-11" >
+            <div className="col-10" >
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">

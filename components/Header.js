@@ -56,6 +56,22 @@ const items = [
 
         }
       },
+      {
+        label: "کیف پول",
+        command: (event) => {
+
+          Router.push('/admin/wallet')
+
+        }
+      },
+      {
+        label: "سفارشات",
+        command: (event) => {
+
+          Router.push('/admin/order')
+
+        }
+      },
     ]
   },
 
@@ -131,8 +147,11 @@ class Header extends React.Component {
             />
           </div>
           <div className="col-lg-2 col-12" style={{ textAlign: 'center' }}  >
-            <AccountBalanceWalletOutlined />
-            <span>کیف پول</span>
+            <a href='/admin/wallet' >
+              <AccountBalanceWalletOutlined />
+              <span>کیف پول</span>
+            </a>
+            
 
           </div>
         </div>

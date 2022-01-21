@@ -35,7 +35,7 @@ class Dashboard extends React.Component {
             <>
                 <div className="justify-content-center" style={{ direction: 'rtl' }}  >
                     <div className="row justify-content-center">
-                        <div className="col-11" >
+                        <div className="col-10" >
                             <div className="row">
                                 <div className="col-lg-3 col-12">
                                     <Card className="b-card2  mt-5" style={{ textAlign: 'center' }}  >

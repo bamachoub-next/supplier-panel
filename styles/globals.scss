@@ -311,4 +311,9 @@ button{
   background-color:  var(--border-color);
   border-radius: 8px;
 }
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {  
 
+   opacity: 0;
+
+}

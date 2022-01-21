@@ -23,11 +23,11 @@ class BInput extends React.Component {
         <div className={this.state.className} >
           <label htmlFor="name" className="p-d-block inputLabel">{this.state.label}</label>
           {this.props.InputNumber &&
-            <InputNumber style={{ width: '100%' }} disabled={this.props.disabled} inputStyle={{ direction: this.props.direction || "rtl" }} mode="decimal" format={false} autocomplete="off" validateOnly={true} value={this.props.value} required inputClassName={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            <InputText autocomplete="off" type="number" disabled={this.props.disabled} validateOnly={true} value={this.props.value} style={{ direction: this.props.direction || "rtl" }} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
               this.setState({
-                value: e.value
+                value: e.target.value
               })
-              this.props.Val(e.value)
+              this.props.Val(e.target.value)
 
             }
 

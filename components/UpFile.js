@@ -14,6 +14,7 @@ class BInput extends React.Component {
     super(props);
     this.FileUpload = this.FileUpload.bind(this);
     this.uploadRef = React.createRef();
+    this.dropRef = React.createRef();
 
     this.state = {
       uploadImage: props.uploadImage || "",
@@ -25,17 +26,19 @@ class BInput extends React.Component {
   }
   FileUpload(e) {
     const formData = new FormData();
-    formData.append('image', e.target.files[0]);
-    switch (e.target.id) {
-      case "uploadRef": {
+    const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
+    formData.append('image', file);
+    debugger;
+    //switch (e.target.id) {
+     // case "uploadRef": {
         this.setState({
-          uploadSize: parseInt(e.target.files[0].size / 1000) + "kb",
-          uploadName: e.target.files[0].name
+          uploadSize: parseInt(file.size / 1000) + "kb",
+          uploadName: file.name
 
         })
 
-      }
-    }
+    //  }
+    //}
     this.setState({
 
     })
@@ -60,11 +63,13 @@ class BInput extends React.Component {
     };
     axios.post(ServerUrl + 'images', formData, config)
       .then((response) => {
+        debugger;
+        const img = response.data.data ? response.data.data.imageUrl : response.data.urls[0];
         this.setState({
-          uploadImage: response.data.data.imageUrl
+          uploadImage: img
 
         })
-        this.props.callback({ uploadImage: response.data.data.imageUrl });
+        this.props.callback({ uploadImage: img });
 
 
       })
@@ -72,8 +77,44 @@ class BInput extends React.Component {
         console.log(error);
       });
   }
+  componentDidMount(){
+      let div = this.dropRef.current
+      div.addEventListener('dragenter', (e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+      })
+      div.addEventListener('dragleave', (e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+      })
+      div.addEventListener('dragover', (e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+      })
+      div.addEventListener('drop', (e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+        this.FileUpload(e)
+      })
+  }
+  componentWillUnmount() {
+    let div = this.dropRef.current
+    div.removeEventListener('dragenter', ()=>{
+      
+    })
+    div.removeEventListener('dragleave', ()=>{
+      
+    })
+    div.removeEventListener('dragover', ()=>{
+      
+    })
+    div.removeEventListener('drop', ()=>{
+      
+    })
+  }
   render() {
     return (
+      <div ref={this.dropRef} >
       <div className="row mt-3" style={{ justifyContent: 'center' }} >
         {this.props.large ?
           <div className={this.props.className || "col-lg-8 col-12 mt-3"} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 200, background: '#fff', alignItems: 'center', padding: 8 }} >
@@ -132,6 +173,8 @@ class BInput extends React.Component {
 
 
       </div>
+      </div>
+      
     )
   }
 }
