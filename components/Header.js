@@ -17,10 +17,18 @@ const items = [
     label: 'فروشگاه',
     items: [
       {
-        label: "اضافه کردن کالا به انبار",
+        label: "جستجو و افزودن کالا به انبار",
         command: (event) => {
 
           Router.push('/admin/add-product')
+
+        }
+      },
+      {
+        label: "مدیریت انبار",
+        command: (event) => {
+
+          Router.push('/admin/manage-store')
 
         }
       },

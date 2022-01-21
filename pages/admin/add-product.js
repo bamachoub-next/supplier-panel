@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Chip } from 'primereact/chip';
 import Router from 'next/router'
-import Image from 'next/image'
+import { Message } from 'primereact/message';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -213,7 +213,7 @@ class AddProduct extends React.Component {
     this.Server.post(`products/basic-search/${this.state.currentCategoryUrl}`, { searchString: this.state.productInSearch },
       (response) => {
         if (response.data) {
-          let productInSearchSuggestions = []
+          let productInSearchSuggestions = [];
           response.data.map(function (v, i) {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img alt=""  src={v.imageArr[0]} />
@@ -334,6 +334,8 @@ class AddProduct extends React.Component {
         })
 
         if (response.data) {
+          debugger;
+
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
@@ -463,19 +465,19 @@ class AddProduct extends React.Component {
                     شما میتوانید کالاهای تایید شده توسط با ما چوب را جستجو و به انبار خود اضافه کنید
                         </div>
                 </div>
-                <div className="col-lg-3 col-12" >
-                  <Button label="ایجاد کالای جدید" onClick={() => this.createProduct()} style={{ width: '100%' }} />
+                <div className="col-lg-3 col-12" style={{textAlign:'left'}} >
+                  <Button label="ایجاد کالای جدید" onClick={() => this.createProduct()} style={{ width: '18.5rem' }} className="large" />
 
                 </div>
               </div>
               <div className="row" >
                 <div className="col-12" >
                   <Card className="b-card2  mt-5">
-                    <div className="row" >
-                      <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
+                  <div className="row" >
+                      <div className="col-lg-10 col-12" style={{ position: 'relative' }}>
                         <Search style={{ position: 'absolute', top: 8 }} />
 
-                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25,height:'3rem' }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
                           let GridDate = [];
                           GridDate.push(e.value);
                           this.setState({
@@ -487,16 +489,19 @@ class AddProduct extends React.Component {
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
-                      <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-lg-2 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         <Button label="جستجو" onClick={() => {
-                          
-                        }} style={{ width: '75%' }}></Button>
+                          this.setState({
+                            GridData: this.state.GridDataSearch
+                          })
+                        }} disabled style={{ width: '8rem' }} className="large"></Button>
                         <Button onClick={() => {
                           this.setState({
                             GridData: [],
                             productInSearch: ''
+
                           })
-                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }} className="large"  > <Close /> </Button>
 
 
                       </div>
@@ -505,9 +510,9 @@ class AddProduct extends React.Component {
                   <Card className="b-card2  mt-3">
                     <div>فیلترها</div>
 
-                    <div className="row mt-3" >
-                      <div className="col-md-3 col-12">
-                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} className="b-border" style={{ width: '100%' }} onChange={(e) => {
+                    <div className="mt-3" style={{display:'flex',flexWrap:'wrap'}} >
+                    <div >
+                        <MultiSelect value={this.state.brandOption} options={this.state.brandOptions} className="b-border" style={{ width: '16.5rem' }} onChange={(e) => {
                           this.setState({
                             brandOption: e.value
                           })
@@ -525,7 +530,7 @@ class AddProduct extends React.Component {
                         <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
                           {this.state.brandOption.map((v, i) => {
                             if (!v.remove) {
-                              return (<Chip label={v} key={i} className="b-p-chip" _id={v} style={{ marginRight: 5 }} removable onRemove={(event) => {
+                              return (<Chip label={v} key={i} className="b-p-chip" _id={v} style={{ marginRight: 5,direction:'ltr' }} removable onRemove={(event) => {
                                 let brand = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
                                 let remove = -1;
                                 let brandOption = this.state.brandOption;
@@ -583,20 +588,24 @@ class AddProduct extends React.Component {
                       <div>
                         {this.state.brandOption.length == 0 ?
                           <div style={{ textAlign: 'center' }}>
-                            <p>موردی برای نمایش وجود ندارد</p>
+                            <p style={{fontWeight:'bold'}} className="title">موردی برای نمایش وجود ندارد</p>
                           </div>
 
                           :
                           <div style={{ textAlign: 'center' }}>
-                            <p>موردی پیدا نشد</p>
-                            <p>محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</p>
+                            <div style={{ textAlign: 'center',display:'flex',justifyContent:'space-evenly',alignItems:'center',flexDirection:'column',height:150 }}>
+                              <p style={{fontWeight:'bold'}} className="title">موردی پیدا نشد</p>
+                              <p style={{width:300,textAlign:'center'}}>
+                                <span  className="title">محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</span>
+                              </p>
+                            </div>
                             <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
                               <div className="col-lg-4 col-12" >
-                                <button className="btn btn-primary" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} style={{ width: '100%' }} >حذف فیلترها</button>
+                                <button className="btn btn-primary large" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} style={{ width: '100%' }} >حذف فیلترها</button>
 
                               </div>
                               <div className="col-lg-4 col-12" >
-                                <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
+                                <button onClick={() => this.createProduct()} className="btn btn-outline-primary large" style={{ width: '100%' }} >ایجاد کالای جدید</button>
 
                               </div>
                             </div>
@@ -639,12 +648,11 @@ class AddProduct extends React.Component {
                   product_Suggest_title: v,
                   product_Suggest_title_inValid: false
                 })} />
-              <p className="title mt-3">در عنوان کالا، برند، مدل (کد رنگ) و تمام ویژگی هایی که از کالا را میدانید را ذکر کنید
-              </p>
-              <p className="title">
-                مثال: ام دی اف ملامینه بست وود 2091 گری استون برجسته 366*183
-              </p>
-              <BInput value={this.state.product_Suggest_description} inValid={this.state.product_Suggest_description_inValid} textArea={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="توضیحات کالا" absoluteLabel="توضیحات کالا" Val={(v) =>
+
+              <Message severity="info" className="title mt-3" style={{ justifyContent: 'flex-start', width: '100%' }} text={<div className="title"><div>در عنوان کالا، برند، مدل (کد رنگ) و تمام ویژگی هایی که از کالا را میدانید را ذکر کنید</div><div>مثال: ام دی اف ملامینه بست وود 2091 گری استون برجسته 366*183</div></div>}></Message>
+
+              
+              <BInput value={this.state.product_Suggest_description} placeholder="برای معرفی بهتر محصول به کابران، توضیحاتی درباره آن بنویسید" inValid={this.state.product_Suggest_description_inValid} textArea={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="توضیحات کالا" absoluteLabel="توضیحات کالا" Val={(v) =>
                 this.setState({
                   product_Suggest_description: v,
                   product_Suggest_description_inValid: false
@@ -658,7 +666,7 @@ class AddProduct extends React.Component {
                     </div>
 
                   </div>
-                } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
+                } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} outlined={true} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
                   this.setState({
                     product_Suggest_imageUrl: v.uploadImage,
                     product_Suggest_imageUrl_inValid: false
@@ -671,7 +679,7 @@ class AddProduct extends React.Component {
               <div className="row" style={{ justifyContent: 'end', marginTop: 32 }} >
 
                 <div className="col-lg-4 col-12" >
-                  <Button label="درخواست ایجاد کالا" onClick={() => this.sendProductSuggest()} style={{ width: '100%' }} />
+                  <Button label="درخواست ایجاد کالا" onClick={() => this.sendProductSuggest()} className="large" style={{ width: '100%' }} />
                 </div>
 
               </div>

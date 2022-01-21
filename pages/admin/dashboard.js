@@ -33,6 +33,7 @@ class Dashboard extends React.Component {
     render() {
         return (
             <>
+                <Header />
                 <div className="justify-content-center" style={{ direction: 'rtl' }}  >
                     <div className="row justify-content-center">
                         <div className="col-10" >

@@ -317,3 +317,41 @@ input[type=number]::-webkit-outer-spin-button {
    opacity: 0;
 
 }
+
+textarea::-webkit-input-placeholder {
+  color: var(--label-2) !important;
+  font-size: 0.875rem;
+
+}
+
+textarea:-moz-placeholder { /* Firefox 18- */
+  color: var(--label-2) !important;  
+  font-size: 0.875rem;
+
+}
+
+textarea::-moz-placeholder {  /* Firefox 19+ */
+  color: var(--label-2) !important;  
+  font-size: 0.875rem;
+
+}
+
+textarea:-ms-input-placeholder {
+  color: var(--label-2) !important;  
+  font-size: 0.875rem;
+
+}
+
+textarea::placeholder {
+  color: var(--label-2) !important;
+  font-size: 0.875rem;
+   
+}
+button{
+  border-radius: 8px !important;
+ 
+}
+button.large{
+  height: 3rem;
+}
+

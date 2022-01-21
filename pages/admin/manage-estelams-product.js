@@ -578,11 +578,11 @@ class ManageEstelam extends React.Component {
                 <div className="col-12" >
 
                   <Card className="b-card2  ">
-                    <div className="row" >
-                      <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
+                  <div className="row" >
+                      <div className="col-lg-10 col-12" style={{ position: 'relative' }}>
                         <Search style={{ position: 'absolute', top: 8 }} />
 
-                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25,height:'3rem' }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
                           let GridDate = [];
                           GridDate.push(e.value);
                           this.setState({
@@ -594,18 +594,19 @@ class ManageEstelam extends React.Component {
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
-                      <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-lg-2 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         <Button label="جستجو" onClick={() => {
-                          /*this.setState({
+                          this.setState({
                             GridData: this.state.GridDataSearch
-                          })*/
-                        }} style={{ width: '75%' }}></Button>
+                          })
+                        }} style={{ width: '8rem' }} disabled className="large"></Button>
                         <Button onClick={() => {
                           this.setState({
                             GridData: [],
                             productInSearch: ''
+
                           })
-                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }} className="large"  > <Close /> </Button>
 
 
                       </div>
@@ -614,8 +615,8 @@ class ManageEstelam extends React.Component {
                   <Card className="b-card2  mt-3">
                     <div>فیلترها</div>
 
-                    <div className="row mt-3" >
-                      <div className="col-md-3 col-12">
+                    <div className="mt-3" style={{display:'flex',flexWrap:'wrap'}} >
+                      <div style={{marginRight:10}} >
                         <Dropdown value={this.state.cat} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
                           this.handleChangeCats(e.value);
                         }
@@ -626,7 +627,7 @@ class ManageEstelam extends React.Component {
 
 
                       </div>
-                      <div className="col-md-3 col-12">
+                      <div style={{marginRight:10}} >
                         <MultiSelect value={this.state.payTypeOption} className="b-border" options={this.state.payTypeOptions} style={{ width: '100%' }} onChange={(e) => {
                           this.setState({
                             payTypeOptions: e.value

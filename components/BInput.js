@@ -13,7 +13,8 @@ class BInput extends React.Component {
       label: props.label,
       ContainerClass: props.ContainerClass,
       className: props.className,
-      absoluteLabel: props.absoluteLabel
+      absoluteLabel: props.absoluteLabel,
+      inputClassName: this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"
     }
   }
   render() {
@@ -23,7 +24,7 @@ class BInput extends React.Component {
         <div className={this.state.className} >
           <label htmlFor="name" className="p-d-block inputLabel">{this.state.label}</label>
           {this.props.InputNumber &&
-            <InputText autocomplete="off" type="number" disabled={this.props.disabled} validateOnly={true} value={this.props.value} style={{ direction: this.props.direction || "rtl" }} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            <InputText autocomplete="off" placeholder={this.props.placeholder||""} type="number" disabled={this.props.disabled} validateOnly={true} value={this.props.value} style={{ direction: this.props.direction || "rtl" }} className={this.state.inputClassName} onChange={(e) => {
               this.setState({
                 value: e.target.value
               })
@@ -34,7 +35,7 @@ class BInput extends React.Component {
             } />
           }
           {!this.props.InputNumber && !this.props.password && !this.props.textArea &&
-            <InputText autocomplete="off" disabled={this.props.disabled} validateOnly={true} value={this.props.value} style={{ direction: this.props.direction || "rtl" }} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            <InputText autocomplete="off" placeholder={this.props.placeholder||""} disabled={this.props.disabled} validateOnly={true} value={this.props.value} style={{ direction: this.props.direction || "rtl" }} className={this.state.inputClassName} onChange={(e) => {
               this.setState({
                 value: e.target.value
               })
@@ -47,7 +48,7 @@ class BInput extends React.Component {
 
           }
           {this.props.password &&
-            <Password autocomplete="off" feedback={false} disabled={this.props.disabled} value={this.props.value} inputStyle={{ direction: this.props.direction || "rtl" }} style={{ width: '100%' }} inputClassName={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            <Password autocomplete="off" placeholder={this.props.placeholder||""} feedback={false} disabled={this.props.disabled} value={this.props.value} inputStyle={{ direction: this.props.direction || "rtl" }} style={{ width: '100%' }} inputClassName={this.state.inputClassName} onChange={(e) => {
               this.setState({
                 value: e.target.value
               })
@@ -60,7 +61,7 @@ class BInput extends React.Component {
 
           }
           {this.props.textArea &&
-            <InputTextarea autocomplete="off" disabled={this.props.disabled} validateOnly={true} rows={this.props.rows || 5} cols={this.props.cols || 30} value={this.props.value} style={{ height: 'auto', direction: this.props.direction || "rtl" }} className={this.props.inValid ? "p-invalid p-d-block form-control" : "p-d-block form-control"} onChange={(e) => {
+            <InputTextarea autocomplete="off" placeholder={this.props.placeholder||""} disabled={this.props.disabled} validateOnly={true} rows={this.props.rows || 5} cols={this.props.cols || 30} value={this.props.value} style={{ height: 'auto', direction: this.props.direction || "rtl" }} className={this.state.inputClassName} onChange={(e) => {
               this.setState({
                 value: e.target.value
               })

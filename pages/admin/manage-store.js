@@ -39,6 +39,7 @@ class ManageStore extends React.Component {
       showLoading: false,
       Step: 1,
       GridData: [],
+      filters:[],
       currentCategoryUrl: '',
       showCreateProduct: false
     }
@@ -48,6 +49,39 @@ class ManageStore extends React.Component {
   componentDidMount() {
     this.setCategories(this.props.cats)
 
+
+  }
+  getBrands(currentCategoryUrl, currentCategoryKey) {
+    debugger;
+    this.setState({
+      showLoading: true
+    })
+    this.Server.get(`brands/used/${currentCategoryUrl}/${currentCategoryKey}`, '',
+      (response) => {
+        this.setState({
+          showLoading: false
+        })
+        let brandOptions = [];
+        for (let data of response.data) {
+          brandOptions.push({
+            label: data,
+            value: data
+          })
+        }
+
+        this.setState({
+          brandOptions: brandOptions
+        })
+        //this.getProducts(0, 10, currentCategoryUrl);
+
+
+      }, (error) => {
+        this.setState({
+          showLoading: false
+        })
+
+      }
+    )
 
   }
 
@@ -264,15 +298,13 @@ class ManageStore extends React.Component {
       cats: cats,
       cat:cats[0]
     })
-    this.handleChangeCats(cats[0]?.value);
+    //this.handleChangeCats(cats[0]);
 
     
   }
-  handleChangeCats(value){
-    this.setState({
-      cat: value
-    })
-    this.getProducts(0, 10, value);
+  handleChangeCats(cat_val){
+   
+    this.getBrands(cat_val.value,cat_val._key);
   }
 
   render() {
@@ -286,14 +318,14 @@ class ManageStore extends React.Component {
               <div className="row">
                 <div className="col-lg-9 col-12" >
                   <div className="large-title">
-                    تاریخچه درخواست ایجاد کالا
+                    مدیریت انبار
                   </div>
                   <div className="small-title">
-                    لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                    کالاهای انبار خود را مدیریت و ویرایش کنید 
                   </div>
                 </div>
-                <div className="col-lg-3 col-12" >
-                  <Button label="ایجاد کالای جدید" onClick={() => this.createProduct()} style={{ width: '100%' }} />
+                <div className="col-lg-3 col-12" style={{textAlign:'left'}} >
+                  <Button label="جستجو و افزودن کالا به انبار" className="large" onClick={() => Router.push('/admin/add-product')} style={{ width: '18.5rem' }} />
 
                 </div>
               </div>
@@ -301,10 +333,10 @@ class ManageStore extends React.Component {
                 <div className="col-12" >
                   <Card className="b-card2  mt-5">
                     <div className="row" >
-                      <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
+                      <div className="col-lg-10 col-12" style={{ position: 'relative' }}>
                         <Search style={{ position: 'absolute', top: 8 }} />
 
-                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25,height:'3rem' }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
                           let GridDate = [];
                           GridDate.push(e.value);
                           this.setState({
@@ -316,37 +348,115 @@ class ManageStore extends React.Component {
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
-                      <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-lg-2 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         <Button label="جستجو" onClick={() => {
                           this.setState({
                             GridData: this.state.GridDataSearch
                           })
-                        }} style={{ width: '75%' }}></Button>
+                        }} style={{ width: '8rem' }} disabled className="large"></Button>
                         <Button onClick={() => {
                           this.setState({
                             GridData: [],
                             productInSearch: ''
 
                           })
-                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }} className="large"  > <Close /> </Button>
 
 
                       </div>
                     </div>
                   </Card>
                   <Card className="b-card2  mt-3">
-                    <div>دسته بندی ها</div>
+                    <div>فیلترها</div>
 
-                    <div className="row mt-3" >
-                      <div className="col-md-3 col-12">
+                    <div className=" mt-3" style={{display:'flex',flexWrap:'wrap'}} >
+                      <div  >
                         <Dropdown value={this.state.cat} ref={this.catsRef} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
-                          this.handleChangeCats(e.value);
+                          
+                          let cat_val = {}
+                          for(let i=0;i<this.state.cats.length;i++){
+                            if(this.state.cats[i].value == e.value )
+                              cat_val = this.state.cats[i];
+                          }
+                          let filters = this.state.filters;
+                          let filter_exist = false;
+                          for(let i=0;i<filters.length;i++){
+                            if(filters[i] == cat_val.label){
+                              filter_exist = true;
+                            }
+                          }
+                          if(!filter_exist)
+                            filters.push(cat_val.label)
+                          this.setState({
+                            filters:filters
+                          })
+                          this.handleChangeCats(cat_val);
                         }
 
                         }
-                          placeholder="دسته بندی را انتخاب کنید" />
+                          placeholder="دسته بندی" />
 
                       </div>
+                      <div style={{marginRight:10}} >
+                        <Dropdown value={this.state.brandOption}  className="b-border" options={this.state.brandOptions} style={{ width: 250 }} onChange={(e) => {
+                          let filters = this.state.filters;
+                          let filter_exist = false;
+                          for(let i=0;i<filters.length;i++){
+                            if(filters[i] == e.value){
+                              filter_exist = true;
+                            }
+                          }
+                          if(!filter_exist)
+                            filters.push(e.value)
+                          this.setState({
+                            filters:filters
+                          })
+                        }
+
+                        }
+                          placeholder="برند" />
+
+                      </div>
+                      <div style={{marginRight:10}} >
+                        <Dropdown value={this.state.estelam} className="b-border" options={this.state.estelams} style={{ width: 250 }} onChange={(e) => {
+                        }
+
+                        }
+                          placeholder="استعلام" />
+
+                      </div>
+                    </div>
+                    <div className="row mt-3" >
+                      <div className="col-md-9 col-12" style={{ display: 'flex', justifyContent: 'start', alignItems: 'baseline' }}>
+                        <div>فیلترهای اعمال شده</div>
+                        <div style={{ marginTop: 10, textAlign: 'right', marginBottom: 10 }}>
+                          {this.state.filters.map((v, i) => {
+                            if (!v.remove) {
+                              return (<Chip label={v} key={i} className="b-p-chip" _id={v} style={{ marginRight: 5,direction:'ltr' }} removable onRemove={(event) => {
+                                let filter = event.target.parentElement.getElementsByClassName("p-chip-text")[0].textContent;
+                                let remove = -1;
+                                let filters = this.state.filters;
+                                for (let i = 0; i < filters.length; i++) {
+                                  if (filters[i] == filter) {
+                                    remove = i;
+                                  }
+                                }
+                                filters.splice(remove, 1)
+                                this.setState({
+                                  filters: filters
+                                })
+                                //this.searchByFilter(brandOption[0],0,10)
+
+                              }} />)
+                            }
+
+                          })
+                          }
+                        </div>
+                      </div>
+                      <a className="col-md-3 col-12" href="#" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} >
+                        <div style={{ textAlign: 'left' }}><span><DeleteOutline /></span><span> حذف همه فیلترها</span></div>
+                      </a>
                     </div>
 
 
@@ -373,21 +483,24 @@ class ManageStore extends React.Component {
 
                       </DataTable>
                       :
-                      <div>
-
-                        <div style={{ textAlign: 'center' }}>
-                          <p>موردی پیدا نشد</p>
-                          <p>محصولی با دسته بندی انتخاب شده در انبار شما وجود ندارد</p>
-                          <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
-
-                            <div className="col-lg-4 col-12" >
-                              <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
-
-                            </div>
-                          </div>
-                        </div>
-
+                      <div style={{ textAlign: 'center' }}>
+                      <div style={{ textAlign: 'center',display:'flex',justifyContent:'space-evenly',alignItems:'center',flexDirection:'column',height:150 }}>
+                        <p style={{fontWeight:'bold'}} className="title">موردی پیدا نشد</p>
+                        <p style={{width:300,textAlign:'center'}}>
+                          <span  className="title">محصولی با فیلترهای اعمال شده در انبار شما وجود ندارد</span>
+                        </p>
                       </div>
+                      <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
+                        <div className="col-lg-4 col-12" >
+                          <button className="btn btn-primary large" onClick={() => { this.setState({ brandOption: [] }); this.searchByFilter("", 0, 10) }} style={{ width: '100%' }} >حذف فیلترها</button>
+
+                        </div>
+                        <div className="col-lg-4 col-12" >
+                          <button onClick={() => Router.push('/admin/add-product')} className="btn btn-outline-primary large" style={{ width: '100%' }} >جستجو و افزودن کالا به انبار</button>
+
+                        </div>
+                      </div>
+                    </div>
                     }
 
                   </Card>
@@ -412,52 +525,6 @@ class ManageStore extends React.Component {
           </div>
 
         }
-        <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
-          <div style={{ direction: 'rtl' }}>
-            <p className="title">درخواست ایجاد کالا در باماچوب</p>
-            <p className="small-title">کالاهایی که در باما چوب وجود ندارد را درخواست دهید تا برای شما ایجاد شود</p>
-            <Card className="b-card2  mt-5">
-              <BInput value={this.state.product_Suggest_title} inValid={this.state.product_Suggest_title_inValid} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="عنوان کالا" absoluteLabel="عنوان کالا" Val={(v) =>
-                this.setState({
-                  product_Suggest_title: v,
-                  product_Suggest_title_inValid: false
-                })} />
-              <p className="title mt-3">در عنوان کالا، برند، مدل (کد رنگ) و تمام ویژگی هایی که از کالا را میدانید را ذکر کنید
-              </p>
-              <p className="title">
-                مثال: ام دی اف ملامینه بست وود 2091 گری استون برجسته 366*183
-              </p>
-              <BInput value={this.state.product_Suggest_description} inValid={this.state.product_Suggest_description_inValid} textArea={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="توضیحات کالا" absoluteLabel="توضیحات کالا" Val={(v) =>
-                this.setState({
-                  product_Suggest_description: v,
-                  product_Suggest_description_inValid: false
-                })} />
-              <UpFile label={
-                <div style={{ textAlign: 'center' }}><div>تصاویر خود را جهت بارگزاری داخل کادر بیاندازید
-                  </div>
-                  <div>
-                    یا از دکمه زیر استفاده کنید
-                  </div>
-
-                </div>
-              } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
-                this.setState({
-                  product_Suggest_imageUrl: v.uploadImage,
-                  product_Suggest_imageUrl_inValid: false
-                })
-              }
-              } />
-              <div className="row" style={{ justifyContent: 'end', marginTop: 32 }} >
-
-                <div className="col-lg-4 col-12" >
-                  <Button label="درخواست ایجاد کالا" onClick={() => this.sendProductSuggest()} style={{ width: '100%' }} />
-                </div>
-
-              </div>
-            </Card>
-          </div>
-
-        </Dialog>
       </>
     )
   }

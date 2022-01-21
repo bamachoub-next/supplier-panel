@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dropdown } from 'primereact/dropdown';
 import Router from 'next/router'
 import { Chip } from 'primereact/chip';
-import Image from 'next/image'
+import { Message } from 'primereact/message';
 
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -209,7 +209,10 @@ class ProductHistory extends React.Component {
 
     } else {
       this.setState({
-        showCreateProduct: true
+        showCreateProduct: true,
+        product_Suggest_title:'',
+        product_Suggest_description:'',
+        product_Suggest_imageUrl:''
       })
     }
 
@@ -292,19 +295,19 @@ class ProductHistory extends React.Component {
                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
                   </div>
                 </div>
-                <div className="col-lg-3 col-12" >
-                  <Button label="ایجاد کالای جدید" onClick={() => this.createProduct()} style={{ width: '100%' }} />
+                <div className="col-lg-3 col-12" style={{textAlign:'left'}} >
+                  <Button label="درخواست ایجاد کالای جدید" className="large" onClick={() => this.createProduct()} style={{ width: '18.5rem' }} />
 
                 </div>
               </div>
               <div className="row" >
                 <div className="col-12" >
                   <Card className="b-card2  mt-5">
-                    <div className="row" >
-                      <div className="col-lg-9 col-12" style={{ position: 'relative' }}>
+                  <div className="row" >
+                      <div className="col-lg-10 col-12" style={{ position: 'relative' }}>
                         <Search style={{ position: 'absolute', top: 8 }} />
 
-                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25 }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
+                        <AutoComplete placeholder="جستجوی نام یا کد کالا " inputClassName="transparent-btn" inputStyle={{ fontFamily: 'iranyekanwebregular', textAlign: 'right', fontSize: 12, borderColor: '#dedddd', fontSize: 15, width: '100%', paddingRight: 25,height:'3rem' }} style={{ width: '100%' }} onChange={(e) => this.setState({ productInSearch: e.value })} itemTemplate={this.itemTemplateSearch.bind(this)} value={this.state.productInSearch} onSelect={(e) => {
                           let GridDate = [];
                           GridDate.push(e.value);
                           this.setState({
@@ -316,19 +319,19 @@ class ProductHistory extends React.Component {
                         } suggestions={this.state.productInSearchSuggestions} completeMethod={this.suggestproductInSearch.bind(this)} />
 
                       </div>
-                      <div className="col-lg-3 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-lg-2 col-12 mt-3 mt-lg-0" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         <Button label="جستجو" onClick={() => {
                           this.setState({
                             GridData: this.state.GridDataSearch
                           })
-                        }} style={{ width: '75%' }}></Button>
+                        }} style={{ width: '8rem' }} className="large"></Button>
                         <Button onClick={() => {
                           this.setState({
                             GridData: [],
                             productInSearch: ''
 
                           })
-                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }}  > <Close /> </Button>
+                        }} style={{ width: '20%', display: 'flex', justifyContent: 'center' }} className="large"  > <Close /> </Button>
 
 
                       </div>
@@ -339,7 +342,7 @@ class ProductHistory extends React.Component {
 
                     <div className="row mt-3" >
                       <div className="col-md-3 col-12">
-                        <Dropdown value={this.state.cat} ref={this.catsRef} className="b-border" options={this.state.cats} style={{ width: 250 }} onChange={(e) => {
+                        <Dropdown value={this.state.cat} ref={this.catsRef} className="b-border" options={this.state.cats} style={{ width: '16.5rem' }} onChange={(e) => {
                           this.handleChangeCats(e.value);
                         }
 
@@ -381,7 +384,7 @@ class ProductHistory extends React.Component {
                           <div className="row" style={{ justifyContent: 'space-evenly', marginTop: 50 }}>
 
                             <div className="col-lg-4 col-12" >
-                              <button onClick={() => this.createProduct()} className="btn btn-outline-primary" style={{ width: '100%' }} >ایجاد کالای جدید</button>
+                              <button onClick={() => this.createProduct()} className="btn btn-outline-primary large" style={{ width: '100%' }} >درخواست ایجاد کالای جدید</button>
 
                             </div>
                           </div>
@@ -412,7 +415,7 @@ class ProductHistory extends React.Component {
           </div>
 
         }
-        <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
+         <Dialog visible={this.state.showCreateProduct} onHide={() => { this.setState({ showCreateProduct: false }) }} style={{ width: '50vw' }} maximizable={true}>
           <div style={{ direction: 'rtl' }}>
             <p className="title">درخواست ایجاد کالا در باماچوب</p>
             <p className="small-title">کالاهایی که در باما چوب وجود ندارد را درخواست دهید تا برای شما ایجاد شود</p>
@@ -422,35 +425,38 @@ class ProductHistory extends React.Component {
                   product_Suggest_title: v,
                   product_Suggest_title_inValid: false
                 })} />
-              <p className="title mt-3">در عنوان کالا، برند، مدل (کد رنگ) و تمام ویژگی هایی که از کالا را میدانید را ذکر کنید
-              </p>
-              <p className="title">
-                مثال: ام دی اف ملامینه بست وود 2091 گری استون برجسته 366*183
-              </p>
-              <BInput value={this.state.product_Suggest_description} inValid={this.state.product_Suggest_description_inValid} textArea={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="توضیحات کالا" absoluteLabel="توضیحات کالا" Val={(v) =>
+
+              <Message severity="info" className="title mt-3" style={{ justifyContent: 'flex-start', width: '100%' }} text={<div className="title"><div>در عنوان کالا، برند، مدل (کد رنگ) و تمام ویژگی هایی که از کالا را میدانید را ذکر کنید</div><div>مثال: ام دی اف ملامینه بست وود 2091 گری استون برجسته 366*183</div></div>}></Message>
+
+              
+              <BInput value={this.state.product_Suggest_description} placeholder="برای معرفی بهتر محصول به کابران، توضیحاتی درباره آن بنویسید" inValid={this.state.product_Suggest_description_inValid} textArea={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-12 col-12" label="توضیحات کالا" absoluteLabel="توضیحات کالا" Val={(v) =>
                 this.setState({
                   product_Suggest_description: v,
                   product_Suggest_description_inValid: false
                 })} />
-              <UpFile label={
-                <div style={{ textAlign: 'center' }}><div>تصاویر خود را جهت بارگزاری داخل کادر بیاندازید
-                  </div>
-                  <div>
-                    یا از دکمه زیر استفاده کنید
-                  </div>
+              <div >
+                <UpFile  label={
+                  <div  style={{ textAlign: 'center' }}><div>تصاویر خود را جهت بارگزاری داخل کادر بیاندازید
+                    </div>
+                    <div>
+                      یا از دکمه زیر استفاده کنید
+                    </div>
 
-                </div>
-              } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
-                this.setState({
-                  product_Suggest_imageUrl: v.uploadImage,
-                  product_Suggest_imageUrl_inValid: false
-                })
-              }
-              } />
+                  </div>
+                } className="col-lg-12 col-12 mt-3" large={true} inValid={this.state.product_Suggest_imageUrl_inValid} outlined={true} uploadImage={this.state.product_Suggest_imageUrl} buttonLabel="انتخاب تصویر" callback={(v) => {
+                  this.setState({
+                    product_Suggest_imageUrl: v.uploadImage,
+                    product_Suggest_imageUrl_inValid: false
+                  })
+                }
+                } />
+              </div>  
+              
+
               <div className="row" style={{ justifyContent: 'end', marginTop: 32 }} >
 
                 <div className="col-lg-4 col-12" >
-                  <Button label="درخواست ایجاد کالا" onClick={() => this.sendProductSuggest()} style={{ width: '100%' }} />
+                  <Button label="درخواست ایجاد کالای جدید" onClick={() => this.sendProductSuggest()} className="large" style={{ width: '100%' }} />
                 </div>
 
               </div>

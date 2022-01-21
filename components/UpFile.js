@@ -117,14 +117,14 @@ class BInput extends React.Component {
       <div ref={this.dropRef} >
       <div className="row mt-3" style={{ justifyContent: 'center' }} >
         {this.props.large ?
-          <div className={this.props.className || "col-lg-8 col-12 mt-3"} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 200, background: '#fff', alignItems: 'center', padding: 8 }} >
+          <div className={this.props.className || "col-lg-8 col-12 mt-3"} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', height: 200, background: '#fff', alignItems: 'center', padding: 8 }} >
             <div>
               <div className="title">{this.state.label}</div>
               <small className={this.props.inValid ? "p-error p-d-block" : "p-error p-d-none"}  >{this.state.absoluteLabel} نمیتواند خالی باشد</small>
             </div>
             <div>
               <input className="d-none" id="uploadRef" ref={this.uploadRef} autoComplete="off" onChange={this.FileUpload} type="file" name="file" />
-              <Button label={this.state.buttonLabel} style={{ width: '100%' }} onClick={() => {
+              <Button label={this.state.buttonLabel} className="p-button-outlined p-button-info" style={{ width: 300 }} onClick={() => {
                 this.uploadRef.current.click();
               }} />
             </div>
