@@ -130,31 +130,7 @@ class Signup extends React.Component {
         )
     }
     setInfo() {
-        if (!this.state.idCardImage) {
-            this.setState({
-                idCardImage_inValid: true
-            })
-            return;
-        }
-        if (!this.state.idBookPageOneImage) {
-            this.setState({
-                idBookPageOneImage_inValid: true
-            })
-            return;
-        }
-        if (!this.state.idBookPageTwoImage) {
-            this.setState({
-                idBookPageTwoImage_inValid: true
-            })
-            return;
-        }
-
-        if (!this.state.salesPermitImage) {
-            this.setState({
-                salesPermitImage_inValid: true
-            })
-            return;
-        }
+       debugger;
         let param =
         {
             "address": this.state.address,
@@ -402,6 +378,11 @@ class Signup extends React.Component {
                                                     lastName: v,
                                                     lastName_inValid: false
                                                 })} />
+                                            <BInput value={this.state.phoneNumber} inValid={this.state.phoneNumber_inValid} InputNumber={true} ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="شماره موبایل خود را وارد کنید" absoluteLabel="شماره موبایل" Val={(v) =>
+                                                this.setState({
+                                                    phoneNumber: v,
+                                                    phoneNumber_inValid: false
+                                                })} />
                                             <BInput value={this.state.nationalCode} inValid={this.state.nationalCode_inValid} InputNumber={true}  ContainerClass="row mt-3 justify-content-center" className="col-lg-8 col-12" label="کد ملی" absoluteLabel="کد ملی" Val={(v) =>
                                                 this.setState({
                                                     nationalCode: v,
@@ -459,6 +440,14 @@ class Signup extends React.Component {
                                                             })
                                                             return;
                                                         }
+                                                        if (!this.state.phoneNumber) {
+                                                            this.setState({
+                                                                phoneNumber_inValid: true
+                                                            })
+                                                            return;
+                                                        }
+
+                                                        
                                                         if (!this.state.nationalCode) {
                                                             this.setState({
                                                                 nationalCode_inValid: true
@@ -692,7 +681,7 @@ class Signup extends React.Component {
 }
 
 export async function getStaticProps({ query }) {
-    let res = await fetch('https://bmch.liara.run/api/v1/categories');
+    let res = await fetch('https://data.bamachoub.com/api/v1/categories');
     //let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
 
     

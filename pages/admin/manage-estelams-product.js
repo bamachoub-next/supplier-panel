@@ -945,7 +945,7 @@ class ManageEstelam extends React.Component {
 }
 export async function getStaticProps({ query }) {
 
-  let res = await fetch('http://bmch.liara.run/api/v1/categories');
+  let res = await fetch('http://data.bamachoub.com/api/v1/categories');
   //let res = await fetch('http://127.0.0.1:3000/api/v1/categories');
 
   

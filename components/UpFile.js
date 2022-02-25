@@ -4,7 +4,7 @@ import axios from 'axios'
 import Image from 'next/image'
 
 import { ProgressBar } from 'primereact/progressbar';
-const ServerUrl = "https://bmch.liara.run/api/v1/"
+const ServerUrl = "https://data.bamachoub.com/api/v1/"
 //const ServerUrl = "http://127.0.0.1:3000/api/v1/"
 
 
