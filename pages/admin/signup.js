@@ -130,7 +130,6 @@ class Signup extends React.Component {
         )
     }
     setInfo() {
-       debugger;
         let param =
         {
             "address": this.state.address,

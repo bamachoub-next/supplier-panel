@@ -28,7 +28,6 @@ class BInput extends React.Component {
     const formData = new FormData();
     const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
     formData.append('image', file);
-    debugger;
     //switch (e.target.id) {
      // case "uploadRef": {
         this.setState({
@@ -63,7 +62,6 @@ class BInput extends React.Component {
     };
     axios.post(ServerUrl + 'images', formData, config)
       .then((response) => {
-        debugger;
         const img = response.data.data ? response.data.data.imageUrl : response.data.urls[0];
         this.setState({
           uploadImage: img

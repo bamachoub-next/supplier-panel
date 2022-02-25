@@ -143,7 +143,6 @@ class AddPrice extends React.Component {
             }
         }
         }
-        debugger;
         if(priceArr.length >0)
           product.variationsObj = {
             variations:priceArr

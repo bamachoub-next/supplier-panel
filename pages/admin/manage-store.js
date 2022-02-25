@@ -52,7 +52,6 @@ class ManageStore extends React.Component {
 
   }
   getBrands(currentCategoryUrl, currentCategoryKey) {
-    debugger;
     this.setState({
       showLoading: true
     })

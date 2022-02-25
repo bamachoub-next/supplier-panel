@@ -334,7 +334,6 @@ class AddProduct extends React.Component {
         })
 
         if (response.data) {
-          debugger;
 
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
