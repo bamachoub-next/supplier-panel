@@ -36,6 +36,7 @@ class AddProduct extends React.Component {
       Step: 1,
       GridData: [],
       currentCategoryUrl: '',
+      favProduct: [],
       showCreateProduct: false
     }
   }
@@ -122,7 +123,7 @@ class AddProduct extends React.Component {
                   this.getCategories(2, event.item._key);
                 } else {
                   if (event.item.status == "end")
-                    this.getProductsPerCat(event.item);
+                    this.getFavProductsPerCat(event.item);
                 }
               }
             }
@@ -139,7 +140,7 @@ class AddProduct extends React.Component {
               currentCategoryUrl: event.item._url
             })
 
-            this.getProductsPerCat(event.item);
+            this.getFavProductsPerCat(event.item);
           }
         }
         cats.push(temp)
@@ -173,7 +174,7 @@ class AddProduct extends React.Component {
                     })
 
                     if (event.item.status == "end")
-                      this.getProductsPerCat(event.item);
+                      this.getFavProductsPerCat(event.item);
 
 
                   }
@@ -218,7 +219,7 @@ class AddProduct extends React.Component {
             v.commissionPercent = <div>{v.commissionPercent} %</div>
             v.img = <img alt=""  src={v.imageArr[0]} />
             if(v.status != "ok"){
-              v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(v._key) }} style={{ width: '100%' }} />
+              v.add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(v._key,item) }} style={{ width: '100%' }} />
             }else{
               v.add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
             }
@@ -256,12 +257,13 @@ class AddProduct extends React.Component {
         this.setState({
           showLoading: false
         })
+
         if (response.data) {
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
             if(v.status != "ok"){
-              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key,response.data[i]) }} style={{ width: '100%' }} />
             }else{
               response.data[i].add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
             }
@@ -321,6 +323,32 @@ class AddProduct extends React.Component {
     )
 
   }
+  getFavProductsPerCat(item) {
+
+    this.setState({
+      GridData: [],
+      showLoading: true
+    })
+    this.Server.get(`suppliers/fav/${item._url}`, `?categoryurl=${item._url}&offset=0&limit=1000`,
+      (response) => {
+        let favProduct=[];
+        for (let i = 0; i < response.data.length; i++) {
+          favProduct.push(response.data[i].productKey)
+        }
+        this.setState({
+          showLoading: false,
+          favProduct:favProduct
+        })
+        this.getProductsPerCat(item);
+        
+      }, (error) => {
+        this.setState({
+          showLoading: false
+        })
+
+      },{ Authorization: `Bearer ${this.props.accessToken || localStorage.getItem("accessToken")}` }
+    )
+  }
   getProductsPerCat(item) {
 
     this.setState({
@@ -334,12 +362,11 @@ class AddProduct extends React.Component {
         })
 
         if (response.data) {
-
           for (let i = 0; i < response.data.length; i++) {
             response.data[i].commissionPercent = <div>{response.data[i].commissionPercent} %</div>
             response.data[i].img = <img alt=""  src={response.data[i].imageArr[0]} />
-            if(response.data[i].status != "ok"){
-              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key) }} style={{ width: '100%' }} />
+            if(this.state.favProduct.indexOf(response.data[i]._key) == -1){
+              response.data[i].add = <Button label="افزودن به انبار" onClick={() => { this.addToMyProducts(response.data[i]._key,item) }} style={{ width: '100%' }} />
             }else{
               response.data[i].add = <Button label="موجود در انبار" disabled style={{ width: '100%' }} />
             }
@@ -360,6 +387,7 @@ class AddProduct extends React.Component {
           GridData: response.data || []
         })
       }, (error) => {
+        console.log(error);
         this.setState({
           showLoading: false
         })
@@ -367,7 +395,7 @@ class AddProduct extends React.Component {
       }
     )
   }
-  addToMyProducts(key) {
+  addToMyProducts(key,item) {
     this.setState({
       showLoading: true
     })
@@ -382,7 +410,7 @@ class AddProduct extends React.Component {
             showConfirmButton: false,
             title: 'کالای مورد نظر به انبار شما اضافه شد',
             html: <div className='title' style={{ marginTop: 80 }}>
-              <div style={{ textAlign: 'center' }}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => { MySwal.close(); }} style={{ width: '90%', marginBottom: 30 }} /><br /><Button label="بازگشت" onClick={() => { MySwal.close(); Router.push(`/admin/manageproduct`) }} style={{ width: '90%' }} /></div></div>
+              <div style={{ textAlign: 'center' }}><Button label="درج تنوع و قیمت گذاری کالا" onClick={() => { MySwal.close();  Router.push(`/admin/manage-store`)  }} style={{ width: '90%', marginBottom: 30 }} /><br /><Button label="بازگشت" onClick={() => { MySwal.close(); this.getFavProductsPerCat(item) }} style={{ width: '90%' }} /></div></div>
           })
         } else {
           this.setState({
